@@ -14,18 +14,44 @@
 #include <QLocale>    // Required for QLocale
 #include <QDir>       // Required for QDir::homePath()
 #include "syntaxhighlighter.h" // Added for syntax highlighting
+#include "splashscreen.h"      // For SplashScreen
+#include "AlteThemeManager.h"  // For ThemeManager
+#include <QTimer>              // For QTimer (might be removable if only for old splash)
+#include <QScreen>             // For QScreen to center splash
+#include <QCoreApplication>    // For applicationDirPath
+#include <QIcon>               // For QIcon (moved to top)
+
+// Forward declare AlteThemeManager if its definition isn't needed in this header part
+// class AlteThemeManager; // Not needed here as it's in main()
 
 class MainWindow : public QMainWindow {
     Q_OBJECT
 
 public:
-    MainWindow(QWidget *parent = nullptr) : QMainWindow(parent) {
+    // Updated constructor to accept AlteThemeManager
+    MainWindow(AlteThemeManager* themeManager, QWidget *parent = nullptr) : QMainWindow(parent) {
         setWindowTitle("Alte Editor"); // Will be updated by newFile()
         setGeometry(100, 100, 800, 600);
+        setWindowIcon(QIcon(":/icons/alte_icon.png")); // Set window icon from QRC
 
         textEdit = new QTextEdit(this);
         setCentralWidget(textEdit);
-        highlighter = new SyntaxHighlighter(textEdit->document()); // Initialize highlighter
+
+        // Initialize highlighter with theme manager and a default language
+        // The actual themeManager instance will come from main()
+        if (themeManager) {
+            // Apply editor-specific font
+            QFont editorFont = themeManager->getEditorFont(textEdit->font());
+            textEdit->setFont(editorFont);
+
+            // Default to "python" or "cpp" for testing
+            highlighter = new SyntaxHighlighter(textEdit->document(), themeManager, "python");
+        } else {
+            // Fallback if themeManager is somehow null
+            qWarning() << "MainWindow: ThemeManager is null, syntax highlighter might not work correctly.";
+            // Initialize highlighter with null themeManager and empty language to avoid crash, though it won't highlight.
+            highlighter = new SyntaxHighlighter(textEdit->document(), nullptr, "");
+        }
 
         createActions();
         createMenus();
@@ -49,14 +75,32 @@ public slots: // Make file operations public slots
         if (maybeSave()) {
             textEdit->clear();
             currentFilePath.clear();
-            // Add sample Persian text for RTL testing
-            textEdit->setPlainText("سلام دنیا! این یک متن نمونه فارسی در Alte Editor است.\n"
-                                   "ویرایشگر متن Alte.\n"
-                                   "خط جدید ۱۲۳.\n"
-                                   "English line then some Persian: تست فارسی.\n"
-                                   "فارسی سپس انگلیسی: Persian Test.");
-            setWindowTitle("Alte Editor - Untitled");
+            // Python sample code for testing syntax highlighting
+            textEdit->setPlainText(
+                "#!/usr/bin/env python3\n\n"
+                "class Greeter:\n"
+                "    \"\"\"A simple greeter class\"\"\"\n"
+                "    def __init__(self, name):\n"
+                "        self.name = name  # Instance variable\n\n"
+                "    def greet(self, loud=False):\n"
+                "        # This is a single line comment\n"
+                "        if loud:\n"
+                "            greeting = f'HELLO, {self.name.upper()}!'\n"
+                "        else:\n"
+                "            greeting = f'Hello, {self.name}'\n"
+                "        print(greeting) # Print the greeting\n"
+                "        return 0.0 # Return a float\n\n"
+                "# Main execution\n"
+                "if __name__ == \"__main__\":\n"
+                "    player = Greeter(\"Alte User\")\n"
+                "    player.greet()\n"
+                "    player.greet(loud=True)\n"
+                "    # Test numbers: 123, 0x1A, 0.45, 1e-3\n"
+                "    number_test = 123 + 0x1A - 0.45 * 1e-3\n"
+            );
+            setWindowTitle("Alte Editor - Untitled.py"); // Suggest .py for Python
             textEdit->document()->setModified(false);
+            // If language switching is implemented later, call highlighter->setCurrentLanguage("python", themeManager);
         }
     }
 
@@ -255,9 +299,51 @@ int main(int argc, char *argv[]) {
     QLocale::setDefault(persianLocale);
     app.setLayoutDirection(Qt::RightToLeft);
 
-    MainWindow mainWindow;
-    mainWindow.show(); // Show the window first
-    mainWindow.newFile(); // Then initialize with newFile to get sample RTL text and set title
+    // ThemeManager setup
+    AlteThemeManager themeManager;
+    // Construct path to theme file relative to application executable
+    // Assuming themes are in: <app_dir>/../resources/themes/ (common for deployed apps)
+    // or <app_dir>/resources/themes/ (common for build dir execution)
+    QString themeFilePath = QCoreApplication::applicationDirPath() + "/resources/themes/default_dark_neon.json";
+    QFile themeFile(themeFilePath);
+    if (!themeFile.exists()) { // Fallback for development environment structure
+        themeFilePath = QCoreApplication::applicationDirPath() + "/../resources/themes/default_dark_neon.json";
+        if (!QFile(themeFilePath).exists()) {
+             themeFilePath = "./resources/themes/default_dark_neon.json"; // Even further fallback
+        }
+    }
+
+    if (themeManager.loadTheme(themeFilePath)) {
+        themeManager.applyTheme(&app);
+    } else {
+        qWarning() << "Failed to load default_dark_neon.json. Using default Qt appearance.";
+        // Optionally, load a known fallback theme packaged internally or use a very basic default palette.
+    }
+
+    SplashScreen splash; // SplashScreen is now a QWidget, not QSplashScreen
+    // It's important that MainWindow is created *after* the theme is applied,
+    // so it picks up themed styles and palette during its construction.
+    MainWindow mainWindow(&themeManager); // Pass themeManager to MainWindow
+
+    // Show and center SplashScreen AFTER MainWindow is created but BEFORE it's shown.
+    // This ensures splash is on top.
+    splash.show();
+    if (QScreen *screen = QApplication::primaryScreen()) {
+        QRect screenGeometry = screen->geometry();
+        splash.move((screenGeometry.width() - splash.width()) / 2,
+                    (screenGeometry.height() - splash.height()) / 2);
+    }
+
+    // Connect the splash screen's animationFinished signal to show main window
+    QObject::connect(&splash, &SplashScreen::animationFinished, &app, [&]() {
+        mainWindow.show();
+        mainWindow.newFile(); // Initialize with newFile as before
+        mainWindow.activateWindow(); // Ensure main window gets focus
+        splash.close(); // Close the splash screen widget
+    });
+
+    // splash.startAnimation(1500); // Old animation call
+    splash.startCentralColumnAnimation(500); // New animation call with 500ms duration
 
     return app.exec();
 }

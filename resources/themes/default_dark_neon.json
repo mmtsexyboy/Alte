@@ -1,0 +1,97 @@
+{
+  "name": "Default Dark Neon",
+  "author": "User & Jules",
+  "font": {
+    "applicationFontFamily": "DejaVu Sans Mono",
+    "applicationFontSize": 10,
+    "editorFontFamily": "DejaVu Sans Mono",
+    "editorFontSize": 11
+  },
+  "colors": {
+    "midnightInk": "#1a1b26",
+    "voidBlack": "#10111c",
+    "cyberPulse": "#00c7a4",
+    "creativeFlame": "#ff9e64",
+    "purpleLogic": "#bb9af7",
+    "greenWhisper": "#9ece6a",
+    "blueSerenity": "#7aa2f7",
+    "grayEcho": "#5c6370",
+    "lightMist": "#a9b1d6",
+    "errorRed": "#f7768e",
+    "warningYellow": "#e0af68",
+
+    "windowBackground": "#1a1b26",
+    "text": "#a9b1d6",
+    "textDisabled": "#5c6370",
+    "base": "#20212e",
+    "alternateBase": "#1e1f2a",
+    "highlight": "#00c7a4",
+    "highlightedText": "#10111c",
+    "button": "#2a2b36",
+    "buttonText": "#a9b1d6",
+    "border": "#0f0f14",
+    "tooltipBase": "#2a2b36",
+    "tooltipText": "#a9b1d6",
+    "accent": "#00c7a4"
+  },
+  "syntax_highlighting": {
+    "python": {
+      "keywords":         { "color": "purpleLogic", "bold": true, "patterns": ["and", "as", "assert", "async", "await", "break", "class", "continue", "def", "del", "elif", "else", "except", "False", "finally", "for", "from", "global", "if", "import", "in", "is", "lambda", "None", "nonlocal", "not", "or", "pass", "raise", "return", "True", "try", "while", "with", "yield"] },
+      "booleans":         { "color": "creativeFlame", "bold": true, "patterns": ["True", "False"] },
+      "none_type":        { "color": "creativeFlame", "bold": true, "patterns": ["None"] },
+      "operators":        { "color": "lightMist", "patterns": ["\\+", "-", "\\*", "/", "%", "\\*\\*", "//", "==", "!=", "<", ">", "<=", ">=", "=", "\\+=", "-=", "\\*=", "/=", "%=", "\\*\\*=", "//=", "&", "\\|", "\\^", "~", "<<", ">>"] },
+      "delimiters":       { "color": "lightMist", "patterns": ["\\(", "\\)", "\\[", "\\]", "\\{", "\\}", ",", ":", "\\.", "@"] },
+      "function_calls":   { "color": "blueSerenity", "pattern": "\\b([a-zA-Z_][a-zA-Z0-9_]*)(?=\\s*\\()" },
+      "class_names":      { "color": "creativeFlame", "bold": true, "pattern": "\\b[A-Z][a-zA-Z0-9_]*" },
+      "self_arg":         { "color": "orangeCoral", "italic": true, "patterns": ["self", "cls"] },
+      "numbers":          { "color": "errorRed", "pattern": "\\b([0-9]+\\.?[0-9]*|[0-9]*\\.?[0-9]+)\\b" },
+      "docstrings_triple":{ "color": "greenWhisper", "italic": true, "pattern": "(\"\"\"(?:[^\"\\\\]|\\\\.)*\"\"\")|('''(?:[^'\\\\]|\\\\.)*''')" },
+      "strings":          { "color": "greenWhisper", "patterns": ["\"([^\"\\\\]|\\\\.)*\"", "'([^'\\\\]|\\\\.)*'"] },
+      "comments":         { "color": "grayEcho", "italic": true, "fontPointSizeOffset": -1, "pattern": "#[^\\n]*" },
+      "decorators":       { "color": "purpleLogic", "italic": true, "pattern": "@[a-zA-Z_][a-zA-Z0-9_\\.]*" }
+    },
+    "cpp": {
+      "keywords":         { "color": "purpleLogic", "bold": true, "patterns": ["alignas", "alignof", "and", "and_eq", "asm", "atomic_cancel", "atomic_commit", "atomic_noexcept", "auto", "bitand", "bitor", "bool", "break", "case", "catch", "char", "char8_t", "char16_t", "char32_t", "class", "compl", "concept", "const", "consteval", "constexpr", "constinit", "const_cast", "continue", "co_await", "co_return", "co_yield", "decltype", "default", "delete", "do", "double", "dynamic_cast", "else", "enum", "explicit", "export", "extern", "false", "float", "for", "friend", "goto", "if", "inline", "int", "long", "mutable", "namespace", "new", "noexcept", "not", "not_eq", "nullptr", "operator", "or", "or_eq", "private", "protected", "public", "reflexpr", "register", "reinterpret_cast", "requires", "return", "short", "signed", "sizeof", "static", "static_assert", "static_cast", "struct", "switch", "synchronized", "template", "this", "thread_local", "throw", "true", "try", "typedef", "typeid", "typename", "union", "unsigned", "using", "virtual", "void", "volatile", "wchar_t", "while", "xor", "xor_eq"] },
+      "types":            { "color": "creativeFlame", "patterns": ["int", "char", "double", "float", "bool", "void", "std::string", "string", "vector", "map", "set", "list", "deque", "size_t", "int8_t", "int16_t", "int32_t", "int64_t", "uint8_t", "uint16_t", "uint32_t", "uint64_t"] },
+      "operators":        { "color": "lightMist", "patterns": ["\\+", "-", "\\*", "/", "%", "\\+\\+", "--", "==", "!=", "<", ">", "<=", ">=", "&&", "\\|\\|", "!", "&", "\\|", "\\^", "~", "<<", ">>", "=", "\\+=", "-=", "\\*=", "/=", "%=", "&=", "\\|=", "\\^=", "<<=", ">>=", "->", "\\.", "::", "\\?"] },
+      "delimiters":       { "color": "lightMist", "patterns": ["\\(", "\\)", "\\[", "\\]", "\\{", "\\}", ";", ","] },
+      "function_calls":   { "color": "blueSerenity", "pattern": "\\b([a-zA-Z_][a-zA-Z0-9_]*)(?=\\s*\\()" },
+      "class_names":      { "color": "creativeFlame", "bold": true, "pattern": "\\b[A-Z][a-zA-Z0-9_]*" },
+      "numbers":          { "color": "errorRed", "pattern": "\\b([0-9]+\\.?[0-9]*f?|[0-9]*\\.?[0-9]+f?|0x[0-9a-fA-F]+[ulL]*)\\b" },
+      "preprocessor":     { "color": "purpleLogic", "bold": true, "pattern": "^\\s*#.*" },
+      "strings":          { "color": "greenWhisper", "pattern": "\"[^\"\\\\]*(\\\\.[^\"\\\\]*)*\"" },
+      "char_literals":    { "color": "greenWhisper", "pattern": "'([^'\\\\]|\\\\.)'" },
+      "comments_single":  { "color": "grayEcho", "italic": true, "fontPointSizeOffset": -1, "pattern": "//[^\\n]*" },
+      "comments_multi":   { "color": "grayEcho", "italic": true, "fontPointSizeOffset": -1, "block": true, "start_pattern": "/\\*", "end_pattern": "\\*/" }
+    }
+  },
+  "styles": {
+    "QMainWindow": "background-color: qlineargradient(spread:pad, x1:0.5, y1:0, x2:0.5, y2:1, stop:0 #1a1b26, stop:1 #10111c); color: #a9b1d6;",
+    "QMenuBar": "background-color: #10111c; color: #a9b1d6;",
+    "QMenuBar::item": "background-color: transparent; padding: 4px 8px;",
+    "QMenuBar::item:selected": "background-color: #20212e; color: #cyberPulse;",
+    "QMenu": "background-color: #161722; color: #a9b1d6; border: 1px solid #0f0f14; padding: 4px;",
+    "QMenu::item": "padding: 4px 20px;",
+    "QMenu::item:selected": "background-color: #20212e; color: #cyberPulse;",
+    "QMenu::separator": "height: 1px; background-color: #0f0f14; margin: 4px 0px;",
+
+    "QPlainTextEdit, QTextEdit": "background-color: #161722; color: #a9b1d6; border: 1px solid #0f0f14; selection-background-color: #00c7a4; selection-color: #10111c;",
+
+    "QLabel": "color: #a9b1d6;",
+    "QPushButton": "background-color: #20212e; color: #a9b1d6; border: 1px solid #0f0f14; padding: 5px 10px; border-radius: 3px; min-width: 60px;",
+    "QPushButton:hover": "background-color: #2a2b3a; border: 1px solid #00c7a4;",
+    "QPushButton:pressed": "background-color: #00c7a4; color: #10111c;",
+    "QToolTip": "background-color: #2a2b36; color: #a9b1d6; border: 1px solid #0f0f14; padding: 4px; opacity: 230;",
+    "QScrollBar:vertical": "border: none; background: #10111c; width: 10px; margin: 0px 0px 0px 0px;",
+    "QScrollBar::handle:vertical": "background: #2a2b36; min-height: 20px; border-radius: 5px;",
+    "QScrollBar::handle:vertical:hover": "background: #3a3b4a;",
+    "QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical": "border: none; background: none; height: 0px;",
+    "QScrollBar:horizontal": "border: none; background: #10111c; height: 10px; margin: 0px 0px 0px 0px;",
+    "QScrollBar::handle:horizontal": "background: #2a2b36; min-width: 20px; border-radius: 5px;",
+    "QScrollBar::handle:horizontal:hover": "background: #3a3b4a;",
+    "QScrollBar::add-line:horizontal, QScrollBar::sub-line:horizontal": "border: none; background: none; width: 0px;",
+    "QStatusBar": "background-color: #10111c; color: #a9b1d6;",
+    "QLineEdit": "background-color: #20212e; color: #a9b1d6; border: 1px solid #5c6370; border-radius: 3px; padding: 4px;",
+    "QLineEdit:focus": "border: 1px solid #00c7a4;"
+  }
+}

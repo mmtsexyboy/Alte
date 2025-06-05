@@ -15,6 +15,8 @@
 #include <QPalette>      // Required for QPalette
 #include "AlteSyntaxHighlighter.h"
 #include "AlteTheme.h"
+#include "splashscreen.h" // Added for SplashScreen
+#include <QTimer>         // Added for QTimer
 
 // Global variables
 QString currentFilePath;
@@ -88,6 +90,16 @@ bool maybeSave() {
 
 int main(int argc, char *argv[]) {
     QApplication app(argc, argv);
+
+    // Create and show the splash screen
+    SplashScreen splash;
+    splash.show();
+
+    // Center the splash screen
+    QRect screenGeometry = QApplication::primaryScreen()->geometry();
+    splash.move((screenGeometry.width() - splash.width()) / 2,
+                (screenGeometry.height() - splash.height()) / 2);
+
 
     currentTheme = new AlteTheme();
     QString themeFilePath = QCoreApplication::applicationDirPath() + "/../resources/themes/default_dark.json";
@@ -238,6 +250,13 @@ int main(int argc, char *argv[]) {
     // For this iteration, we rely on File > Exit or the user explicitly saving.
 
     updateWindowTitle(); // Ensure title is set before showing
-    window.show();
+
+    // Use QTimer to close splash screen and show main window
+    QTimer::singleShot(1500, &splash, [&]() {
+        window.show();
+        window.activateWindow(); // Ensure main window gets focus
+        splash.close();
+    });
+
     return app.exec();
 }
