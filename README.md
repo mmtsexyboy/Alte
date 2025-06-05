@@ -50,3 +50,50 @@ Alte : یک اپلیکیشن تکس ادیتور به شدت سبک و به شد
 
 فایل بندی .DEB را پیاده سازی کن
 این پروزه را شروع کن 
+
+## Installation Instructions
+
+You can install the `alte-0.1.0-Linux.deb` package using the command line or a graphical tool.
+
+**Command-line installation:**
+
+1. Open your terminal.
+2. Navigate to the directory containing the `.deb` file.
+3. Run the following command to install the package:
+   ```bash
+   sudo dpkg -i build_temp/alte-0.1.0-Linux.deb
+   ```
+4. If you encounter any dependency issues, run the following command to fix them:
+   ```bash
+   sudo apt-get install -f
+   ```
+
+**Graphical installation:**
+
+You can also install the package by opening the `build_temp/alte-0.1.0-Linux.deb` file with a graphical package installer like GDebi or Eddy.
+
+## Rebuilding the .deb Package
+
+If you need to rebuild the `.deb` package from source, follow these steps:
+
+1. Ensure you are in the project's root directory.
+2. If a build directory (e.g., `build_temp`) doesn't exist or you want a clean build, create it and navigate into it. Otherwise, just navigate into the existing build directory:
+   ```bash
+   # For a clean build
+   mkdir build_temp && cd build_temp
+   # Or if build_temp already exists
+   # cd build_temp
+   ```
+3. Configure the project using CMake. Make sure your `CMakeLists.txt` is in the parent directory (the project root):
+   ```bash
+   cmake ..
+   ```
+4. Build the package using CPack. This will generate the `.deb` file:
+   ```bash
+   cpack -G DEB
+   ```
+   Alternatively, you might be able to use:
+   ```bash
+   make package
+   ```
+5. The new `.deb` package will be located in the build directory (e.g., `build_temp`).
