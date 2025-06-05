@@ -72,6 +72,18 @@ You can install the `alte-0.1.0-Linux.deb` package using the command line or a g
 
 You can also install the package by opening the `build_temp/alte-0.1.0-Linux.deb` file with a graphical package installer like GDebi or Eddy.
 
+## Easy Installation (Using Script)
+
+An `install.sh` script is provided to automate the installation process. This script uses the pre-built `.deb` package.
+
+To use the script:
+1. Make sure the script is executable: `chmod +x install.sh` (if you haven't done so already or if you cloned the repo fresh).
+2. Run the script with sudo:
+   ```bash
+   sudo ./install.sh
+   ```
+The script will check for the `alte-0.1.0-Linux.deb` package in the `build_temp/` directory, ask for confirmation, and then proceed with the installation and dependency resolution.
+
 ## Rebuilding the .deb Package
 
 If you need to rebuild the `.deb` package from source, follow these steps:
