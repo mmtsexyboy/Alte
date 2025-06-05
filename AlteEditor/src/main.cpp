@@ -1,6 +1,6 @@
 #include <QApplication>
 #include <QMainWindow>
-#include <QTextEdit>
+#include <QPlainTextEdit> // Changed from QTextEdit
 #include <QMenuBar>
 #include <QMenu>
 #include <QAction>
@@ -23,9 +23,10 @@ public:
         setWindowTitle("Alte Editor"); // Will be updated by newFile()
         setGeometry(100, 100, 800, 600);
 
-        textEdit = new QTextEdit(this);
+        textEdit = new QPlainTextEdit(this); // Changed from QTextEdit
         setCentralWidget(textEdit);
-        highlighter = new SyntaxHighlighter(textEdit->document()); // Initialize highlighter
+        textEdit->setLayoutDirection(QApplication::layoutDirection()); // Explicitly set layout direction
+        highlighter = nullptr; // Initialize to nullptr
 
         createActions();
         createMenus();
@@ -57,12 +58,13 @@ public slots: // Make file operations public slots
                                    "فارسی سپس انگلیسی: Persian Test.");
             setWindowTitle("Alte Editor - Untitled");
             textEdit->document()->setModified(false);
+            updateSyntaxHighlighter(currentFilePath); // Update for new (empty path) file
         }
     }
 
     void openFile() {
         if (maybeSave()) {
-            QString filePath = QFileDialog::getOpenFileName(this, tr("Open File"), QDir::homePath(), tr("Text Files (*.txt);;All Files (*)"));
+            QString filePath = QFileDialog::getOpenFileName(this, tr("Open File"), QDir::homePath(), tr("Text Files (*.txt);;C++ Files (*.cpp *.h *.cxx *.hpp);;Python Files (*.py);;JavaScript Files (*.js);;All Files (*)")); // Added more file types
             if (!filePath.isEmpty()) {
                 QFile file(filePath);
                 if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
@@ -72,6 +74,7 @@ public slots: // Make file operations public slots
                     currentFilePath = filePath;
                     setWindowTitle("Alte Editor - " + QFileInfo(filePath).fileName());
                     textEdit->document()->setModified(false);
+                    updateSyntaxHighlighter(currentFilePath); // Update for opened file
                 } else {
                     QMessageBox::warning(this, tr("Error"), tr("Could not open file: ") + file.errorString());
                 }
@@ -143,6 +146,34 @@ public slots: // Make file operations public slots
     }
 
 private:
+    void updateSyntaxHighlighter(const QString &filePath) {
+        QString langName;
+        if (!filePath.isEmpty()) {
+            QFileInfo fileInfo(filePath);
+            QString extension = fileInfo.suffix().toLower();
+            if (extension == "py" || extension == "pyw") {
+                langName = "python";
+            } else if (extension == "cpp" || extension == "cxx" || extension == "cc" ||
+                       extension == "h" || extension == "hpp" || extension == "hh") {
+                langName = "cpp";
+            } else if (extension == "js" || extension == "mjs") {
+                langName = "javascript";
+            }
+            // Add more language mappings here if needed
+        }
+        // If langName is empty, SyntaxHighlighter will be created with no specific language,
+        // effectively disabling highlighting or using a default if implemented.
+
+        if (this->highlighter) {
+            delete this->highlighter;
+            this->highlighter = nullptr;
+        }
+
+        if (textEdit && textEdit->document()) { // Ensure document and textEdit exist
+            this->highlighter = new SyntaxHighlighter(textEdit->document(), langName);
+        }
+    }
+
     void createActions() {
         newAction = new QAction(tr("&New"), this);
         newAction->setShortcuts(QKeySequence::New);
@@ -168,27 +199,27 @@ private:
         // Edit Actions
         undoAction = new QAction(tr("&Undo"), this);
         undoAction->setShortcuts(QKeySequence::Undo);
-        connect(undoAction, &QAction::triggered, textEdit, &QTextEdit::undo);
+        connect(undoAction, &QAction::triggered, textEdit, &QPlainTextEdit::undo); // Changed to QPlainTextEdit
 
         redoAction = new QAction(tr("&Redo"), this);
         redoAction->setShortcuts(QKeySequence::Redo);
-        connect(redoAction, &QAction::triggered, textEdit, &QTextEdit::redo);
+        connect(redoAction, &QAction::triggered, textEdit, &QPlainTextEdit::redo); // Changed to QPlainTextEdit
 
         cutAction = new QAction(tr("Cu&t"), this);
         cutAction->setShortcuts(QKeySequence::Cut);
-        connect(cutAction, &QAction::triggered, textEdit, &QTextEdit::cut);
+        connect(cutAction, &QAction::triggered, textEdit, &QPlainTextEdit::cut); // Changed to QPlainTextEdit
 
         copyAction = new QAction(tr("&Copy"), this);
         copyAction->setShortcuts(QKeySequence::Copy);
-        connect(copyAction, &QAction::triggered, textEdit, &QTextEdit::copy);
+        connect(copyAction, &QAction::triggered, textEdit, &QPlainTextEdit::copy); // Changed to QPlainTextEdit
 
         pasteAction = new QAction(tr("&Paste"), this);
         pasteAction->setShortcuts(QKeySequence::Paste);
-        connect(pasteAction, &QAction::triggered, textEdit, &QTextEdit::paste);
+        connect(pasteAction, &QAction::triggered, textEdit, &QPlainTextEdit::paste); // Changed to QPlainTextEdit
 
         selectAllAction = new QAction(tr("Select &All"), this);
         selectAllAction->setShortcuts(QKeySequence::SelectAll);
-        connect(selectAllAction, &QAction::triggered, textEdit, &QTextEdit::selectAll);
+        connect(selectAllAction, &QAction::triggered, textEdit, &QPlainTextEdit::selectAll); // Changed to QPlainTextEdit
     }
 
     void createMenus() {
@@ -224,7 +255,7 @@ private:
         viewMenu->addAction(zoomOutAction);
     }
 
-    QTextEdit *textEdit;
+    QPlainTextEdit *textEdit; // Changed from QTextEdit
     QAction *newAction;
     QAction *openAction;
     QAction *saveAction;
@@ -255,7 +286,141 @@ int main(int argc, char *argv[]) {
     QLocale::setDefault(persianLocale);
     app.setLayoutDirection(Qt::RightToLeft);
 
-    MainWindow mainWindow;
+    QString qss = QLatin1String(
+        "/* General Application Styles */\n"
+        "QWidget {\n"
+        "    /* color: #D4D4D4; */ /* Default text color for widgets - can be overridden */\n"
+        "    /* background-color: #1E1E1E; */ /* General background for the application window */\n"
+        "}\n"
+        "\n"
+        "QMainWindow {\n"
+        "    background-color: #2D2D2D; /* Background for the main window frame */\n"
+        "}\n"
+        "\n"
+        "QPlainTextEdit {\n"
+        "    background-color: #1E1E1E; /* Dark background for editor */\n"
+        "    color: #D4D4D4;            /* Default text color */\n"
+        "    border: 1px solid #3C3C3C; /* Subtle border */\n"
+        "    selection-background-color: #005A9E; /* Selection background (VS Code like blue) */\n"
+        "    selection-color: #FFFFFF;          /* Text color for selection */\n"
+        "    font-family: \"Monospace\"; /* Suggest a monospace font, system can choose best */\n"
+        "    /* font-size: 10pt; */ /* Optional: set a default font size */\n"
+        "}\n"
+        "\n"
+        "/* Menu Bar */\n"
+        "QMenuBar {\n"
+        "    background-color: #2D2D2D; /* Dark background for menubar */\n"
+        "    color: #CCCCCC;            /* Text color for menubar items */\n"
+        "    border-bottom: 1px solid #3C3C3C;\n"
+        "}\n"
+        "QMenuBar::item {\n"
+        "    background-color: transparent;\n"
+        "    padding: 4px 8px;\n"
+        "}\n"
+        "QMenuBar::item:selected { /* When selected using keyboard navigation */\n"
+        "    background-color: #005A9E;\n"
+        "    color: #FFFFFF;\n"
+        "}\n"
+        "QMenuBar::item:pressed { /* When an item is pressed */\n"
+        "    background-color: #004C87;\n"
+        "    color: #FFFFFF;\n"
+        "}\n"
+        "\n"
+        "/* Menu */\n"
+        "QMenu {\n"
+        "    background-color: #2D2D2D; /* Background for dropdown menus */\n"
+        "    color: #CCCCCC;            /* Text color for menu items */\n"
+        "    border: 1px solid #3C3C3C; /* Border around the dropdown */\n"
+        "    padding: 2px;\n"
+        "}\n"
+        "QMenu::item {\n"
+        "    padding: 4px 20px 4px 20px; /* Padding for menu items */\n"
+        "}\n"
+        "QMenu::item:selected {\n"
+        "    background-color: #005A9E;\n"
+        "    color: #FFFFFF;\n"
+        "}\n"
+        "QMenu::separator {\n"
+        "    height: 1px;\n"
+        "    background-color: #3C3C3C;\n"
+        "    margin-left: 10px;\n"
+        "    margin-right: 5px;\n"
+        "}\n"
+        "\n"
+        "/* ScrollBars - making them less obtrusive */\n"
+        "QScrollBar:vertical {\n"
+        "    border: 1px solid #3C3C3C;\n"
+        "    background: #2D2D2D;\n"
+        "    width: 10px;\n"
+        "    margin: 0px 0px 0px 0px;\n"
+        "}\n"
+        "QScrollBar::handle:vertical {\n"
+        "    background: #555555;\n"
+        "    min-height: 20px;\n"
+        "    border-radius: 5px;\n"
+        "}\n"
+        "QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {\n"
+        "    border: none;\n"
+        "    background: none;\n"
+        "    height: 0px;\n"
+        "}\n"
+        "QScrollBar::up-arrow:vertical, QScrollBar::down-arrow:vertical {\n"
+        "    background: none;\n"
+        "}\n"
+        "QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {\n"
+        "    background: none;\n"
+        "}\n"
+        "\n"
+        "QScrollBar:horizontal {\n"
+        "    border: 1px solid #3C3C3C;\n"
+        "    background: #2D2D2D;\n"
+        "    height: 10px;\n"
+        "    margin: 0px 0px 0px 0px;\n"
+        "}\n"
+        "QScrollBar::handle:horizontal {\n"
+        "    background: #555555;\n"
+        "    min-width: 20px;\n"
+        "    border-radius: 5px;\n"
+        "}\n"
+        "QScrollBar::add-line:horizontal, QScrollBar::sub-line:horizontal {\n"
+        "    border: none;\n"
+        "    background: none;\n"
+        "    width: 0px;\n"
+        "}\n"
+        "QScrollBar::left-arrow:horizontal, QScrollBar::right-arrow:horizontal {\n"
+        "    background: none;\n"
+        "}\n"
+        "QScrollBar::add-page:horizontal, QScrollBar::sub-page:horizontal {\n"
+        "    background: none;\n"
+        "}\n"
+        "\n"
+        "/* QMessageBox for consistent theming if possible (might be limited by native dialogs) */\n"
+        "QMessageBox {\n"
+        "    background-color: #2D2D2D;\n"
+        "    /* color: #D4D4D4; */ /* This might not apply well to all QMessageBox parts */\n"
+        "}\n"
+        "QMessageBox QLabel { /* For the message text */\n"
+        "    color: #D4D4D4;\n"
+        "}\n"
+        "QMessageBox QPushButton {\n"
+        "    background-color: #3C3C3C;\n"
+        "    color: #D4D4D4;\n"
+        "    border: 1px solid #555555;\n"
+        "    padding: 5px 10px;\n"
+        "    min-width: 70px;\n"
+        "}\n"
+        "QMessageBox QPushButton:hover {\n"
+        "    background-color: #555555;\n"
+        "}\n"
+        "QMessageBox QPushButton:pressed {\n"
+        "    background-color: #005A9E;\n"
+        "}\n"
+        "/* QFileDialog is often a native dialog and hard to style comprehensively with QSS. */\n"
+        "/* This QSS is a starting point and might need adjustments. */\n"
+    ");\n"
+    "app.setStyleSheet(qss);\n"
+    "\n"
+    "MainWindow mainWindow;\n"
     mainWindow.show(); // Show the window first
     mainWindow.newFile(); // Then initialize with newFile to get sample RTL text and set title
 

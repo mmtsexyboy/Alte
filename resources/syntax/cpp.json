@@ -1,0 +1,84 @@
+{
+    "language_name": "C++",
+    "file_extensions": [".cpp", ".cxx", ".cc", ".h", ".hpp", ".hxx"],
+    "highlighting_rules": [
+        {
+            "type": "keywords",
+            "list": [
+                "alignas", "alignof", "and", "and_eq", "asm", "atomic_cancel", "atomic_commit", "atomic_noexcept",
+                "auto", "bitand", "bitor", "bool", "break", "case", "catch", "char", "char8_t", "char16_t",
+                "char32_t", "class", "compl", "concept", "const", "consteval", "constexpr", "constinit",
+                "const_cast", "continue", "co_await", "co_return", "co_yield", "decltype", "default",
+                "delete", "do", "double", "dynamic_cast", "else", "enum", "explicit", "export", "extern",
+                "false", "float", "for", "friend", "goto", "if", "inline", "int", "long", "mutable",
+                "namespace", "new", "noexcept", "not", "not_eq", "nullptr", "operator", "or", "or_eq",
+                "private", "protected", "public", "reflexpr", "register", "reinterpret_cast", "requires",
+                "return", "short", "signed", "sizeof", "static", "static_assert", "static_cast", "struct",
+                "switch", "synchronized", "template", "this", "thread_local", "throw", "true", "try",
+                "typedef", "typeid", "typename", "union", "unsigned", "using", "virtual", "void",
+                "volatile", "wchar_t", "while", "xor", "xor_eq"
+            ],
+            "format": { "color": "#569CD6", "font_weight": "bold" }
+        },
+        {
+            "type": "definition_name",
+            "pattern": "\\bclass\\s+([A-Za-z_][A-Za-z0-9_]*)",
+            "format_capture_group": 1,
+            "format": { "color": "#4EC9B0", "font_weight": "bold" }
+        },
+        {
+            "type": "definition_name",
+            "pattern": "\\bstruct\\s+([A-Za-z_][A-Za-z0-9_]*)",
+            "format_capture_group": 1,
+            "format": { "color": "#4EC9B0", "font_weight": "bold" }
+        },
+        {
+            "type": "definition_name",
+            "pattern": "\\benum\\s+([A-Za-z_][A-Za-z0-9_]*)",
+            "format_capture_group": 1,
+            "format": { "color": "#4EC9B0" }
+        },
+        {
+            "type": "pattern_rule",
+            "pattern": "^\\s*#\\s*(include|define|undef|if|ifdef|ifndef|else|elif|endif|line|error|pragma|warning)\\b.*",
+            "format": { "color": "#C586C0", "font_weight": "bold" }
+        },
+        {
+            "type": "line_comment",
+            "start_delimiter": "//",
+            "format": { "color": "#6A9955" }
+        },
+        {
+            "type": "multi_line_comment",
+            "start_delimiter": "/\\*",
+            "end_delimiter": "\\*/",
+            "state_id": 3,
+            "format": { "color": "#6A9955" }
+        },
+        {
+            "type": "pattern_rule",
+            "pattern": "\"([^\"\\\\]|\\\\.)*\"",
+            "format": { "color": "#CE9178" }
+        },
+        {
+            "type": "pattern_rule",
+            "pattern": "'([^'\\\\]|\\\\.)*'",
+            "format": { "color": "#CE9178" }
+        },
+        {
+            "type": "number",
+            "pattern": "\\b(?:0[xX][0-9a-fA-F]+(?:[uU](?:ll|LL|[lL])?|(?:ll|LL|[lL])[uU]?)?|0[bB][01]+(?:[uU](?:ll|LL|[lL])?|(?:ll|LL|[lL])[uU]?)?|(?:[0-9]+(?:\\.[0-9]*)?|\\.[0-9]+)(?:[eE][+-]?[0-9]+)?[fFlL]?|[0-9]+[uU](?:ll|LL|[lL])?|[0-9]+(?:ll|LL|[lL])[uU]?)\\b",
+            "format": { "color": "#B5CEA8" }
+        },
+        {
+            "type": "pattern_rule",
+            "pattern": "\\b[A-Za-z_][A-Za-z0-9_]*(?=\\s*\\()",
+            "format": { "color": "#DCDCAA" }
+        },
+        {
+            "type": "pattern_rule",
+            "pattern": "[+\\-*/%&|\\^~<>=!?:.,;{}\\[\\]()]+",
+            "format": {"color": "#D4D4D4"}
+        }
+    ]
+}

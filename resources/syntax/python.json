@@ -2,27 +2,18 @@
     "language_name": "Python",
     "file_extensions": [".py", ".pyw"],
     "highlighting_rules": [
-        {
-            "type": "keywords",
-            "list": ["def", "class", "if", "else", "elif", "for", "while", "return", "import", "from", "True", "False", "None", "try", "except", "finally", "with", "as", "in", "is", "lambda", "nonlocal", "global", "pass", "yield", "assert", "del"],
-            "format": { "color": "blue", "font_weight": "bold" }
-        },
-        {
-            "type": "line_comment",
-            "start_delimiter": "#",
-            "format": { "color": "green", "font_style": "italic" }
-        },
-        {
-            "type": "strings_double_quotes",
-            "start_delimiter": "\"",
-            "end_delimiter": "\"",
-            "format": { "color": "red" }
-        },
-        {
-            "type": "strings_single_quotes",
-            "start_delimiter": "'",
-            "end_delimiter": "'",
-            "format": { "color": "red" }
-        }
+        {"type": "keywords", "list": ["and", "as", "assert", "async", "await", "break", "continue", "del", "elif", "else", "except", "finally", "for", "from", "global", "if", "import", "in", "is", "lambda", "nonlocal", "not", "or", "pass", "raise", "try", "while", "with", "yield"], "format": {"color": "#C586C0"}},
+        {"type": "keywords", "list": ["def", "class"], "format": {"color": "#C586C0", "font_weight": "bold"}},
+        {"type": "keywords", "list": ["True", "False", "None", "self", "cls"], "format": {"color": "#569CD6", "font_weight": "bold"}},
+        {"type": "line_comment", "start_delimiter": "#", "format": {"color": "#6A9955"}},
+        {"type": "pattern_rule", "pattern": "([rRuUfFbB]?)'([^'\\\\]|\\\\.|\\\n)*'", "format": {"color": "#CE9178"}},
+        {"type": "pattern_rule", "pattern": "([rRuUfFbB]?)\"([^\"\\\\]|\\\\.|\\\n)*\"", "format": {"color": "#CE9178"}},
+        {"type": "number", "pattern": "\\b(?:0[xX][0-9a-fA-F]+(_[0-9a-fA-F]+)*|0[oO][0-7]+(_[0-7]+)*|0[bB][01]+(_[01]+)*|\\d+(_\\d+)*\\.?\\d*(?:[eE][+-]?\\d+)?)\\b", "format": {"color": "#B5CEA8"}},
+        {"type": "definition_name", "pattern": "\\bdef\\s+([A-Za-z_][A-Za-z0-9_]*)", "format_capture_group": 1, "format": {"color": "#DCDCAA"}},
+        {"type": "definition_name", "pattern": "\\bclass\\s+([A-Za-z_][A-Za-z0-9_]*)(\\s*\\((.*?)\\))?", "format_capture_group": 1, "format": {"color": "#4EC9B0", "font_weight": "bold"}},
+        {"type": "multi_line_comment", "start_delimiter": "([rRuUfFbB]?)\"\"\"", "end_delimiter": "\"\"\"", "state_id": 1, "format": {"color": "#CE9178"}},
+        {"type": "multi_line_comment", "start_delimiter": "([rRuUfFbB]?)'''", "end_delimiter": "'''", "state_id": 2, "format": {"color": "#CE9178"}},
+        {"type": "pattern_rule", "pattern": "@[A-Za-z_][A-Za-z0-9_.]*", "format": {"color": "#DCDCAA"}},
+        {"type": "pattern_rule", "pattern": "[+\\-*/%&|\\^~<>=!]=?|!=|//=?|\\*\\*=?", "format": {"color": "#B8B8B8"}}
     ]
 }

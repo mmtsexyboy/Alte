@@ -1,0 +1,92 @@
+{
+    "language_name": "JavaScript",
+    "file_extensions": [".js", ".mjs", ".cjs", ".jsx"],
+    "highlighting_rules": [
+        {
+            "type": "keywords",
+            "list": [
+                "abstract", "arguments", "await", "boolean", "break", "byte", "case", "catch",
+                "char", "class", "const", "constructor", "continue", "debugger", "default", "delete",
+                "do", "double", "else", "enum", "eval", "export", "extends", "false", "final",
+                "finally", "float", "for", "function", "goto", "if", "implements", "import",
+                "in", "instanceof", "int", "interface", "let", "long", "native", "new", "null",
+                "package", "private", "protected", "public", "return", "short", "static",
+                "super", "switch", "synchronized", "this", "throw", "throws", "transient",
+                "true", "try", "typeof", "var", "void", "volatile", "while", "with", "yield",
+                "async", "of"
+            ],
+            "format": { "color": "#569CD6", "font_weight": "bold" }
+        },
+        {
+            "type": "keywords",
+            "list": ["NaN", "Infinity", "undefined"],
+            "format": { "color": "#569CD6" }
+        },
+        {
+            "type": "line_comment",
+            "start_delimiter": "//",
+            "format": { "color": "#6A9955" }
+        },
+        {
+            "type": "multi_line_comment",
+            "start_delimiter": "/\\*",
+            "end_delimiter": "\\*/",
+            "state_id": 4,
+            "format": { "color": "#6A9955" }
+        },
+        {
+            "type": "pattern_rule",
+            "pattern": "\"([^\"\\\\]|\\\\.)*\"",
+            "format": { "color": "#CE9178" }
+        },
+        {
+            "type": "pattern_rule",
+            "pattern": "'([^'\\\\]|\\\\.)*'",
+            "format": { "color": "#CE9178" }
+        },
+        {
+            "type": "multi_line_comment",
+            "start_delimiter": "`",
+            "end_delimiter": "`",
+            "state_id": 5,
+            "format": { "color": "#CE9178" }
+        },
+        {
+            "type": "number",
+            "pattern": "\\b(?:0[xX][0-9a-fA-F]+(?:n)?|0[bB][01]+(?:n)?|0[oO][0-7]+(?:n)?|(?:\\d+(?:\\.\\d*)?|\\.\\d+)(?:[eE][+-]?\\d+)?(?:n)?|NaN|Infinity)\\b",
+            "format": { "color": "#B5CEA8" }
+        },
+        {
+            "type": "definition_name",
+            "pattern": "\\b(?:function\\*?|async\\s+function\\*?)\\s+([A-Za-z$_][A-Za-z0-9$_]*)",
+            "format_capture_group": 1,
+            "format": { "color": "#DCDCAA" }
+        },
+        {
+            "type": "definition_name",
+            "pattern": "\\bclass\\s+([A-Za-z$_][A-Za-z0-9$_]*)",
+            "format_capture_group": 1,
+            "format": { "color": "#4EC9B0", "font_weight": "bold" }
+        },
+        {
+            "type": "pattern_rule",
+            "pattern": "\\b(document|window|console|Math|JSON|Promise|Object|Array|String|Number|Boolean|Function|Symbol|Date|RegExp|Error|Map|Set|WeakMap|WeakSet)\\b",
+            "format": { "color": "#4EC9B0" }
+        },
+        {
+            "type": "pattern_rule",
+            "pattern": "\\b(getElementBy(?:Id|Name|TagName|ClassName)|querySelector(?:All)?|addEventListener|removeEventListener|preventDefault|stopPropagation|setTimeout|setInterval|clearTimeout|clearInterval)\\b",
+            "format": { "color": "#DCDCAA" }
+        },
+        {
+            "type": "pattern_rule",
+            "pattern": "/(?![*/])(?:[^/\\\\\\[]|\\\\.|\\[(?:[^\\\\\\]]|\\\\.)*\\])+/(?:[gimsuy]*)",
+            "format": { "color": "#D16969" }
+        },
+        {
+            "type": "pattern_rule",
+            "pattern": "[+\\-*/%&|\\^~<>=!?:.,;{}\\[\\]()]+|=>",
+            "format": {"color": "#D4D4D4"}
+        }
+    ]
+}
