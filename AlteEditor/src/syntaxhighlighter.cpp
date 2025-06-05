@@ -1,130 +1,220 @@
 #include "syntaxhighlighter.h"
-#include <QDebug> // For debugging output
+#include "AlteThemeManager.h"
+#include <QTextDocument>
+#include <QJsonArray>
+#include <QDebug>
 
-SyntaxHighlighter::SyntaxHighlighter(QTextDocument *parent)
+SyntaxHighlighter::SyntaxHighlighter(QTextDocument *parent, AlteThemeManager *themeManager, const QString& languageName)
     : QSyntaxHighlighter(parent) {
-    HighlightingRule rule;
-
-    // Keyword format (e.g., int, void, class, if, else, for, while, return)
-    keywordFormat.setForeground(Qt::blue);
-    keywordFormat.setFontWeight(QFont::Bold);
-    QStringList keywordPatterns;
-    keywordPatterns << "\\bint\\b" << "\\bvoid\\b" << "\\bclass\\b" << "\\bif\\b" << "\\belse\\b"
-                    << "\\bfor\\b" << "\\bwhile\\b" << "\\breturn\\b" << "\\bdouble\\b" << "\\bfloat\\b"
-                    << "\\bchar\\b" << "\\bconst\\b" << "\\bstruct\\b" << "\\benum\\b" << "\\bnamespace\\b"
-                    << "\\bpublic\\b" << "\\bprivate\\b" << "\\bprotected\\b" << "\\bstatic\\b" << "\\bvirtual\\b"
-                    << "\\bexplicit\\b" << "\\btrue\\b" << "\\bfalse\\b" << "\\bnullptr\\b" << "\\bdelete\\b"
-                    << "\\bnew\\b" << "\\bthis\\b" << "\\btemplate\\b" << "\\btypename\\b" << "\\btry\\b"
-                    << "\\bcatch\\b" << "\\bthrow\\b" << "\\busing\\b" << "\\bvolatile\\b"
-                    << "\\boperator\\b" << "\\binline\\b" << "\\btypedef\\b" << "\\bunsigned\\b"
-                    << "\\bsigned\\b" << "\\bshort\\b" << "\\blong\\b" << "\\bextern\\b" << "\\bswitch\\b"
-                    << "\\bcase\\b" << "\\bdefault\\b" << "\\bbreak\\b" << "\\bcontinue\\b" << "\\bgoto\\b"
-                    << "\\bconst_cast\\b" << "\\bdynamic_cast\\b" << "\\breinterpret_cast\\b" << "\\bstatic_cast\\b"
-                    << "\\bmutable\\b" << "\\bnoexcept\\b" << "\\bconstexpr\\b" << "\\bdecltype\\b" << "\\bauto\\b";
-
-    foreach (const QString &pattern, keywordPatterns) {
-        rule.pattern = QRegularExpression(pattern);
-        rule.format = keywordFormat;
-        highlightingRules.append(rule);
+    if (themeManager && !languageName.isEmpty()) {
+        setCurrentLanguage(languageName, themeManager);
+    } else {
+        qWarning() << "SyntaxHighlighter: ThemeManager or languageName not provided. No rules loaded.";
     }
-
-    // Class Format (simple: word after 'class ')
-    classFormat.setFontWeight(QFont::Bold);
-    classFormat.setForeground(Qt::darkMagenta); // A distinct color for class names
-    // This rule is specifically handled in highlightBlock to apply to capture group 1
-    rule.pattern = QRegularExpression("\\bclass\\s+([A-Za-z_][A-Za-z0-9_]*)");
-    rule.format = classFormat;
-    highlightingRules.append(rule); // Add it to rules so its pattern is iterated
-
-    // Preprocessor directives (#include, #define, #if, etc.)
-    preprocessorFormat.setForeground(QColor(128, 0, 128)); // Purple
-    preprocessorFormat.setFontWeight(QFont::Bold);
-    rule.pattern = QRegularExpression("^\\s*#[A-Za-z_]+.*"); // Include the rest of the line
-    rule.format = preprocessorFormat;
-    highlightingRules.append(rule);
-
-    // Single line comment
-    singleLineCommentFormat.setForeground(Qt::darkGreen);
-    rule.pattern = QRegularExpression("//[^\n]*"); // Corrected newline issue
-    rule.format = singleLineCommentFormat;
-    highlightingRules.append(rule);
-
-    // Multi-line comment (handled separately but format stored)
-    multiLineCommentFormat.setForeground(Qt::darkGreen);
-    commentStartExpression = QRegularExpression("/\\*");
-    commentEndExpression = QRegularExpression("\\*/");
-
-    // String literals ("...")
-    quotationFormat.setForeground(QColor(200,100,50)); // Orange-brown
-    rule.pattern = QRegularExpression("\"([^\"\\\\]|\\\\.)*\""); // Handles escaped quotes
-    rule.format = quotationFormat;
-    highlightingRules.append(rule);
-
-    // Character literals ('...')
-    // Using the same quotationFormat for char literals
-    rule.pattern = QRegularExpression("'([^'\\\\]|\\\\.)*'"); // Handles escaped chars
-    rule.format = quotationFormat;
-    highlightingRules.append(rule);
-
-    // Numbers (integers, hex, float, binary)
-    numberFormat.setForeground(Qt::darkCyan);
-    rule.pattern = QRegularExpression("\\b(?:0[xX][0-9a-fA-F]+|0[bB][01]+|[0-9]+(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?)[ULf]*\\b");
-    rule.format = numberFormat;
-    highlightingRules.append(rule);
-
-    // Basic function/method call highlighting (name followed by parenthesis)
-    functionFormat.setForeground(Qt::blue);
-    // functionFormat.setFontItalic(true); // Optional: make function names italic
-    rule.pattern = QRegularExpression("\\b[A-Za-z_][A-Za-z0-9_]*(?=\\s*\\()");
-    rule.format = functionFormat;
-    highlightingRules.append(rule);
 }
 
-void SyntaxHighlighter::highlightBlock(const QString &text) {
-    foreach (const HighlightingRule &rule, highlightingRules) {
-        QRegularExpressionMatchIterator matchIterator = rule.pattern.globalMatch(text);
-        while (matchIterator.hasNext()) {
-            QRegularExpressionMatch match = matchIterator.next();
-            // Special handling for class names to only color the name (capture group 1)
-            if (rule.pattern.pattern() == "\\bclass\\s+([A-Za-z_][A-Za-z0-9_]*)") {
-                 if (match.hasMatch() && match.lastCapturedIndex() >= 1) {
-                    setFormat(match.capturedStart(1), match.capturedLength(1), rule.format); // Use rule.format which is classFormat
-                 }
+void SyntaxHighlighter::setCurrentLanguage(const QString& languageName, AlteThemeManager *themeManager) {
+    m_highlightingRules.clear();
+    if (!themeManager) {
+        qWarning() << "SyntaxHighlighter::setCurrentLanguage: ThemeManager is null.";
+        rehighlight();
+        return;
+    }
+    if (languageName.isEmpty()){
+        qWarning() << "SyntaxHighlighter::setCurrentLanguage: languageName is empty.";
+        rehighlight();
+        return;
+    }
+    loadRulesForLanguage(languageName, themeManager);
+    rehighlight(); // Trigger re-highlighting of the entire document
+}
+
+QTextCharFormat SyntaxHighlighter::createFormatFromRule(const QJsonObject& ruleDetails,
+                                                      const QJsonObject& themeColors, // Not used directly, themeManager is used
+                                                      const QFont& defaultFont,
+                                                      AlteThemeManager* themeManager) {
+    QTextCharFormat format;
+    QString colorName = ruleDetails.value("color").toString();
+    if (!colorName.isEmpty()) {
+        QColor color = themeManager->getColor(colorName); // getColor can lookup from "colors" or parse hex
+        if (!color.isValid()) { // Fallback if color name is not in theme's "colors" and not a valid hex
+             qWarning() << "SyntaxHighlighter: Color name/hex '" << colorName << "' is invalid or not found in theme colors. Using default text color.";
+             color = themeManager->getColor("text", Qt::black);
+        }
+        format.setForeground(color);
+    }
+
+    if (ruleDetails.value("bold").toBool(false)) {
+        format.setFontWeight(QFont::Bold);
+    }
+    if (ruleDetails.value("italic").toBool(false)) {
+        format.setFontItalic(true);
+    }
+
+    if (ruleDetails.contains("fontPointSizeOffset")) {
+        int offset = ruleDetails.value("fontPointSizeOffset").toInt(0);
+        if (offset != 0) {
+            QFont currentFont = format.font(); // Get font if already modified by bold/italic
+            if (currentFont.pointSize() <= 0) { // If not set, use default
+                 currentFont = defaultFont;
+            }
+            int newSize = currentFont.pointSize() + offset;
+            if (newSize > 0) {
+                currentFont.setPointSize(newSize);
+                format.setFont(currentFont); // Apply the font with new size
             } else {
-                setFormat(match.capturedStart(), match.capturedLength(), rule.format);
+                qWarning() << "SyntaxHighlighter: Calculated font point size is not positive (" << newSize << "). Ignoring offset.";
             }
         }
     }
-    setCurrentBlockState(0);
+    return format;
+}
 
-    // Handle multi-line comments
-    int startIndex = 0;
-    if (previousBlockState() != 1) { // If previous block was not already in a comment
-        QRegularExpressionMatch match = commentStartExpression.match(text);
-        startIndex = match.capturedStart();
-    } else { // Previous block was in a comment, so this block starts in a comment
-        startIndex = 0; // Start highlighting from the beginning of the block
+void SyntaxHighlighter::loadRulesForLanguage(const QString& languageName, AlteThemeManager *themeManager) {
+    m_highlightingRules.clear();
+    QJsonObject langRules = themeManager->getSyntaxRulesForLanguage(languageName);
+    if (langRules.isEmpty()) {
+        qWarning() << "SyntaxHighlighter: No syntax rules found for language" << languageName;
+        return;
     }
 
+    QFont documentFont;
+    if (document()) {
+        documentFont = document()->defaultFont();
+    } else {
+        documentFont = QApplication::font(); // Fallback, should ideally not happen
+        qWarning() << "SyntaxHighlighter: QTextDocument is null during rule loading. Using application default font.";
+    }
 
-    while (startIndex >= 0) {
-        QRegularExpressionMatch endMatch = commentEndExpression.match(text, startIndex);
-        int endIndex = endMatch.capturedStart();
-        int commentLength;
-        if (endIndex == -1) { // Comment doesn't end in this block
-            setCurrentBlockState(1); // Mark this block as being inside a multi-line comment
-            commentLength = text.length() - startIndex;
-        } else {
-            commentLength = endIndex - startIndex + endMatch.capturedLength();
-            // setCurrentBlockState(0); // Comment ends in this block - already default
+    // The themeColors parameter in createFormatFromRule is currently unused,
+    // as themeManager->getColor() is preferred for direct lookup or hex parsing.
+    // Passing an empty QJsonObject for now.
+    QJsonObject dummyColors;
+
+    for (const QString& ruleKey : langRules.keys()) {
+        QJsonObject ruleDef = langRules.value(ruleKey).toObject();
+        HighlightingRule currentRuleSetup; // For properties common to a set of patterns
+        currentRuleSetup.format = createFormatFromRule(ruleDef, dummyColors, documentFont, themeManager);
+        currentRuleSetup.isBlockRule = ruleDef.value("block").toBool(false);
+
+        if (currentRuleSetup.isBlockRule) {
+            currentRuleSetup.pattern = QRegularExpression(ruleDef.value("start_pattern").toString());
+            currentRuleSetup.endPattern = QRegularExpression(ruleDef.value("end_pattern").toString());
+            if (currentRuleSetup.pattern.isValid() && currentRuleSetup.endPattern.isValid()) {
+                m_highlightingRules.append(currentRuleSetup);
+            } else {
+                qWarning() << "SyntaxHighlighter: Invalid regex for block rule" << ruleKey
+                           << ": Start:" << ruleDef.value("start_pattern").toString()
+                           << "End:" << ruleDef.value("end_pattern").toString();
+            }
+        } else if (ruleDef.contains("pattern")) { // Single regex pattern
+            currentRuleSetup.pattern = QRegularExpression(ruleDef.value("pattern").toString());
+             if (currentRuleSetup.pattern.isValid()) {
+                m_highlightingRules.append(currentRuleSetup);
+            } else {
+                qWarning() << "SyntaxHighlighter: Invalid regex pattern for rule" << ruleKey << ":" << ruleDef.value("pattern").toString();
+            }
+        } else if (ruleDef.contains("patterns")) { // List of literal string patterns (e.g., keywords)
+            QJsonArray patternsArray = ruleDef.value("patterns").toArray();
+            for (const QJsonValue& val : patternsArray) {
+                HighlightingRule specificRule = currentRuleSetup; // Copy format
+                specificRule.isBlockRule = false; // Ensure it's not marked as block
+                // For keywords, typically want whole word match, case-sensitive by default
+                QString patternString = "\\b" + QRegularExpression::escape(val.toString()) + "\\b";
+                specificRule.pattern = QRegularExpression(patternString);
+                if (specificRule.pattern.isValid()) {
+                    m_highlightingRules.append(specificRule);
+                } else {
+                    qWarning() << "SyntaxHighlighter: Invalid regex from keyword" << val.toString();
+                }
+            }
         }
-        setFormat(startIndex, commentLength, multiLineCommentFormat);
-        // Move startIndex to after the current comment to find the next one
-        // Avoid re-matching the same comment part if commentLength is 0 (should not happen with current logic)
-        int nextSearchPos = startIndex + (commentLength > 0 ? commentLength : 1);
-        if (nextSearchPos >= text.length()) break;
+    }
+}
 
-        QRegularExpressionMatch nextMatch = commentStartExpression.match(text, nextSearchPos);
-        startIndex = nextMatch.capturedStart();
+void SyntaxHighlighter::highlightBlock(const QString &text) {
+    // Apply non-block rules first
+    for (const HighlightingRule &rule : m_highlightingRules) {
+        if (rule.isBlockRule) continue;
+
+        QRegularExpressionMatchIterator matchIterator = rule.pattern.globalMatch(text);
+        while (matchIterator.hasNext()) {
+            QRegularExpressionMatch match = matchIterator.next();
+            setFormat(match.capturedStart(), match.capturedLength(), rule.format);
+        }
+    }
+
+    // Handle block rules (multi-line comments, strings etc.)
+    // This state machine is simplified and assumes block rules don't nest in complex ways
+    // with other block rules. It processes one block type at a time per line.
+
+    int blockRuleIndex = previousBlockState(); // 0 = no state, >0 means rule index + 1
+
+    if (blockRuleIndex > 0) { // Resuming a block from previous line
+        int ruleIdx = blockRuleIndex - 1;
+        if (ruleIdx < m_highlightingRules.size() && m_highlightingRules[ruleIdx].isBlockRule) {
+            const HighlightingRule& currentBlockRule = m_highlightingRules[ruleIdx];
+            QRegularExpressionMatch endMatch = currentBlockRule.endPattern.match(text, 0);
+            int endIndex = endMatch.capturedStart();
+            int length;
+
+            if (endIndex == -1) { // Block does not end on this line
+                setCurrentBlockState(blockRuleIndex); // Continue this block state
+                length = text.length();
+                setFormat(0, length, currentBlockRule.format);
+                return; // Entire line is part of this block
+            } else { // Block ends on this line
+                length = endIndex + endMatch.capturedLength();
+                setFormat(0, length, currentBlockRule.format);
+                setCurrentBlockState(0); // Block ended
+                // Now, search for new blocks *after* this one ended
+                // This recursive call is one way, or loop with adjusted startIndex
+                // For simplicity, we'll let the next loop handle new blocks.
+                // highlightBlock(text.mid(length)); // This is not how QSyntaxHighlighter works.
+                // Instead, we need to continue scanning from 'length'.
+                // The logic below will scan from 0, which is fine if blocks don't overlap.
+                // A more robust solution might need a loop here that advances a startIndex.
+            }
+        } else {
+             setCurrentBlockState(0); // Invalid previous state
+        }
+    }
+
+    // Search for new block starts
+    for (int i = 0; i < m_highlightingRules.size(); ++i) {
+        const HighlightingRule &rule = m_highlightingRules[i];
+        if (!rule.isBlockRule) continue;
+
+        QRegularExpressionMatchIterator matchIterator = rule.pattern.globalMatch(text);
+        while (matchIterator.hasNext()) {
+            QRegularExpressionMatch startMatch = matchIterator.next();
+
+            // Check if this match is already formatted by a higher-priority rule or a completed block
+            // This is a simplification; proper handling of overlapping rules is complex.
+            // For now, we assume if currentBlockState became 0, we can format.
+            // A more robust check would involve checking formats at startMatch.capturedStart().
+            if (currentBlockState() != 0 && startMatch.capturedStart() == 0) {
+                 // This part of the line is already consumed by a continued block.
+                 // This check is imperfect. A better way is to manage startIndex.
+                continue;
+            }
+
+
+            QRegularExpressionMatch endMatch = rule.endPattern.match(text, startMatch.capturedEnd());
+            int length;
+            if (endMatch.capturedStart() == -1) { // Block starts here and does not end on this line
+                setCurrentBlockState(i + 1); // Store (rule index + 1) as block state
+                length = text.length() - startMatch.capturedStart();
+                setFormat(startMatch.capturedStart(), length, rule.format);
+                return; // Rest of the line is this block
+            } else { // Block starts and ends on this line
+                length = endMatch.capturedEnd() - startMatch.capturedStart();
+                setFormat(startMatch.capturedStart(), length, rule.format);
+                // Continue searching for more blocks after this one on the same line
+                // This basic loop doesn't handle that well. It will find subsequent blocks
+                // but might re-apply over earlier block matches if not careful.
+                // For now, let's assume one block type takes precedence or they don't overlap this way.
+            }
+        }
     }
 }

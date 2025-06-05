@@ -31,7 +31,22 @@ endif()
 
 message(STATUS "Using Qt version: ${QT_VERSION}")
 
-add_executable(AlteEditor src/main.cpp src/syntaxhighlighter.cpp)
+add_executable(AlteEditor
+    src/main.cpp
+    src/syntaxhighlighter.cpp
+    src/splashscreen.cpp  # Added splashscreen source
+    src/AlteRope.cpp      # Added AlteRope source
+    src/AlteThemeManager.cpp # Added ThemeManager source
+    ../include/splashscreen.h # Ensure MOC processes this header
+    resources.qrc # Added QRC file
+)
+
+# Add include directory for project headers (e.g., splashscreen.h)
+# splashscreen.h is in 'PROJECT_ROOT/include'
+# This CMakeLists.txt is in 'PROJECT_ROOT/AlteEditor/'
+# So, the path from here to the include dir is '../include'.
+# CMAKE_SOURCE_DIR when running cmake from AlteEditor/build (cmake ..) is /app/AlteEditor.
+target_include_directories(AlteEditor PUBLIC ${CMAKE_SOURCE_DIR}/../include)
 
 if(QT_VERSION EQUAL 6)
   qt_standard_project_setup()
