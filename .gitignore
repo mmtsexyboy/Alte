@@ -33,3 +33,9 @@ Makefile
 
 # Debug files
 *.DS_Store
+
+# Custom build/editor specific
+build_temp/
+build_*/
+*.user
+AlteEditor/
