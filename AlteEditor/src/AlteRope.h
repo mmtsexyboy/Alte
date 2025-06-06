@@ -4,8 +4,31 @@
 #include <string>
 #include <vector> // Will be needed for more advanced node structures later
 
-// Forward declaration for Node structure if kept internal, or define here
-// struct RopeNode;
+// Define RopeNode struct
+struct RopeNode {
+    std::string data;    // For leaf nodes
+    RopeNode* left = nullptr;
+    RopeNode* right = nullptr;
+    size_t weight;       // Number of characters in the left subtree OR in data if leaf
+    // size_t depth;     // Optional for balancing, can be added later
+
+    // Constructor for leaf node
+    explicit RopeNode(std::string d) : data(std::move(d)), weight(0), left(nullptr), right(nullptr) {
+        // weight will be set properly by a char counting function
+    }
+
+    // Constructor for internal node
+    RopeNode(RopeNode* l, RopeNode* r) : left(l), right(r), weight(0), data("") {
+        if (left) {
+            // weight will be set by calculate_length on left subtree or similar
+        }
+    }
+
+    bool is_leaf() const {
+        return left == nullptr && right == nullptr;
+    }
+    void set_leaf_weight(); // Declaration for the helper
+};
 
 class AlteRope {
 public:
@@ -15,55 +38,32 @@ public:
     ~AlteRope();
 
     // Basic Rope operations
-    long long length() const;
-    std::string toString() const; // Mainly for debugging in early stages
+    size_t length() const; // Changed return type to size_t
+    std::string toString() const; // Mainly for debugging
 
-    // Editing operations (initial simple implementation)
-    void insert(long long index, const std::string& str);
-    void remove(long long index, long long count);
-    char at(long long index) const; // Get character at index
+    // Editing operations (to be re-implemented)
+    void insert(size_t char_index, const std::string& text);
+    void remove(size_t char_index, size_t char_count);
+    std::string character_at(size_t char_index) const; // Get character at UTF-8 index
 
 private:
-    // For this initial phase, we'll use a simple string buffer.
-    // This will be replaced by a tree structure later.
-    std::string internal_buffer;
+    RopeNode* root = nullptr; // Replaced internal_buffer
 
-    // Future node structure (example, not fully implemented in this step)
-    /*
-    struct RopeNode {
-        std::string data; // For leaf nodes
-        RopeNode* left;
-        RopeNode* right;
-        long long weight; // Length of the left subtree's string content
-        long long depth;  // For balancing (e.g., AVL/Red-Black)
+    // Private helper functions
+    size_t calculate_length(RopeNode* node) const;
+    void delete_nodes(RopeNode* node);
+    RopeNode* build_rope(const std::string& str, size_t start, size_t end); // Helper for constructor
+    void build_string(RopeNode* node, std::string& out) const; // For toString
+    void find_char_at(RopeNode* node, size_t& char_index, std::string& result) const; // char_index is ref
+    RopeNode* insert_recursive(RopeNode* node, size_t& char_index, const std::string& text); // char_index is ref
+    RopeNode* delete_recursive(RopeNode* node, size_t char_index_in_subtree, size_t& chars_to_delete_count); // count is ref
 
-        RopeNode(std::string d = "", RopeNode* l = nullptr, RopeNode* r = nullptr, long long w = 0)
-            : data(std::move(d)), left(l), right(r), weight(w), depth(1) {
-            if (left) { // If it's an internal node
-                weight = left->length(); // Assuming RopeNode has a length method or similar
-            } else { // Leaf node
-                weight = data.length();
-            }
-        }
 
-        // Helper to calculate length of content in this node/subtree
-        long long node_length() const {
-            if (left == nullptr && right == nullptr) { // Leaf
-                return data.length();
-            }
-            long long len = 0;
-            if (left) len += left->node_length();
-            if (right) len += right->node_length();
-            return len;
-        }
-    };
-    RopeNode* root;
-    */
-
-    // Helper functions for future tree implementation (examples)
-    // void balance();
+    // Helper functions for future tree implementation
+    // void balance(RopeNode*& node);
     // RopeNode* concatenate(RopeNode* n1, RopeNode* n2);
-    // void split(RopeNode* original_node, long long index, RopeNode** left_part, RopeNode** right_part);
+    // void split(RopeNode* original_node, size_t index, RopeNode** left_part, RopeNode** right_part);
+    // static size_t count_utf8_chars(const std::string& s); // Declaration for UTF-8 helper
 };
 
 #endif // ALTEROPE_H

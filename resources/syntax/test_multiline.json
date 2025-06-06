@@ -1,0 +1,29 @@
+{
+  "language_name": "Test MultiLine",
+  "highlighting_rules": [
+    {
+      "type": "keywords",
+      "list": ["keyword1", "keyword2", "if", "else"],
+      "style_key": "keyword"
+    },
+    {
+      "type": "line_comment",
+      "start_delimiter": "//",
+      "style_key": "comment"
+    },
+    {
+      "type": "multi_line_comment",
+      "name": "C-Style Block Comment",
+      "start_pattern": "/\\*",
+      "end_pattern": "\\*/",
+      "style_key": "comment",
+      "state_id": 1
+    },
+    {
+      "type": "strings_double_quotes",
+      "start_delimiter": "\"",
+      "end_delimiter": "\"",
+      "style_key": "string"
+    }
+  ]
+}
