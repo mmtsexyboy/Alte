@@ -74,28 +74,53 @@ void SplashScreen::paintEvent(QPaintEvent *event) {
         // Background for glyph animation phase (still black)
         painter.fillRect(rect(), QColor(0, 0, 0));
 
-        if (m_centralColumnHeight > 0) { // Only draw if line has some height
-            qreal lineWidth = 4.0; // Define the thickness of the vertical line
-
-            // Calculate X position for a centered vertical line
-            qreal lineX = (width() - lineWidth) / 2.0;
-
-            // Calculate Y position for the top of the line.
-            // The line grows from the bottom (height()) upwards.
-            // Its animated height is m_centralColumnHeight.
-            // So, its top Y coordinate is height() - m_centralColumnHeight.
-            qreal lineTopY = height() - m_centralColumnHeight;
-
-            QRectF lineRect(lineX, lineTopY, lineWidth, m_centralColumnHeight);
-
-            QColor cyberPulse(0, 199, 164); // #00c7a4
-
-            // Apply the animated opacity to the painter for the line
+        if (m_centralColumnHeight > 0 && m_centralColumnOpacity > 0) {
             painter.setOpacity(m_centralColumnOpacity);
-            painter.setBrush(cyberPulse); // Use solid color for the line
-            painter.setPen(Qt::NoPen);    // No border for the line itself
+            QColor neonColor(0, 199, 164); // #00c7a4
+            painter.setPen(QPen(neonColor, 3)); // Pen thickness 3
 
-            painter.drawRect(lineRect);
+            // Define 'A' geometry based on splash screen size and m_centralColumnHeight
+            // All coordinates relative to center of the splash screen.
+            float centerX = width() / 2.0f;
+            float bottomY = height() * 0.75f; // Baseline for the 'A'
+            float charHeight = height() * 0.4f; // Max height of the 'A'
+            float charWidth = charHeight * 0.75f;
+
+            // Points for 'A' (top, bottom-left, bottom-right, crossbar-left, crossbar-right)
+            QPointF p_top(centerX, bottomY - charHeight);
+            QPointF p_bl(centerX - charWidth / 2.0f, bottomY);
+            QPointF p_br(centerX + charWidth / 2.0f, bottomY);
+
+            float crossbarHeightRatio = 0.4f; // crossbar is 40% up from baseline
+            QPointF p_cl(centerX - charWidth / 2.0f * (1.0f - crossbarHeightRatio),
+                           bottomY - charHeight * crossbarHeightRatio);
+            QPointF p_cr(centerX + charWidth / 2.0f * (1.0f - crossbarHeightRatio),
+                           bottomY - charHeight * crossbarHeightRatio);
+
+            // Use m_centralColumnHeight as a progress factor (0.0 to height()/2.0)
+            // Normalize this progress: currentHeight / (splashHeight/2.0)
+            // The animation sets m_centralColumnHeight's EndValue to height() / 2.0
+            float fullProgress = m_centralColumnHeight / (height() / 2.0f);
+            fullProgress = qBound(0.0f, fullProgress, 1.0f); // Clamp between 0 and 1
+
+            // Draw parts of 'A' based on fullProgress
+            // Part 1: Left leg (0.0 to 0.4 progress)
+            if (fullProgress > 0) {
+                float part1Progress = qBound(0.0f, fullProgress / 0.4f, 1.0f);
+                painter.drawLine(p_top, p_top + (p_bl - p_top) * part1Progress);
+            }
+
+            // Part 2: Right leg (drawn from 0.2 to 0.7 progress)
+            if (fullProgress > 0.2f) {
+                float part2Progress = qBound(0.0f, (fullProgress - 0.2f) / 0.5f, 1.0f);
+                painter.drawLine(p_top, p_top + (p_br - p_top) * part2Progress);
+            }
+
+            // Part 3: Crossbar (drawn from 0.5 to 1.0 progress)
+            if (fullProgress > 0.5f) {
+                float part3Progress = qBound(0.0f, (fullProgress - 0.5f) / 0.5f, 1.0f);
+                painter.drawLine(p_cl, p_cl + (p_cr - p_cl) * part3Progress);
+            }
         }
     }
 }
