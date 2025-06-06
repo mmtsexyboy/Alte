@@ -1,5 +1,0 @@
-<RCC>
-    <qresource prefix="/">
-        <file alias="icons/alte_icon.png">../resources/icons/alte_icon.png</file>
-    </qresource>
-</RCC>
