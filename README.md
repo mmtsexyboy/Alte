@@ -1,5 +1,5 @@
 # Alte Text Editor
-
+سرعت قدرت است 
 Alte is a lightweight, fast, and modern text editor designed for performance and a clean user experience. It aims to provide essential features for developers and writers, with a focus on speed, customizability, and beautiful rendering of text.
 
 (Alte : یک اپلیکیشن تکس ادیتور به شدت سبک و به شدت ساده و به شدت کاربردی)
