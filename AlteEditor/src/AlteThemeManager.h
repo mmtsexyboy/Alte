@@ -8,6 +8,8 @@
 #include <QFile>
 #include <QDebug> // For logging errors
 #include <QApplication> // For applyTheme argument
+#include <QFont>      // Added for QFont
+#include <QPalette>   // Added for QPalette
 
 class AlteThemeManager {
 public:
