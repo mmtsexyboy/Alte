@@ -13,7 +13,7 @@
 #include <QCloseEvent>
 #include <QLocale>    // Required for QLocale
 #include <QDir>       // Required for QDir::homePath()
-#include "syntaxhighlighter.h" // Added for syntax highlighting
+#include "AlteSyntaxHighlighter.h" // Added for syntax highlighting
 #include "splashscreen.h"      // For SplashScreen
 #include "AlteThemeManager.h"  // For ThemeManager
 #include <QTimer>              // For QTimer (might be removable if only for old splash)
@@ -31,7 +31,7 @@ public:
     // Updated constructor to accept AlteThemeManager
     MainWindow(AlteThemeManager* themeManager, QWidget *parent = nullptr) : QMainWindow(parent) {
         setWindowTitle("Alte Editor"); // Will be updated by newFile()
-        setGeometry(100, 100, 800, 600);
+        // setGeometry(100, 100, 800, 600); // Removed, will be set in main() after splash
         setWindowIcon(QIcon(":/icons/alte_icon.png")); // Set window icon from QRC
 
         textEdit = new QTextEdit(this);
@@ -312,12 +312,13 @@ int main(int argc, char *argv[]) {
              themeFilePath = "./resources/themes/default_dark_neon.json"; // Even further fallback
         }
     }
-
+    qDebug() << "Final theme file path attempted:" << themeFilePath;
     if (themeManager.loadTheme(themeFilePath)) {
+        qDebug() << "Theme loaded successfully from:" << themeFilePath;
         themeManager.applyTheme(&app);
     } else {
-        qWarning() << "Failed to load default_dark_neon.json. Using default Qt appearance.";
-        // Optionally, load a known fallback theme packaged internally or use a very basic default palette.
+        qWarning() << "Failed to load theme from:" << themeFilePath << ". Using default Qt appearance.";
+        // Potentially add more specific error info here if possible or if loadTheme provides it.
     }
 
     SplashScreen splash; // SplashScreen is now a QWidget, not QSplashScreen
@@ -336,6 +337,26 @@ int main(int argc, char *argv[]) {
 
     // Connect the splash screen's animationFinished signal to show main window
     QObject::connect(&splash, &SplashScreen::animationFinished, &app, [&]() {
+        if (QScreen *screen = QApplication::primaryScreen()) {
+            QRect screenGeometry = screen->availableGeometry(); // Use availableGeometry for usable space
+
+            // Calculate desired size (e.g., 70% of screen dimensions)
+            int desiredWidth = static_cast<int>(screenGeometry.width() * 0.70);
+            int desiredHeight = static_cast<int>(screenGeometry.height() * 0.70);
+
+            // Calculate top-left position to center the window
+            int x = screenGeometry.x() + (screenGeometry.width() - desiredWidth) / 2;
+            int y = screenGeometry.y() + (screenGeometry.height() - desiredHeight) / 2;
+
+            mainWindow.setGeometry(x, y, desiredWidth, desiredHeight);
+            qDebug() << "Set main window geometry to:" << x << y << desiredWidth << desiredHeight;
+        } else {
+            // Fallback if primary screen is not available (should be rare)
+            // You might want to set a default fixed size here, or use the old fixed geometry
+            mainWindow.setGeometry(100, 100, 1024, 768); // A slightly larger default
+            qDebug() << "Primary screen not found, using fallback geometry for main window.";
+        }
+
         mainWindow.show();
         mainWindow.newFile(); // Initialize with newFile as before
         mainWindow.activateWindow(); // Ensure main window gets focus

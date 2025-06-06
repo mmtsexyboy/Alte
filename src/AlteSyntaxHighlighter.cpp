@@ -1,4 +1,4 @@
-#include "syntaxhighlighter.h"
+#include "AlteSyntaxHighlighter.h"
 #include "AlteThemeManager.h"
 #include <QTextDocument>
 #include <QJsonArray>
