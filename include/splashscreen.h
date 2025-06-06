@@ -17,8 +17,7 @@ public:
     explicit SplashScreen(QWidget *parent = nullptr); // ThemeManager can be passed here if needed later
     ~SplashScreen();
 
-    // void startAnimation(int durationMs); // Old animation starter, will be replaced
-    void startCentralColumnAnimation(int durationMs); // New animation starter
+    void startGlyphAnimation(int durationMs); // Renamed from startCentralColumnAnimation
 
     // Accessors for new properties
     qreal centralColumnHeight() const { return m_centralColumnHeight; }
@@ -41,6 +40,8 @@ private:
     QPropertyAnimation *m_columnHeightAnimation;
     QPropertyAnimation *m_columnOpacityAnimation;
     QAnimationGroup *m_centralColumnAnimationGroup;
+
+    bool m_glyphAnimationStarted; // Added to control drawing phase
 
     // Comment out or remove old animation members
     // qreal m_pulseRadius;

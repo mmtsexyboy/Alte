@@ -41,22 +41,41 @@ bool AlteTheme::loadThemeFromFile(const QString &filePath) {
     name = rootObj["name"].toString("Untitled Theme");
     themeType = rootObj["type"].toString("dark"); // default to dark
 
-    // Parse editor colors
-    QJsonObject colorsObj = rootObj["colors"].toObject();
-    for (auto it = colorsObj.begin(); it != colorsObj.end(); ++it) {
+    // Parse editor colors (application palette colors)
+    QJsonObject globalColorsObj = rootObj["colors"].toObject();
+    for (auto it = globalColorsObj.begin(); it != globalColorsObj.end(); ++it) {
+        // These are general editor colors, not syntax-specific ones unless resolved later
         editorColors.insert(it.key(), QColor(it.value().toString()));
     }
 
-    // Parse syntax formats
-    QJsonObject syntaxFormatsObj = rootObj["syntax_formats"].toObject();
-    for (auto it = syntaxFormatsObj.begin(); it != syntaxFormatsObj.end(); ++it) {
+    // Parse syntax formats from the new "token_styles" section
+    // This section maps style_keys directly to their definitions.
+    QJsonObject tokenStylesObj = rootObj["token_styles"].toObject();
+    if (tokenStylesObj.isEmpty()) {
+        qWarning() << "Theme JSON" << filePath << "is missing 'token_styles' object. Syntax highlighting may be unstyled.";
+    }
+
+    for (auto it = tokenStylesObj.begin(); it != tokenStylesObj.end(); ++it) {
+        QString style_key = it.key(); // e.g., "keyword", "comment", "string"
         QJsonObject formatDetails = it.value().toObject();
         QTextCharFormat charFormat;
+
         if (formatDetails.contains("color")) {
-            charFormat.setForeground(QColor(formatDetails["color"].toString()));
+            QString colorValue = formatDetails["color"].toString();
+            // Resolve color if it's a name from the theme's main "colors" palette, otherwise treat as hex/QColor string
+            if (editorColors.contains(colorValue)) {
+                charFormat.setForeground(editorColors.value(colorValue));
+            } else {
+                charFormat.setForeground(QColor(colorValue));
+            }
         }
-        if (formatDetails.contains("background_color")) { // Optional background for tokens
-            charFormat.setBackground(QColor(formatDetails["background_color"].toString()));
+        if (formatDetails.contains("background_color")) {
+            QString bgColorValue = formatDetails["background_color"].toString();
+            if (editorColors.contains(bgColorValue)) {
+                charFormat.setBackground(editorColors.value(bgColorValue));
+            } else {
+                charFormat.setBackground(QColor(bgColorValue));
+            }
         }
         if (formatDetails.contains("font_weight") && formatDetails["font_weight"].toString() == "bold") {
             charFormat.setFontWeight(QFont::Bold);
@@ -64,10 +83,10 @@ bool AlteTheme::loadThemeFromFile(const QString &filePath) {
         if (formatDetails.contains("font_style") && formatDetails["font_style"].toString() == "italic") {
             charFormat.setFontItalic(true);
         }
-        // Could add underline, etc.
-        syntaxFormats.insert(it.key(), charFormat);
+        // Could add underline, etc. here
+        syntaxFormats.insert(style_key, charFormat);
     }
-    qDebug() << "Theme loaded:" << name << "with" << syntaxFormats.count() << "syntax formats.";
+    qDebug() << "Theme loaded:" << name << ". Parsed" << editorColors.count() << "global colors and" << syntaxFormats.count() << "token styles.";
     return true;
 }
 

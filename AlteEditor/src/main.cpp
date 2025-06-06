@@ -343,7 +343,16 @@ int main(int argc, char *argv[]) {
     });
 
     // splash.startAnimation(1500); // Old animation call
-    splash.startCentralColumnAnimation(500); // New animation call with 500ms duration
+    // splash.startCentralColumnAnimation(500); // Old direct call, remove this
+
+    // New: Show splash, then after a delay, start the glyph animation
+    // The glyph animation itself will take 'glyphAnimationDurationMs'
+    int initialBlackScreenMs = 750;
+    int glyphAnimationDurationMs = 1000; // Duration for the glyph to draw and fade in
+
+    QTimer::singleShot(initialBlackScreenMs, &splash, [=, &splash]() {
+        splash.startGlyphAnimation(glyphAnimationDurationMs);
+    });
 
     return app.exec();
 }
