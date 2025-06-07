@@ -212,13 +212,32 @@ QString AlteThemeManager::generateGlobalStyleSheet() const {
 
         QString processedStyleValue = originalStyleValue;
         for (auto it = colors.constBegin(); it != colors.constEnd(); ++it) {
-            QString placeholderToReplace = QString("%%%1%%").arg(it.key()); // Format: %%colorName%%
-            if (originalStyleValue.contains(placeholderToReplace)) { // Log only if placeholder is relevant for debugging
-                fprintf(stderr, "[generateGlobalStyleSheet]     Attempting to replace placeholder: %s with color: %s (fprintf).\n", placeholderToReplace.toUtf8().constData(), it.value().toString().toUtf8().constData());
-                fflush(stderr);
-                qDebug().noquote() << "    Attempting to replace placeholder:" << placeholderToReplace << "with color:" << it.value().toString();
-            }
-            processedStyleValue.replace(placeholderToReplace, it.value().toString());
+            QString placeholderToReplace = QString("%%%1%%").arg(it.key());
+            QString colorValue = it.value().toString();
+
+            fprintf(stderr, "[generateGlobalStyleSheet]     Looping for color key: '%s', placeholder: '%s', value: '%s' (fprintf).\n",
+                    it.key().toUtf8().constData(),
+                    placeholderToReplace.toUtf8().constData(),
+                    colorValue.toUtf8().constData());
+            fflush(stderr);
+            qDebug().noquote() << "    Looping for color key:" << it.key()
+                               << ", placeholder:" << placeholderToReplace
+                               << ", value:" << colorValue;
+
+            fprintf(stderr, "[generateGlobalStyleSheet]     processedStyleValue BEFORE replace for '%s': '%s' (fprintf).\n",
+                    placeholderToReplace.toUtf8().constData(),
+                    processedStyleValue.toUtf8().constData());
+            fflush(stderr);
+            qDebug().noquote() << "    processedStyleValue BEFORE replace for" << placeholderToReplace << ":" << processedStyleValue;
+
+            // Perform the replacement
+            processedStyleValue.replace(placeholderToReplace, colorValue);
+
+            fprintf(stderr, "[generateGlobalStyleSheet]     processedStyleValue AFTER replace for '%s': '%s' (fprintf).\n",
+                    placeholderToReplace.toUtf8().constData(),
+                    processedStyleValue.toUtf8().constData());
+            fflush(stderr);
+            qDebug().noquote() << "    processedStyleValue AFTER replace for" << placeholderToReplace << ":" << processedStyleValue;
         }
         fprintf(stderr, "[generateGlobalStyleSheet]   Processed styleValue: %s (fprintf).\n", processedStyleValue.toUtf8().constData());
         fflush(stderr);
