@@ -7,6 +7,9 @@
 #include <QDir>
 #include <QFileInfo>
 #include <QRegularExpression>
+#include <QFileInfoList> // Added for getAvailableThemes
+#include <QCoreApplication> // Added for applicationDirPath in getAvailableThemes
+// QDir, QFileInfo, QJsonDocument, QJsonObject, QJsonParseError are included via AlteThemeManager.h or already present
 
 AlteThemeManager::AlteThemeManager() {
     // Consider a default path or a path from settings later
@@ -396,4 +399,73 @@ QStringList AlteThemeManager::getExtensionsForLanguage(const QString& languageNa
         }
     }
     return extensionsList;
+}
+
+QMap<QString, QString> AlteThemeManager::getAvailableThemes(const QString& directoryPath) const {
+    QMap<QString, QString> availableThemes;
+    QDir themesDir;
+
+    // Attempt to find the themes directory using a similar fallback strategy as loadLanguageDefinitions
+    QString effectivePath = directoryPath;
+    if (!QFileInfo::exists(effectivePath)) {
+        qDebug() << "Primary theme directory not found:" << effectivePath;
+        effectivePath = QCoreApplication::applicationDirPath() + "/" + directoryPath;
+        if (!QFileInfo::exists(effectivePath)) {
+            qDebug() << "Theme directory relative to app path not found:" << effectivePath;
+            effectivePath = QDir::currentPath() + "/" + directoryPath;
+            if (!QFileInfo::exists(effectivePath)) {
+                qDebug() << "Theme directory relative to current working dir not found:" << effectivePath;
+                // Qt resource path for themes (e.g. ":/themes")
+                // This assumes themes are also added to qrc if this path is to be used
+                effectivePath = ":/themes";
+                if (!QFileInfo::exists(effectivePath)) {
+                   qWarning() << "Theme directory not found in standard locations including Qt resources ':/themes'. Cannot load available themes.";
+                   return availableThemes;
+                } else {
+                   qDebug() << "Found themes in Qt resource path ':/themes'";
+                }
+            } else {
+                qDebug() << "Found themes in CWD path:" << effectivePath;
+            }
+        } else {
+            qDebug() << "Found themes in app path:" << effectivePath;
+        }
+    } else {
+        qDebug() << "Found themes in primary path:" << effectivePath;
+    }
+    themesDir.setPath(effectivePath);
+
+    if (!themesDir.exists()) {
+        qWarning() << "Themes directory does not exist after all checks:" << themesDir.path();
+        return availableThemes;
+    }
+
+    QStringList filters;
+    filters << "*.json";
+    QFileInfoList fileList = themesDir.entryInfoList(filters, QDir::Files);
+
+    for (const QFileInfo& fileInfo : fileList) {
+        QFile themeFile(fileInfo.filePath());
+        if (!themeFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
+            qWarning() << "Could not open theme file for reading name:" << fileInfo.filePath();
+            continue;
+        }
+        QByteArray jsonData = themeFile.readAll();
+        themeFile.close();
+
+        QJsonParseError parseError;
+        QJsonDocument doc = QJsonDocument::fromJson(jsonData, &parseError);
+        if (parseError.error == QJsonParseError::NoError && doc.isObject()) {
+            QString themeName = doc.object().value("name").toString();
+            if (!themeName.isEmpty()) {
+                availableThemes.insert(themeName, fileInfo.canonicalFilePath());
+                qDebug() << "Discovered theme:" << themeName << "at" << fileInfo.canonicalFilePath();
+            } else {
+                qWarning() << "Theme file" << fileInfo.fileName() << "is missing 'name' property.";
+            }
+        } else {
+            qWarning() << "Error parsing theme file" << fileInfo.fileName() << ":" << parseError.errorString();
+        }
+    }
+    return availableThemes;
 }

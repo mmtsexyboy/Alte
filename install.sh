@@ -98,6 +98,44 @@ fi
 echo "Running apt-get install -f -y..."
 if apt-get install -f -y; then
   echo "Installation complete! Alte editor should now be installed."
+  # Create desktop shortcut for the original user
+  if [ -n "\\$SUDO_USER" ] && [ "\\$SUDO_USER" != "root" ]; then
+      USER_HOME=\$(getent passwd "\\$SUDO_USER" | cut -d: -f6)
+      if [ -n "\\$USER_HOME" ] && [ -d "\\$USER_HOME" ]; then
+          # Try to get Desktop path using xdg-user-dir as the user
+          DESKTOP_DIR=\$(sudo -u "\\$SUDO_USER" xdg-user-dir DESKTOP 2>/dev/null || true)
+
+          # Fallback if xdg-user-dir failed, returned empty, or non-directory
+          if [ -z "\\$DESKTOP_DIR" ] || ! sudo -u "\\$SUDO_USER" test -d "\\$DESKTOP_DIR"; then
+              DESKTOP_DIR="\\$USER_HOME/Desktop"
+          fi
+
+          # Check if Desktop directory exists (as user)
+          if sudo -u "\\$SUDO_USER" test -d "\\$DESKTOP_DIR"; then
+              DESKTOP_FILE_PATH="/usr/share/applications/alte.desktop"
+              SHORTCUT_NAME="Alte Text Editor.desktop"
+
+              if [ -f "\\$DESKTOP_FILE_PATH" ]; then
+                  echo "Attempting to create desktop shortcut in '\\$DESKTOP_DIR' for user '\\$SUDO_USER'..."
+                  if sudo -u "\\$SUDO_USER" ln -sf "\\$DESKTOP_FILE_PATH" "\\$DESKTOP_DIR/\\$SHORTCUT_NAME"; then
+                      echo "Desktop shortcut created successfully: '\\$DESKTOP_DIR/\\$SHORTCUT_NAME'"
+                      # Attempt to make the shortcut executable (often needed for .desktop files to be trusted)
+                      sudo -u "\\$SUDO_USER" chmod +x "\\$DESKTOP_DIR/\\$SHORTCUT_NAME" || true
+                  else
+                      echo "Warning: Failed to create desktop shortcut for user '\\$SUDO_USER'."
+                  fi
+              else
+                  echo "Warning: Could not create desktop shortcut. Main .desktop file ('\\$DESKTOP_FILE_PATH') not found."
+              fi
+          else
+              echo "Warning: User's Desktop directory ('\\$DESKTOP_DIR') not found or not accessible. No shortcut created."
+          fi
+      else
+          echo "Warning: Could not determine home directory for user '\\$SUDO_USER' or it does not exist. No desktop shortcut created."
+      fi
+  else
+      echo "Info: Running as root or SUDO_USER not set/is root. Skipping user-specific desktop shortcut."
+  fi
 else
   echo "Dependency resolution failed. You may need to resolve dependencies manually."
   exit 1

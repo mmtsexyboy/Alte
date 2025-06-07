@@ -1,4 +1,5 @@
 cmake_minimum_required(VERSION 3.16)
+include(GNUInstallDirs)
 project(Alte LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 20)
@@ -65,9 +66,9 @@ install(TARGETS Alte DESTINATION bin)
 
 install(DIRECTORY resources/syntax/ DESTINATION share/alte/resources/syntax)
 install(DIRECTORY resources/themes/ DESTINATION share/alte/resources/themes)
-install(FILES resources/icons/alte_icon.png DESTINATION share/icons/hicolor/128x128/apps RENAME alte_icon.png)
+install(FILES icon.svg DESTINATION ${CMAKE_INSTALL_DATADIR}/icons/hicolor/scalable/apps RENAME alte_icon.svg)
 
-install(FILES packaging/linux/alte.desktop DESTINATION share/applications/)
+install(FILES packaging/linux/alte.desktop DESTINATION ${CMAKE_INSTALL_DATADIR}/applications/)
 
 set(CPACK_GENERATOR "DEB")
 set(CPACK_PACKAGE_NAME "alte")

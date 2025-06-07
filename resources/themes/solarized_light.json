@@ -1,0 +1,40 @@
+{
+    "name": "Solarized Light",
+    "type": "light",
+    "colors": {
+        "text": "#657b83",
+        "background": "#fdf6e3",
+        "selection_background": "#eee8d5",
+        "line_highlight": "#eee8d5"
+    },
+    "syntax_formats": {
+        "default": {
+            "color": "#657b83"
+        },
+        "comment": {
+            "color": "#93a1a1",
+            "font_style": "italic"
+        },
+        "keyword": {
+            "color": "#859900"
+        },
+        "string": {
+            "color": "#2aa198"
+        },
+        "number": {
+            "color": "#d33682"
+        },
+        "preprocessor": {
+            "color": "#cb4b16"
+        },
+        "function": {
+            "color": "#268bd2"
+        },
+        "class": {
+            "color": "#b58900"
+        },
+        "type_name": {
+            "color": "#cb4b16"
+        }
+    }
+}

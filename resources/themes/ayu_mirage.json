@@ -1,0 +1,40 @@
+{
+    "name": "Ayu Mirage",
+    "type": "dark",
+    "colors": {
+        "text": "#cbccc6",
+        "background": "#1f2430",
+        "selection_background": "#3b404d",
+        "line_highlight": "#2a2f3b"
+    },
+    "syntax_formats": {
+        "default": {
+            "color": "#cbccc6"
+        },
+        "comment": {
+            "color": "#5c6773",
+            "font_style": "italic"
+        },
+        "keyword": {
+            "color": "#ffa759"
+        },
+        "string": {
+            "color": "#bae67e"
+        },
+        "number": {
+            "color": "#d4bfff"
+        },
+        "preprocessor": {
+            "color": "#73d0ff"
+        },
+        "function": {
+            "color": "#ffd580"
+        },
+        "class": {
+            "color": "#5ccfe6"
+        },
+        "type_name": {
+            "color": "#73d0ff"
+        }
+    }
+}
