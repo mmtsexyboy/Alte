@@ -16,7 +16,7 @@ SplashScreen::SplashScreen(QWidget *parent)
       m_centralColumnAnimationGroup(nullptr),
       m_glyphAnimationStarted(false) // Initialize new member
 {
-    setFixedSize(400, 300);
+    setFixedSize(480, 360);
     setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint | Qt::SplashScreen);
     // WA_TranslucentBackground is important if the splash screen isn't always a full rectangle,
     // or for smooth edges if the glyph is drawn near edges.
