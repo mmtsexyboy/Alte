@@ -1,373 +1,41 @@
 #include <QApplication>
-#include <QMainWindow>
-#include <QTextEdit>
-#include <QMenuBar>
-#include <QMenu>
-#include <QAction>
-#include <QFileDialog>
-#include <QFile>
-#include <QTextStream>
-#include <QMessageBox>
-#include <QString>
-#include <QFileInfo>
-#include <QCloseEvent>
+// <QMainWindow> // Moved to MainWindow.h
+// <QTextEdit> // Moved to MainWindow.h/cpp
+// <QMenuBar> // Implicitly used by menuBar(), handled by QMainWindow
+// <QMenu> // Moved to MainWindow.cpp
+// <QAction> // Moved to MainWindow.h/cpp
+// <QFileDialog> // Moved to MainWindow.cpp
+#include <QFile> // Still needed for theme loading in main()
+// <QTextStream> // Moved to MainWindow.cpp
+// <QMessageBox> // Moved to MainWindow.cpp
+// <QString> // Moved to MainWindow.h
+// <QFileInfo> // Moved to MainWindow.cpp
+// <QCloseEvent> // Moved to MainWindow.h
 #include <QLocale>    // Required for QLocale
-#include <QDir>       // Required for QDir::homePath()
-#include "AlteSyntaxHighlighter.h" // Added for syntax highlighting
+#include <QDir>       // Required for QDir::homePath() in main() for file dialogs, but MainWindow uses it too. Keep for main, MainWindow.cpp has it.
+// "AlteSyntaxHighlighter.h" // Moved to MainWindow.h/cpp
 #include "splashscreen.h"      // For SplashScreen
 #include "AlteThemeManager.h"  // For ThemeManager
-#include <QTimer>              // For QTimer (might be removable if only for old splash)
+// <QTimer> // Moved to MainWindow.h/cpp (one QTimer for splash, one for MainWindow focus)
 #include <QScreen>             // For QScreen to center splash
 #include <QCoreApplication>    // For applicationDirPath
-#include <QIcon>               // For QIcon (moved to top)
+#include <QIcon>               // For QIcon (used in MainWindow constructor, now in MainWindow.cpp)
 #include <stdexcept>           // For std::exception
 #include <QDebug>              // For qDebug messages
 #include <cstdio>              // For fprintf
 
+#include "include/MainWindow.h" // Include the new MainWindow header
+
 // Forward declare AlteThemeManager if its definition isn't needed in this header part
-// class AlteThemeManager; // Not needed here as it's in main()
-#include <QTimer> // For QTimer in MainWindow for focus glow
-#include <QEvent> // For QEvent in eventFilter
+// class AlteThemeManager; // Not needed here as AlteThemeManager.h is included by AlteThemeManager.h (indirectly if main needs it) or directly.
+// <QTimer> // Moved
+// <QEvent> // Moved
 
-class MainWindow : public QMainWindow {
-    Q_OBJECT
 
-public:
-    // Updated constructor to accept AlteThemeManager
-    MainWindow(AlteThemeManager* p_themeManager, QWidget *parent = nullptr)
-        : QMainWindow(parent), m_themeManager(p_themeManager), m_focusTimer(nullptr) {
-        setWindowTitle("Alte Editor"); // Will be updated by newFile()
-        setWindowIcon(QIcon(":/icons/alte_icon.png")); // Set window icon from QRC
+// MainWindow class definition and implementations are now in MainWindow.h and MainWindow.cpp
 
-        textEdit = new QTextEdit(this);
-        setCentralWidget(textEdit);
 
-        // Initialize highlighter with theme manager and a default language
-        if (m_themeManager) {
-            // Apply editor-specific font
-            QFont editorFont = m_themeManager->getEditorFont(textEdit->font());
-            textEdit->setFont(editorFont);
-
-            // Default to "python" or "cpp" for testing
-            highlighter = new SyntaxHighlighter(textEdit->document(), m_themeManager, "python");
-
-            // Store original stylesheet after textEdit is created and theme is presumably applied
-            // This needs to be done carefully. resolveTextEditStyleSheet needs m_themeManager.
-            // We will call a helper to fully resolve it.
-            m_originalTextEditStyleSheet = resolveTextEditStyleSheet(false); // false for not using glow color
-            textEdit->setStyleSheet(m_originalTextEditStyleSheet); // Apply it once to be sure
-
-        } else {
-            // Fallback if themeManager is somehow null
-            qWarning() << "MainWindow: ThemeManager is null, syntax highlighter and focus glow might not work correctly.";
-            highlighter = new SyntaxHighlighter(textEdit->document(), nullptr, "");
-        }
-
-        textEdit->installEventFilter(this);
-        m_focusTimer = new QTimer(this);
-        m_focusTimer->setSingleShot(true);
-        connect(m_focusTimer, &QTimer::timeout, this, &MainWindow::resetTextEditBorderSlot);
-
-        createActions();
-        createMenus();
-
-        currentFilePath = QString();
-        // newFile() will be called after show, which sets the initial title and content
-        // textEdit->document()->setModified(false); // Set in newFile
-    }
-
-protected:
-    void closeEvent(QCloseEvent *event) override {
-        if (maybeSave()) {
-            event->accept();
-        } else {
-            event->ignore();
-        }
-    }
-
-protected: // Change from public for eventFilter
-    bool eventFilter(QObject *obj, QEvent *event) override {
-        if (obj == textEdit) {
-            if (event->type() == QEvent::FocusIn) {
-                applyTextEditFocusGlow();
-                m_focusTimer->start(250); // Glow duration in ms
-            } else if (event->type() == QEvent::FocusOut) {
-                m_focusTimer->stop();
-                resetTextEditBorderSlot(); // Use the slot directly
-            }
-        }
-        return QMainWindow::eventFilter(obj, event);
-    }
-
-public slots:
-    void resetTextEditBorderSlot() {
-        if (m_themeManager && !m_originalTextEditStyleSheet.isEmpty()) {
-            textEdit->setStyleSheet(m_originalTextEditStyleSheet);
-        } else if (m_themeManager) { // Fallback if m_originalTextEditStyleSheet was empty
-            textEdit->setStyleSheet(resolveTextEditStyleSheet(false));
-        }
-        // If m_themeManager is null, no easy way to reset to a themed style.
-    }
-
-    void newFile() {
-        if (maybeSave()) {
-            textEdit->clear();
-            currentFilePath.clear();
-            // Python sample code for testing syntax highlighting
-            textEdit->setPlainText(
-                "#!/usr/bin/env python3\n\n"
-                "class Greeter:\n"
-                "    \"\"\"A simple greeter class\"\"\"\n"
-                "    def __init__(self, name):\n"
-                "        self.name = name  # Instance variable\n\n"
-                "    def greet(self, loud=False):\n"
-                "        # This is a single line comment\n"
-                "        if loud:\n"
-                "            greeting = f'HELLO, {self.name.upper()}!'\n"
-                "        else:\n"
-                "            greeting = f'Hello, {self.name}'\n"
-                "        print(greeting) # Print the greeting\n"
-                "        return 0.0 # Return a float\n\n"
-                "# Main execution\n"
-                "if __name__ == \"__main__\":\n"
-                "    player = Greeter(\"Alte User\")\n"
-                "    player.greet()\n"
-                "    player.greet(loud=True)\n"
-                "    # Test numbers: 123, 0x1A, 0.45, 1e-3\n"
-                "    number_test = 123 + 0x1A - 0.45 * 1e-3\n"
-            );
-            setWindowTitle("Alte Editor - Untitled.py"); // Suggest .py for Python
-            textEdit->document()->setModified(false);
-            // If language switching is implemented later, call highlighter->setCurrentLanguage("python", themeManager);
-        }
-    }
-
-    void openFile() {
-        if (maybeSave()) {
-            QString filePath = QFileDialog::getOpenFileName(this, tr("Open File"), QDir::homePath(), tr("Text Files (*.txt);;All Files (*)"));
-            if (!filePath.isEmpty()) {
-                QFile file(filePath);
-                if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-                    QTextStream in(&file);
-                    textEdit->setPlainText(in.readAll());
-                    file.close();
-                    currentFilePath = filePath;
-                    setWindowTitle("Alte Editor - " + QFileInfo(filePath).fileName());
-                    textEdit->document()->setModified(false);
-                } else {
-                    QMessageBox::warning(this, tr("Error"), tr("Could not open file: ") + file.errorString());
-                }
-            }
-        }
-    }
-
-    // Internal save logic, used by saveFile and saveFileAs
-    bool saveFileInternal(const QString &filePath) {
-        QFile file(filePath);
-        // Ensure text mode for consistent line endings (LF on Unix, CRLF on Windows)
-        if (file.open(QIODevice::WriteOnly | QIODevice::Text)) {
-            QTextStream out(&file);
-            out << textEdit->toPlainText();
-            file.close();
-            currentFilePath = filePath;
-            setWindowTitle("Alte Editor - " + QFileInfo(filePath).fileName());
-            textEdit->document()->setModified(false);
-            return true;
-        } else {
-            QMessageBox::warning(this, tr("Error"), tr("Could not save file: ") + file.errorString());
-            return false;
-        }
-    }
-
-    bool saveFile() {
-        if (currentFilePath.isEmpty()) {
-            return saveFileAs();
-        } else {
-            return saveFileInternal(currentFilePath);
-        }
-    }
-
-    bool saveFileAs() {
-        QString initialPath = currentFilePath.isEmpty() ? QDir::homePath() + "/Untitled.txt" : currentFilePath;
-        QString filePath = QFileDialog::getSaveFileName(this, tr("Save File As"), initialPath, tr("Text Files (*.txt);;All Files (*)"));
-        if (!filePath.isEmpty()) {
-            // Optional: Add default extension if missing
-            // if (!QFileInfo(filePath).suffix().compare("txt", Qt::CaseInsensitive)) {
-            //     filePath += ".txt";
-            // }
-            return saveFileInternal(filePath);
-        }
-        return false;
-    }
-
-    // Returns true if it's okay to proceed (file not modified, saved, or user chose Discard).
-    // Returns false if user chose Cancel or save failed.
-    bool maybeSave() {
-        if (!textEdit->document()->isModified()) {
-            return true;
-        }
-        const QMessageBox::StandardButton ret =
-            QMessageBox::warning(this, tr("Alte Editor"),
-                                 tr("The document has been modified.\n"
-                                    "Do you want to save your changes?"),
-                                 QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);
-        switch (ret) {
-        case QMessageBox::Save:
-            return saveFile(); // This will return true if save is successful, false otherwise
-        case QMessageBox::Cancel:
-            return false;
-        case QMessageBox::Discard:
-            return true; // User chose not to save
-        default: // Should not happen
-            break;
-        }
-        return false; // Default to not proceeding if something unexpected happens
-    }
-
-private:
-    void createActions() {
-        newAction = new QAction(tr("&New"), this);
-        newAction->setShortcuts(QKeySequence::New);
-        connect(newAction, &QAction::triggered, this, &MainWindow::newFile);
-
-        openAction = new QAction(tr("&Open..."), this);
-        openAction->setShortcuts(QKeySequence::Open);
-        connect(openAction, &QAction::triggered, this, &MainWindow::openFile);
-
-        saveAction = new QAction(tr("&Save"), this);
-        saveAction->setShortcuts(QKeySequence::Save);
-        connect(saveAction, &QAction::triggered, this, &MainWindow::saveFile);
-
-        saveAsAction = new QAction(tr("Save &As..."), this);
-        saveAsAction->setShortcuts(QKeySequence::SaveAs);
-        connect(saveAsAction, &QAction::triggered, this, &MainWindow::saveFileAs);
-
-        exitAction = new QAction(tr("E&xit"), this);
-        exitAction->setShortcuts(QKeySequence::Quit);
-        // Use qApp->closeAllWindows() to ensure all window closeEvents are processed
-        connect(exitAction, &QAction::triggered, qApp, &QApplication::closeAllWindows);
-
-        // Edit Actions
-        undoAction = new QAction(tr("&Undo"), this);
-        undoAction->setShortcuts(QKeySequence::Undo);
-        connect(undoAction, &QAction::triggered, textEdit, &QTextEdit::undo);
-
-        redoAction = new QAction(tr("&Redo"), this);
-        redoAction->setShortcuts(QKeySequence::Redo);
-        connect(redoAction, &QAction::triggered, textEdit, &QTextEdit::redo);
-
-        cutAction = new QAction(tr("Cu&t"), this);
-        cutAction->setShortcuts(QKeySequence::Cut);
-        connect(cutAction, &QAction::triggered, textEdit, &QTextEdit::cut);
-
-        copyAction = new QAction(tr("&Copy"), this);
-        copyAction->setShortcuts(QKeySequence::Copy);
-        connect(copyAction, &QAction::triggered, textEdit, &QTextEdit::copy);
-
-        pasteAction = new QAction(tr("&Paste"), this);
-        pasteAction->setShortcuts(QKeySequence::Paste);
-        connect(pasteAction, &QAction::triggered, textEdit, &QTextEdit::paste);
-
-        selectAllAction = new QAction(tr("Select &All"), this);
-        selectAllAction->setShortcuts(QKeySequence::SelectAll);
-        connect(selectAllAction, &QAction::triggered, textEdit, &QTextEdit::selectAll);
-    }
-
-    void createMenus() {
-        QMenu *fileMenu = menuBar()->addMenu(tr("&File"));
-        fileMenu->addAction(newAction);
-        fileMenu->addAction(openAction);
-        fileMenu->addAction(saveAction);
-        fileMenu->addAction(saveAsAction);
-        fileMenu->addSeparator();
-        fileMenu->addAction(exitAction);
-
-        QMenu *editMenu = menuBar()->addMenu(tr("&Edit"));
-        editMenu->addAction(undoAction);
-        editMenu->addAction(redoAction);
-        editMenu->addSeparator();
-        editMenu->addAction(cutAction);
-        editMenu->addAction(copyAction);
-        editMenu->addAction(pasteAction);
-        editMenu->addSeparator();
-        editMenu->addAction(selectAllAction);
-
-        QMenu *viewMenu = menuBar()->addMenu(tr("&View"));
-        QAction *zoomInAction = new QAction(tr("Zoom &In"), this);
-        zoomInAction->setShortcut(QKeySequence::ZoomIn);
-        // connect(zoomInAction, &QAction::triggered, this, &MainWindow::zoomIn); // Placeholder
-        zoomInAction->setEnabled(false);
-        viewMenu->addAction(zoomInAction);
-
-        QAction *zoomOutAction = new QAction(tr("Zoom &Out"), this);
-        zoomOutAction->setShortcut(QKeySequence::ZoomOut);
-        // connect(zoomOutAction, &QAction::triggered, this, &MainWindow::zoomOut); // Placeholder
-        zoomOutAction->setEnabled(false);
-        viewMenu->addAction(zoomOutAction);
-    }
-
-    QTextEdit *textEdit;
-    QAction *newAction;
-    QAction *openAction;
-    QAction *saveAction;
-    QAction *saveAsAction;
-    QAction *exitAction;
-    // Edit Action members
-    QAction *undoAction;
-    QAction *redoAction;
-    QAction *cutAction;
-    QAction *copyAction;
-    QAction *pasteAction;
-    QAction *selectAllAction;
-    // View Action members (if they need to be accessed later, otherwise can be local in createMenus)
-    // QAction *zoomInAction;
-    // QAction *zoomOutAction;
-
-    QString currentFilePath;
-    SyntaxHighlighter *highlighter; // Member variable for the highlighter
-    AlteThemeManager* m_themeManager;
-    QTimer* m_focusTimer;
-    QString m_originalTextEditStyleSheet;
-
-private: // Helper methods for focus glow
-    QString resolveTextEditStyleSheet(bool useGlowColor) {
-        if (!m_themeManager) return "";
-
-        QString baseStyle = m_themeManager->getStyleSheet("QPlainTextEdit, QTextEdit");
-        if (baseStyle.isEmpty()) {
-            qWarning() << "resolveTextEditStyleSheet: Could not get base style for QPlainTextEdit, QTextEdit";
-            // Fallback to a very basic border if nothing is defined in theme
-            return QString("border: 1px solid %1;").arg(useGlowColor ? m_themeManager->getColor("cyberPulse").name() : m_themeManager->getColor("border").name());
-        }
-
-        // Resolve the border color first
-        QColor borderColorToUse = useGlowColor ? m_themeManager->getColor("cyberPulse") : m_themeManager->getColor("border");
-        baseStyle.replace("%%border%%", borderColorToUse.name());
-
-        // Resolve other known color placeholders (add more if TextEdit style uses them)
-        baseStyle.replace("%%alternateBase%%", m_themeManager->getColor("alternateBase").name());
-        baseStyle.replace("%%lightMist%%", m_themeManager->getColor("lightMist").name()); // for text color
-        baseStyle.replace("%%cyberPulse%%", m_themeManager->getColor("cyberPulse").name()); // for selection-background
-        baseStyle.replace("%%highlightedText%%", m_themeManager->getColor("highlightedText").name());
-        // Add any other placeholders that might be in this specific style rule
-
-        return baseStyle;
-    }
-
-    void applyTextEditFocusGlow() {
-        if (!m_themeManager) return;
-        // Store original style if not already stored (e.g. first focus in)
-        // This is now done in constructor, but as a fallback:
-        if (m_originalTextEditStyleSheet.isEmpty()) {
-             m_originalTextEditStyleSheet = resolveTextEditStyleSheet(false);
-        }
-        QString glowStyle = resolveTextEditStyleSheet(true); // true for glow color
-        textEdit->setStyleSheet(glowStyle);
-    }
-
-};
-
-#include "main.moc"
+// #include "main.moc" // Should be handled by build system for MainWindow. Q_OBJECT is not in main.cpp anymore.
 
 int main(int argc, char *argv[]) {
     QApplication app(argc, argv);
