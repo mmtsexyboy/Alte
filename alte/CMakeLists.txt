@@ -21,10 +21,16 @@ message(STATUS "Using Qt version: ${QT_VERSION_MAJOR}")
 set(ALTE_SOURCES
     src/main.cpp
     src/MainWindow.cpp
+    src/ShortcutManager.cpp
+    src/ShortcutSettingsDialog.cpp
+    src/ScratchpadDialog.cpp
 )
 
 set(ALTE_HEADERS
     src/MainWindow.h
+    src/ShortcutManager.h
+    src/ShortcutSettingsDialog.h
+    src/ScratchpadDialog.h
 )
 
 add_executable(Alte ${ALTE_SOURCES} ${ALTE_HEADERS})
