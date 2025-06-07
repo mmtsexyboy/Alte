@@ -1,0 +1,123 @@
+{
+    "language_name": "JavaScript",
+    "file_extensions": [".js", ".mjs", ".cjs", ".jsx", ".json"],
+    "first_line_patterns": [
+        "^#!.*node",
+        "^#!.*deno",
+        "^#!.*bun"
+    ],
+    "highlighting_rules": [
+        {
+            "name": "Keywords",
+            "type": "keywords",
+            "list": [
+                "abstract", "arguments", "await", "boolean", "break", "byte",
+                "case", "catch", "char", "class", "const", "constructor",
+                "continue", "debugger", "default", "delete", "do", "double",
+                "else", "enum", "eval", "export", "extends", "false", "final",
+                "finally", "float", "for", "function", "get", "goto", "if",
+                "implements", "import", "in", "instanceof", "int", "interface",
+                "let", "long", "native", "new", "null", "package", "private",
+                "protected", "public", "return", "set", "short", "static", "super",
+                "switch", "synchronized", "this", "throw", "throws", "transient",
+                "true", "try", "typeof", "undefined", "var", "void", "volatile",
+                "while", "with", "yield", "async", "of", "from"
+            ],
+            "style_key": "keyword"
+        },
+        {
+            "name": "Line Comment",
+            "type": "pattern",
+            "pattern": "//.*",
+            "style_key": "comment"
+        },
+        {
+            "name": "Block Comment",
+            "type": "multi_line_string",
+            "start_pattern": "/\\*",
+            "end_pattern": "\\*/",
+            "style_key": "comment"
+        },
+        {
+            "name": "Double-Quoted String",
+            "type": "pattern",
+            "pattern": "\"(?:\\\\.|[^\"\\\\])*\"",
+            "style_key": "string"
+        },
+        {
+            "name": "Single-Quoted String",
+            "type": "pattern",
+            "pattern": "'(?:\\\\.|[^'\\\\])*'",
+            "style_key": "string"
+        },
+        {
+            "name": "Template Literal Interpolation",
+            "type": "pattern",
+            "pattern": "\\$\\{[^}]*\\}",
+            "style_key": "interpolation_marker"
+        },
+        {
+            "name": "Template Literal (Backticks)",
+            "type": "multi_line_string",
+            "start_pattern": "`",
+            "end_pattern": "`",
+            "style_key": "string"
+        },
+        {
+            "name": "Hexadecimal Numbers",
+            "type": "pattern",
+            "pattern": "\\b0[xX][0-9a-fA-F_]+n?\\b",
+            "style_key": "number_hex"
+        },
+        {
+            "name": "Binary Numbers",
+            "type": "pattern",
+            "pattern": "\\b0[bB][01_]+n?\\b",
+            "style_key": "number"
+        },
+        {
+            "name": "Octal Numbers (ES6)",
+            "type": "pattern",
+            "pattern": "\\b0[oO][0-7_]+n?\\b",
+            "style_key": "number"
+        },
+        {
+            "name": "Decimal/Float/BigInt Numbers",
+            "type": "pattern",
+            "pattern": "\\b(?:[0-9](?:[0-9_]*[0-9])*(?:\\.(?:[0-9](?:[0-9_]*[0-9])*)?)?|\\.(?:[0-9](?:[0-9_]*[0-9])*))(?:[eE][-+]?[0-9](?:[0-9_]*[0-9])*)?n?\\b",
+            "style_key": "number"
+        },
+        {
+            "name": "Regular Expression Literals",
+            "type": "pattern",
+            "pattern": "\\/(?![*+?])(?:[^\\\\/\\r\\n\\[]|\\\\.|\\[(?:[^\\\\\\]\\r\\n]|\\\\.)*\\])+\\/[gimsuy]*",
+            "style_key": "regex"
+        },
+        {
+            "name": "Operators",
+            "type": "pattern",
+            "pattern": "[+\\-*\\/%&|^!=<>~?:\\[\\]().{};\\#]=?|&&|\\|\\||\\+\\+|--|=>|\\.{3}|\\?\\?|\\?\\.|\\*\\*=?|<<=?|>>=?|>>>?=?",
+            "style_key": "operator"
+        },
+        {
+            "name": "Built-in Objects/Functions (examples)",
+            "type": "keywords",
+            "list": [
+                "Array", "ArrayBuffer", "Atomics", "BigInt", "BigInt64Array",
+                "BigUint64Array", "Boolean", "DataView", "Date", "Error",
+                "EvalError", "FinalizationRegistry", "Float32Array", "Float64Array",
+                "Function", "Infinity", "Int16Array", "Int32Array", "Int8Array",
+                "InternalError", "Intl", "JSON", "Map", "Math", "NaN", "Number",
+                "Object", "Promise", "Proxy", "RangeError", "ReferenceError",
+                "Reflect", "RegExp", "Set", "SharedArrayBuffer", "String", "Symbol",
+                "SyntaxError", "TypeError", "URIError", "Uint16Array", "Uint32Array",
+                "Uint8Array", "Uint8ClampedArray", "WeakMap", "WeakRef", "WeakSet",
+                "console", "document", "window", "navigator", "localStorage",
+                "sessionStorage", "fetch", "setTimeout", "setInterval", "clearTimeout",
+                "clearInterval", "isNaN", "isFinite", "parseFloat", "parseInt", "decodeURI",
+                "decodeURIComponent", "encodeURI", "encodeURIComponent"
+            ],
+            "style_key": "builtin"
+        }
+    ]
+}

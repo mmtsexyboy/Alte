@@ -1,0 +1,85 @@
+{
+    "language_name": "C",
+    "file_extensions": [".c", ".h"],
+    "first_line_patterns": [],
+    "highlighting_rules": [
+        {
+            "name": "Keywords",
+            "type": "keywords",
+            "list": [
+                "auto", "break", "case", "char", "const", "continue", "default", "do",
+                "double", "else", "enum", "extern", "float", "for", "goto", "if",
+                "inline", "int", "long", "register", "restrict", "return", "short",
+                "signed", "sizeof", "static", "struct", "switch", "typedef", "union",
+                "unsigned", "void", "volatile", "while",
+                "_Bool", "_Complex", "_Imaginary"
+            ],
+            "style_key": "keyword"
+        },
+        {
+            "name": "Preprocessor Directives",
+            "type": "pattern",
+            "pattern": "^#.*",
+            "style_key": "preprocessor"
+        },
+        {
+            "name": "Line Comment",
+            "type": "pattern",
+            "pattern": "//.*",
+            "style_key": "comment"
+        },
+        {
+            "name": "Block Comment",
+            "type": "multi_line_string",
+            "start_pattern": "/\\*",
+            "end_pattern": "\\*/",
+            "style_key": "comment"
+        },
+        {
+            "name": "String Literals",
+            "type": "pattern",
+            "pattern": "\"(?:\\\\.|[^\"\\\\])*\"",
+            "style_key": "string"
+        },
+        {
+            "name": "Character Literals",
+            "type": "pattern",
+            "pattern": "'(?:\\\\.|[^'\\\\])'",
+            "style_key": "string"
+        },
+        {
+            "name": "Hexadecimal Numbers",
+            "type": "pattern",
+            "pattern": "\\b0[xX][0-9a-fA-F]+[uUlL]{0,2}\\b",
+            "style_key": "number_hex"
+        },
+        {
+            "name": "Octal Numbers",
+            "type": "pattern",
+            "pattern": "\\b0[0-7]+[uUlL]{0,2}\\b",
+            "style_key": "number"
+        },
+        {
+            "name": "Decimal and Floating Point Numbers",
+            "type": "pattern",
+            "pattern": "\\b[0-9]+(?:\\.[0-9]*)?(?:[eE][-+]?[0-9]+)?[fFlL]?\\b|\\b\\.[0-9]+(?:[eE][-+]?[0-9]+)?[fFlL]?\\b",
+            "style_key": "number"
+        },
+        {
+            "name": "Operators",
+            "type": "pattern",
+            "pattern": "[+\\-*\\/%&|^!=<>]=?|&&|\\|\\||\\+\\+|--|~|\\?|:|<<=?|>>=?",
+            "style_key": "operator"
+        },
+        {
+            "name": "Standard Library Types/Macros (examples)",
+            "type": "keywords",
+            "list": [
+                "NULL", "FILE", "size_t", "ptrdiff_t", "int8_t", "int16_t", "int32_t", "int64_t",
+                "uint8_t", "uint16_t", "uint32_t", "uint64_t", "stdin", "stdout", "stderr",
+                "true", "false", "bool"
+            ],
+            "style_key": "type_name"
+        }
+    ]
+}

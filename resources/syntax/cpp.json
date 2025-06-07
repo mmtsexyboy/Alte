@@ -1,0 +1,110 @@
+{
+    "language_name": "C++",
+    "file_extensions": [".cpp", ".cxx", ".cc", ".hpp", ".hxx", ".hh", ".h", ".inl"],
+    "first_line_patterns": [],
+    "highlighting_rules": [
+        {
+            "name": "Keywords",
+            "type": "keywords",
+            "list": [
+                "alignas", "alignof", "and", "and_eq", "asm", "auto",
+                "bitand", "bitor", "bool", "break", "case", "catch", "char",
+                "char8_t", "char16_t", "char32_t", "class", "compl", "concept",
+                "const", "consteval", "constexpr", "constinit", "const_cast",
+                "continue", "co_await", "co_return", "co_yield", "decltype",
+                "default", "delete", "do", "double", "dynamic_cast", "else",
+                "enum", "explicit", "export", "extern", "false", "final", "float",
+                "for", "friend", "goto", "if", "inline", "int", "long",
+                "mutable", "namespace", "new", "noexcept", "not", "not_eq",
+                "nullptr", "operator", "or", "or_eq", "override", "private",
+                "protected", "public", "reflexpr", "register", "reinterpret_cast",
+                "requires", "return", "short", "signed", "sizeof", "static",
+                "static_assert", "static_cast", "struct", "switch", "template",
+                "this", "thread_local", "throw", "true", "try", "typedef",
+                "typeid", "typename", "union", "unsigned", "using", "virtual",
+                "void", "volatile", "wchar_t", "while", "xor", "xor_eq"
+            ],
+            "style_key": "keyword"
+        },
+        {
+            "name": "Preprocessor Directives",
+            "type": "pattern",
+            "pattern": "^\\s*#.*",
+            "style_key": "preprocessor"
+        },
+        {
+            "name": "Line Comment",
+            "type": "pattern",
+            "pattern": "//.*",
+            "style_key": "comment"
+        },
+        {
+            "name": "Block Comment",
+            "type": "multi_line_string",
+            "start_pattern": "/\\*",
+            "end_pattern": "\\*/",
+            "style_key": "comment"
+        },
+        {
+            "name": "String Literals",
+            "type": "pattern",
+            "pattern": "(?:[uU8LR]*)?\"(?:\\\\.|[^\"\\\\])*\"",
+            "style_key": "string"
+        },
+        {
+            "name": "Raw String Literals",
+            "type": "pattern",
+            "pattern": "(?:[uU8LR]*)?R\"([^()\\s]{0,16})\\((?:.|\\n)*?\\)\\1\"",
+            "style_key": "string"
+        },
+        {
+            "name": "Character Literals",
+            "type": "pattern",
+            "pattern": "(?:[uUL]*)?'(?:\\\\.|[^'\\\\])'",
+            "style_key": "string"
+        },
+        {
+            "name": "Hexadecimal Numbers",
+            "type": "pattern",
+            "pattern": "\\b0[xX][0-9a-fA-F']+[uUlL]{0,3}\\b",
+            "style_key": "number_hex"
+        },
+        {
+            "name": "Binary Numbers",
+            "type": "pattern",
+            "pattern": "\\b0[bB][01']+[uUlL]{0,3}\\b",
+            "style_key": "number"
+        },
+        {
+            "name": "Octal Numbers",
+            "type": "pattern",
+            "pattern": "\\b0[0-7']+[uUlL]{0,3}\\b",
+            "style_key": "number"
+        },
+        {
+            "name": "Decimal and Floating Point Numbers",
+            "type": "pattern",
+            "pattern": "\\b(?:[0-9](?:[0-9']*[0-9])*(?:\\.(?:[0-9](?:[0-9']*[0-9])*)?)?|\\.(?:[0-9](?:[0-9']*[0-9])*))(?:[eE][-+]?[0-9](?:[0-9']*[0-9])*)?[fFlL]{0,3}\\b",
+            "style_key": "number"
+        },
+        {
+            "name": "Operators",
+            "type": "pattern",
+            "pattern": "[+\\-*\\/%&|^!=<>~?:\\[\\]().{};\\#]=?|&&|\\|\\||\\+\\+|--|->\\*?|\\.\\*?|::|<<=?|>>=?",
+            "style_key": "operator"
+        },
+        {
+            "name": "Standard Library Types/Common Macros (examples)",
+            "type": "keywords",
+            "list": [
+                "std", "cout", "cin", "endl", "string", "vector", "map", "list", "array",
+                "deque", "set", "unordered_map", "unordered_set", "shared_ptr", "unique_ptr",
+                "weak_ptr", "thread", "mutex", "atomic", "chrono", "nullptr_t", "size_t",
+                "int8_t", "int16_t", "int32_t", "int64_t", "uint8_t", "uint16_t",
+                "uint32_t", "uint64_t", "iostream", "fstream", "sstream", "vector", "algorithm",
+                "iterator", "memory", "utility", "exception", "stdexcept", "regex", "filesystem"
+            ],
+            "style_key": "type_name"
+        }
+    ]
+}

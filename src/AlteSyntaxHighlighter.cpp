@@ -34,14 +34,35 @@ QTextCharFormat AlteSyntaxHighlighter::createFormatFromRule(const QJsonObject& r
                                                       const QFont& defaultFont,
                                                       AlteThemeManager* themeManager) {
     QTextCharFormat format;
+    QString style_key = ruleDetails.value("style_key").toString();
     QString colorNameRef = ruleDetails.value("color_ref").toString();
+    QColor finalColor;
+    bool colorSet = false;
+
     if (!colorNameRef.isEmpty()) {
-        QColor color = themeManager->getColor(colorNameRef);
-        if (!color.isValid()) {
-             qWarning() << "AlteSyntaxHighlighter: Color reference '" << colorNameRef << "' is invalid or not found in theme colors. Using default text color.";
-             color = themeManager->getColor("text", Qt::black);
+        finalColor = themeManager->getColor(colorNameRef);
+        if (finalColor.isValid()) {
+            colorSet = true;
+        } else {
+            qWarning() << "AlteSyntaxHighlighter: Color reference '" << colorNameRef << "' is invalid or not found in theme colors.";
         }
-        format.setForeground(color);
+    }
+
+    if (!colorSet && !style_key.isEmpty()) {
+        finalColor = themeManager->getSyntaxColor(style_key);
+        if (finalColor.isValid()) {
+            colorSet = true;
+        } else {
+            qWarning() << "AlteSyntaxHighlighter: Style key '" << style_key << "' did not yield a valid color.";
+        }
+    }
+
+    if (colorSet) {
+        format.setForeground(finalColor);
+    } else {
+        // Fallback to default text color
+        qWarning() << "AlteSyntaxHighlighter: No valid color found via color_ref or style_key for rule. Using default text color.";
+        format.setForeground(themeManager->getColor("text", Qt::black)); // Ensure a default if "text" isn't found
     }
 
     if (ruleDetails.value("bold").toBool(false)) {

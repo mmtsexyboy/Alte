@@ -1,0 +1,154 @@
+{
+    "language_name": "CSS",
+    "file_extensions": [".css"],
+    "first_line_patterns": [],
+    "highlighting_rules": [
+        {
+            "name": "Comment",
+            "type": "multi_line_string",
+            "start_pattern": "/\\*",
+            "end_pattern": "\\*/",
+            "style_key": "comment"
+        },
+        {
+            "name": "At-Rules (e.g., @media, @import)",
+            "type": "pattern",
+            "pattern": "@[a-zA-Z_][a-zA-Z0-9_-]*\\b",
+            "style_key": "preprocessor"
+        },
+        {
+            "name": "Double-Quoted String",
+            "type": "pattern",
+            "pattern": "\"(?:\\\\.|[^\"\\\\])*\"",
+            "style_key": "string"
+        },
+        {
+            "name": "Single-Quoted String",
+            "type": "pattern",
+            "pattern": "'(?:\\\\.|[^'\\\\])*'",
+            "style_key": "string"
+        },
+        {
+            "name": "ID Selector",
+            "type": "pattern",
+            "pattern": "#([a-zA-Z_][a-zA-Z0-9_-]*)",
+            "style_key": "selector_id"
+        },
+        {
+            "name": "Class Selector",
+            "type": "pattern",
+            "pattern": "\\.([a-zA-Z_][a-zA-Z0-9_-]*)",
+            "style_key": "selector_class"
+        },
+        {
+            "name": "Pseudo-classes and Pseudo-elements",
+            "type": "pattern",
+            "pattern": ":{1,2}([a-zA-Z_][a-zA-Z0-9_-]+)(?:\\((?:[^()\"']|\"(?:\\\\.|[^\"\\\\])*\"|'(?:\\\\.|[^'\\\\])*')*\\))?",
+            "style_key": "selector_pseudo"
+        },
+        {
+            "name": "Attribute Selector Brackets",
+            "type": "pattern",
+            "pattern": "\\[|\\]",
+            "style_key": "operator"
+        },
+        {
+            "name": "Attribute Name in Selector",
+            "type": "pattern",
+            "pattern": "\\b([a-zA-Z0-9_-]+)\\b(?=\\s*[\\]~|^$*]?=)",
+            "style_key": "attribute_name"
+        },
+        {
+            "name": "Attribute Selector Operators",
+            "type": "pattern",
+            "pattern": "[~|^$*]?=",
+            "style_key": "operator"
+        },
+        {
+            "name": "Property Name",
+            "type": "pattern",
+            "pattern": "\\b([a-zA-Z-]+)(?=\\s*:)",
+            "style_key": "keyword_property"
+        },
+        {
+            "name": "Important Keyword",
+            "type": "pattern",
+            "pattern": "!important\\b",
+            "style_key": "keyword_important"
+        },
+        {
+            "name": "Hex Color",
+            "type": "pattern",
+            "pattern": "#([0-9a-fA-F]{3,8})\\b",
+            "style_key": "number_hex"
+        },
+        {
+            "name": "URL Function",
+            "type": "pattern",
+            "pattern": "\\burl\\((?:[^)\\\\]|\\\\.)*\\)",
+            "style_key": "function"
+        },
+        {
+            "name": "Numbers with Units",
+            "type": "pattern",
+            "pattern": "-?\\b[0-9]+(?:\\.[0-9]+)?(?:%|em|ex|ch|rem|vw|vh|vmin|vmax|cm|mm|in|px|pt|pc|deg|grad|rad|turn|s|ms|Hz|kHz|dpi|dpcm|dppx|fr|lh|rlh|Q)?\\b",
+            "style_key": "number"
+        },
+        {
+            "name": "Unitless Numbers (e.g., line-height, z-index)",
+            "type": "pattern",
+            "pattern": "-?\\b[0-9]+(?:\\.[0-9]+)?\\b(?!\\w|%)",
+            "style_key": "number"
+        },
+        {
+            "name": "Value Keywords (examples)",
+            "type": "keywords",
+            "list": [
+                "auto", "inherit", "initial", "unset", "revert", "none", "hidden", "visible",
+                "block", "inline", "inline-block", "flex", "grid", "table", "list-item",
+                "absolute", "relative", "static", "fixed", "sticky",
+                "normal", "bold", "italic", "oblique",
+                "solid", "dotted", "dashed", "double", "groove", "ridge", "inset", "outset",
+                "transparent", "currentColor",
+                "aliceblue", "antiquewhite", "aqua", "aquamarine", "azure", "beige", "bisque",
+                "black", "blanchedalmond", "blue", "blueviolet", "brown", "burlywood",
+                "cadetblue", "chartreuse", "chocolate", "coral", "cornflowerblue", "cornsilk",
+                "crimson", "cyan", "darkblue", "darkcyan", "darkgoldenrod", "darkgray", "darkgreen",
+                "darkgrey", "darkkhaki", "darkmagenta", "darkolivegreen", "darkorange", "darkorchid",
+                "darkred", "darksalmon", "darkseagreen", "darkslateblue", "darkslategray",
+                "darkslategrey", "darkturquoise", "darkviolet", "deeppink", "deepskyblue",
+                "dimgray", "dimgrey", "dodgerblue", "firebrick", "floralwhite", "forestgreen",
+                "fuchsia", "gainsboro", "ghostwhite", "gold", "goldenrod", "gray", "green",
+                "greenyellow", "grey", "honeydew", "hotpink", "indianred", "indigo", "ivory",
+                "khaki", "lavender", "lavenderblush", "lawngreen", "lemonchiffon", "lightblue",
+                "lightcoral", "lightcyan", "lightgoldenrodyellow", "lightgray", "lightgreen",
+                "lightgrey", "lightpink", "lightsalmon", "lightseagreen", "lightskyblue",
+                "lightslategray", "lightslategrey", "lightsteelblue", "lightyellow", "lime",
+                "limegreen", "linen", "magenta", "maroon", "mediumaquamarine", "mediumblue",
+                "mediumorchid", "mediumpurple", "mediumseagreen", "mediumslateblue",
+                "mediumspringgreen", "mediumturquoise", "mediumvioletred", "midnightblue",
+                "mintcream", "mistyrose", "moccasin", "navajowhite", "navy", "oldlace", "olive",
+                "olivedrab", "orange", "orangered", "orchid", "palegoldenrod", "palegreen",
+                "paleturquoise", "palevioletred", "papayawhip", "peachpuff", "peru", "pink",
+                "plum", "powderblue", "purple", "rebeccapurple", "red", "rosybrown", "royalblue",
+                "saddlebrown", "salmon", "sandybrown", "seagreen", "seashell", "sienna",
+                "silver", "skyblue", "slateblue", "slategray", "slategrey", "snow", "springgreen",
+                "steelblue", "tan", "teal", "thistle", "tomato", "turquoise", "violet",
+                "wheat", "white", "whitesmoke", "yellow", "yellowgreen"
+            ],
+            "style_key": "constant_value"
+        },
+        {
+            "name": "Element/Tag Selectors (general)",
+            "type": "pattern",
+            "pattern": "\\b([a-zA-Z*][a-zA-Z0-9_*-]*)(?=\\s*[,{.#:])",
+            "style_key": "tag"
+        },
+        {
+            "name": "Punctuation and Combinators",
+            "type": "pattern",
+            "pattern": "[{};:,\\[\\]()>+~*]",
+            "style_key": "operator"
+        }
+    ]
+}

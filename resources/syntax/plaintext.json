@@ -1,0 +1,6 @@
+{
+    "language_name": "Plain Text",
+    "file_extensions": [".txt", ".log", ""],
+    "highlighting_rules": [],
+    "first_line_patterns": []
+}
