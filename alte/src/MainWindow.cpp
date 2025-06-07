@@ -10,15 +10,14 @@
 #include <QTextStream>
 #include <QDragEnterEvent>
 #include <QDropEvent>
-#include <QKeySequence> // Required for QKeySequence
-#include <QCloseEvent> // Required for closeEvent
-#include <QTextDocument> // Required for isModified
-#include "LineNumberArea.h" // Include the new header
+#include <QKeySequence>
+#include <QCloseEvent>
+#include <QTextDocument>
+#include "LineNumberArea.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), typewriterModeEnabled(false), currentFilePath("") {
     textEdit = new QTextEdit(this);
-    // setCentralWidget(textEdit); // Will be replaced by composite widget
     textEdit->setPlaceholderText("Welcome to Alte! Drag and drop a text file here or start typing.");
 
     lineNumberArea = new LineNumberArea(textEdit);
@@ -29,11 +28,9 @@ MainWindow::MainWindow(QWidget *parent)
     layout->setContentsMargins(0, 0, 0, 0);
     layout->addWidget(lineNumberArea);
     layout->addWidget(textEdit);
-    // editorWidget->setLayout(layout); // QHBoxLayout constructor already sets the parent
     setCentralWidget(editorWidget);
 
 
-    // File Actions
     newAction = new QAction("New", this);
     newAction->setShortcut(QKeySequence::New);
     connect(newAction, &QAction::triggered, this, &MainWindow::newFile);
@@ -52,15 +49,13 @@ MainWindow::MainWindow(QWidget *parent)
 
     quitAction = new QAction("Quit", this);
     quitAction->setShortcut(QKeySequence::Quit);
-    connect(quitAction, &QAction::triggered, this, &QMainWindow::close); // Connect to MainWindow's close
+    connect(quitAction, &QAction::triggered, this, &QMainWindow::close);
 
-    // Typewriter Mode Action
     typewriterModeAction = new QAction("Typewriter Mode", this);
     typewriterModeAction->setCheckable(true);
     typewriterModeAction->setShortcut(QKeySequence("Ctrl+Shift+T"));
     connect(typewriterModeAction, &QAction::triggered, this, &MainWindow::toggleTypewriterMode);
 
-    // Menu Bar
     QMenu *fileMenu = menuBar()->addMenu("File");
     fileMenu->addAction(newAction);
     fileMenu->addAction(openAction);
@@ -72,13 +67,11 @@ MainWindow::MainWindow(QWidget *parent)
     QMenu *viewMenu = menuBar()->addMenu("View");
     viewMenu->addAction(typewriterModeAction);
 
-    // Connect cursor position changed signal
     connect(textEdit, &QTextEdit::cursorPositionChanged, this, &MainWindow::updateTypewriterCenter);
     connect(textEdit->document(), &QTextDocument::modificationChanged, this, &MainWindow::onModificationChanged);
 
-    // Enable drops on the main window
     setAcceptDrops(true);
-    updateWindowTitle(); // Set initial window title
+    updateWindowTitle();
 }
 
 MainWindow::~MainWindow() {
@@ -106,7 +99,7 @@ void MainWindow::onModificationChanged(bool modified) {
 
 bool MainWindow::maybeSave() {
     if (!textEdit->document()->isModified()) {
-        return true; // No unsaved changes
+        return true;
     }
     const QMessageBox::StandardButton ret =
         QMessageBox::warning(this, tr("Alte"),
@@ -147,7 +140,6 @@ void MainWindow::openFile() {
                 currentFilePath = filePath;
                 textEdit->document()->setModified(false);
                 updateWindowTitle();
-                // TODO: Signal syntax highlighter to update based on new file type/name
             } else {
                 QMessageBox::warning(this, "Open File", "Could not open file: " + file.errorString());
             }
@@ -165,7 +157,6 @@ bool MainWindow::saveFile() {
             out << textEdit->toPlainText();
             file.close();
             textEdit->document()->setModified(false);
-            // updateWindowTitle(); // Already handled by setModified -> onModificationChanged
             return true;
         } else {
             QMessageBox::warning(this, "Save File", "Could not save file: " + file.errorString());
@@ -178,8 +169,6 @@ bool MainWindow::saveFileAs() {
     QString filePath = QFileDialog::getSaveFileName(this, "Save File As", currentFilePath.isEmpty() ? "." : currentFilePath, "Text Files (*.txt);;All Files (*)");
     if (!filePath.isEmpty()) {
         currentFilePath = filePath;
-        // TODO: Update syntax highlighting based on new file name/extension
-        // setModified(false) will be called by saveFile(), which also updates title via signal
         return saveFile();
     }
     return false;
@@ -187,9 +176,9 @@ bool MainWindow::saveFileAs() {
 
 void MainWindow::closeEvent(QCloseEvent *event) {
     if (maybeSave()) {
-        event->accept(); // Changes saved or discarded, accept close
+        event->accept();
     } else {
-        event->ignore(); // User cancelled, ignore close
+        event->ignore();
     }
 }
 
@@ -199,9 +188,6 @@ void MainWindow::toggleTypewriterMode() {
     if (typewriterModeEnabled) {
         updateTypewriterCenter();
     } else {
-        // Reset any specific scrolling behavior if necessary.
-        // QTextEdit might handle this naturally by returning to normal scroll behavior.
-        // For now, we don't need to do anything specific here.
     }
 }
 
@@ -210,7 +196,7 @@ void MainWindow::updateTypewriterCenter() {
         QTextCursor cursor = textEdit->textCursor();
         QRect cursorRect = textEdit->cursorRect(cursor);
         int viewportHeight = textEdit->viewport()->height();
-        int desiredY = cursorRect.top() - viewportHeight / 2 + cursorRect.height() / 2; // Center the line cursor is on
+        int desiredY = cursorRect.top() - viewportHeight / 2 + cursorRect.height() / 2;
 
         textEdit->verticalScrollBar()->setValue(desiredY);
     }
@@ -226,12 +212,12 @@ void MainWindow::dropEvent(QDropEvent *event) {
     const QMimeData *mimeData = event->mimeData();
     if (mimeData->hasUrls()) {
         if (!maybeSave()) {
-             event->ignore(); // User cancelled saving current file
+             event->ignore();
              return;
         }
         const QList<QUrl> urls = mimeData->urls();
         if (!urls.isEmpty()) {
-            const QUrl url = urls.first(); // Process only the first file
+            const QUrl url = urls.first();
             if (url.isLocalFile()) {
                 const QString filePath = url.toLocalFile();
                 QFile file(filePath);
@@ -242,7 +228,6 @@ void MainWindow::dropEvent(QDropEvent *event) {
                     currentFilePath = filePath;
                     textEdit->document()->setModified(false);
                     updateWindowTitle();
-                    // TODO: Signal syntax highlighter to update based on new file type/name
                     file.close();
                     event->acceptProposedAction();
                 } else {

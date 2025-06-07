@@ -4,18 +4,18 @@
 #include <QString>
 #include <QMap>
 #include <QTextCharFormat>
-#include <QColor> // Include QColor
+#include <QColor>
 
 class AlteTheme {
 public:
     AlteTheme();
     bool loadThemeFromFile(const QString &filePath);
-    QTextCharFormat getFormat(const QString &type) const; // e.g., "keyword", "comment"
-    QColor getColor(const QString &type) const; // e.g., "text", "background"
+    QTextCharFormat getFormat(const QString &type) const;
+    QColor getColor(const QString &type) const;
 
 private:
     QString name;
-    QString themeType; // "dark" or "light"
+    QString themeType;
     QMap<QString, QColor> editorColors;
     QMap<QString, QTextCharFormat> syntaxFormats;
 };

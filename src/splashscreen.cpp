@@ -1,40 +1,34 @@
 #include "splashscreen.h"
-#include <QApplication> // For QScreen, if needed, though not directly here now
-#include <QScreen>      // For screen geometry
+#include <QApplication>
+#include <QScreen>
 #include <QAnimationGroup>
 #include <QPainterPath>
 #include <QDebug>
 #include <QFontMetrics>
 
-#include <QParallelAnimationGroup> // Ensure this is included
+#include <QParallelAnimationGroup>
 
 SplashScreen::SplashScreen(QWidget *parent)
     : QWidget(parent),
       m_centralColumnHeight(0.0),
-      m_centralColumnOpacity(0.0), // Start fully transparent for the glyph
+      m_centralColumnOpacity(0.0),
       m_columnHeightAnimation(nullptr),
       m_columnOpacityAnimation(nullptr),
       m_centralColumnAnimationGroup(nullptr),
-      m_glyphAnimationStarted(false) // Initialize new member
+      m_glyphAnimationStarted(false)
 {
     setFixedSize(480, 360);
     setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint | Qt::SplashScreen);
-    // WA_TranslucentBackground is important if the splash screen isn't always a full rectangle,
-    // or for smooth edges if the glyph is drawn near edges.
-    // For a fully black initial screen, this is fine.
     setAttribute(Qt::WA_TranslucentBackground);
-    // setAttribute(Qt::WA_DeleteOnClose); // Removed: Object is stack-allocated in main
 
-    // Setup for the animation
     m_centralColumnAnimationGroup = new QParallelAnimationGroup(this);
 
     m_columnHeightAnimation = new QPropertyAnimation(this, "centralColumnHeight", this);
-    m_columnHeightAnimation->setEasingCurve(QEasingCurve::OutCubic); // Smooth growth for the line
+    m_columnHeightAnimation->setEasingCurve(QEasingCurve::OutCubic);
 
     m_columnOpacityAnimation = new QPropertyAnimation(this, "centralColumnOpacity", this);
-    m_columnOpacityAnimation->setEasingCurve(QEasingCurve::Linear); // Simple fade-in for the line
+    m_columnOpacityAnimation->setEasingCurve(QEasingCurve::Linear);
 
-    // Animations will be added to group in startGlyphAnimation if needed, or configured here.
     m_centralColumnAnimationGroup->addAnimation(m_columnHeightAnimation);
     m_centralColumnAnimationGroup->addAnimation(m_columnOpacityAnimation);
 
@@ -43,27 +37,22 @@ SplashScreen::SplashScreen(QWidget *parent)
 
 SplashScreen::~SplashScreen()
 {
-    // Qt's parent-child system handles deletion of animations when m_centralColumnAnimationGroup is deleted,
-    // and m_centralColumnAnimationGroup is deleted when 'this' (SplashScreen) is deleted.
 }
 
 void SplashScreen::startGlyphAnimation(int durationMs) {
-    m_glyphAnimationStarted = true; // Signal that the glyph animation phase has begun
+    m_glyphAnimationStarted = true;
 
-    // Height animation for the line (e.g., grows over 70% of duration)
-    m_columnHeightAnimation->setDuration(durationMs); // Grow to full height over the main duration
+    m_columnHeightAnimation->setDuration(durationMs);
     m_columnHeightAnimation->setStartValue(0.0);
-    m_columnHeightAnimation->setEndValue(height() / 2.0); // Grow to half screen height (center)
+    m_columnHeightAnimation->setEndValue(height() / 2.0);
 
-    // Opacity animation for the line (e.g., fades in over 50% of duration, could be delayed)
-    // For a simple parallel fade-in while growing:
-    m_columnOpacityAnimation->setDuration(durationMs * 0.7); // Fade in slightly faster than full growth
-    m_columnOpacityAnimation->setStartValue(0.0);      // Start fully transparent
-    m_columnOpacityAnimation->setEndValue(1.0);        // End fully opaque
+    m_columnOpacityAnimation->setDuration(durationMs * 0.7);
+    m_columnOpacityAnimation->setStartValue(0.0);
+    m_columnOpacityAnimation->setEndValue(1.0);
 
     qDebug() << "Starting glyph animation";
     m_centralColumnAnimationGroup->start();
-    update(); // Ensure a repaint is scheduled
+    update();
 }
 
 void SplashScreen::paintEvent(QPaintEvent *event) {
@@ -72,58 +61,43 @@ void SplashScreen::paintEvent(QPaintEvent *event) {
     painter.setRenderHint(QPainter::Antialiasing);
 
     if (!m_glyphAnimationStarted) {
-        painter.fillRect(rect(), QColor(0, 0, 0)); // Fully opaque black for initial phase
+        painter.fillRect(rect(), QColor(0, 0, 0));
     } else {
-        // Background for glyph animation phase (still black)
         painter.fillRect(rect(), QColor(0, 0, 0));
 
         if (m_centralColumnHeight > 0 && m_centralColumnOpacity > 0) {
             painter.setOpacity(m_centralColumnOpacity);
-            QColor neonColor(0, 199, 164); // #00c7a4
+            QColor neonColor(0, 199, 164);
 
-            // Use m_centralColumnHeight as a progress factor (0.0 to height()/2.0)
-            // Normalize this progress: currentHeight / (splashHeight/2.0)
-            // The animation sets m_centralColumnHeight's EndValue to height() / 2.0
             float fullProgress = m_centralColumnHeight / (height() / 2.0f);
-            fullProgress = qBound(0.0f, fullProgress, 1.0f); // Clamp between 0 and 1
+            fullProgress = qBound(0.0f, fullProgress, 1.0f);
 
-            // Animated stroke width: Example: 2 to 6
             int currentStrokeWidth = 2 + static_cast<int>(fullProgress * 4);
             painter.setPen(QPen(neonColor, currentStrokeWidth, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
 
-            // Define 'A' geometry based on splash screen size and m_centralColumnHeight
-            // All coordinates relative to center of the splash screen.
             float centerX = width() / 2.0f;
-            float bottomY = height() * 0.75f; // Baseline for the 'A'
-            float charHeight = height() * 0.4f; // Max height of the 'A'
+            float bottomY = height() * 0.75f;
+            float charHeight = height() * 0.4f;
             float charWidth = charHeight * 0.75f;
 
-            // Points for 'A' (top, bottom-left, bottom-right, crossbar-left, crossbar-right)
             QPointF p_top(centerX, bottomY - charHeight);
             QPointF p_bl(centerX - charWidth / 2.0f, bottomY);
             QPointF p_br(centerX + charWidth / 2.0f, bottomY);
 
-            float crossbarHeightRatio = 0.4f; // crossbar is 40% up from baseline
+            float crossbarHeightRatio = 0.4f;
             QPointF p_cl(centerX - charWidth / 2.0f * (1.0f - crossbarHeightRatio),
                            bottomY - charHeight * crossbarHeightRatio);
             QPointF p_cr(centerX + charWidth / 2.0f * (1.0f - crossbarHeightRatio),
                            bottomY - charHeight * crossbarHeightRatio);
 
-            // Draw parts of 'A' based on fullProgress
-            // Part 1: Left leg (0.0 to 0.4 progress) - Curved
             if (fullProgress > 0) {
                 float part1Progress = qBound(0.0f, fullProgress / 0.4f, 1.0f);
-                if (part1Progress > 0) { // Only draw if there's progress
+                if (part1Progress > 0) {
                     QPainterPath leftLegPath;
                     leftLegPath.moveTo(p_top);
-                    // Control point: slightly to the left and halfway down the leg
                     QPointF control_p1_bl(p_top.x() - charWidth * 0.25f, p_top.y() + (p_bl.y() - p_top.y()) * 0.5f);
                     QPointF target_p_bl = p_top + (p_bl - p_top) * part1Progress;
 
-                    // If part1Progress is very small, quadTo might behave unexpectedly if control and target are too close to p_top.
-                    // A simple approach is to animate the target point of the curve.
-                    // For a more sophisticated partial curve drawing, one would need to evaluate the Bezier curve equation.
-                    // Here, we animate the end point of the curve itself.
                     QPointF animated_control_p1_bl = p_top + (control_p1_bl - p_top) * part1Progress;
 
                     leftLegPath.quadTo(animated_control_p1_bl, target_p_bl);
@@ -131,13 +105,11 @@ void SplashScreen::paintEvent(QPaintEvent *event) {
                 }
             }
 
-            // Part 2: Right leg (drawn from 0.2 to 0.7 progress) - Curved
             if (fullProgress > 0.2f) {
                 float part2Progress = qBound(0.0f, (fullProgress - 0.2f) / 0.5f, 1.0f);
-                if (part2Progress > 0) { // Only draw if there's progress
+                if (part2Progress > 0) {
                     QPainterPath rightLegPath;
                     rightLegPath.moveTo(p_top);
-                    // Control point: slightly to the right and halfway down the leg
                     QPointF control_p1_br(p_top.x() + charWidth * 0.25f, p_top.y() + (p_br.y() - p_top.y()) * 0.5f);
                     QPointF target_p_br = p_top + (p_br - p_top) * part2Progress;
                     QPointF animated_control_p1_br = p_top + (control_p1_br - p_top) * part2Progress;
@@ -147,10 +119,9 @@ void SplashScreen::paintEvent(QPaintEvent *event) {
                 }
             }
 
-            // Part 3: Crossbar (drawn from 0.5 to 1.0 progress)
             if (fullProgress > 0.5f) {
                 float part3Progress = qBound(0.0f, (fullProgress - 0.5f) / 0.5f, 1.0f);
-                if (part3Progress > 0) { // Only draw if there's progress
+                if (part3Progress > 0) {
                     painter.drawLine(p_cl, p_cl + (p_cr - p_cl) * part3Progress);
                 }
             }

@@ -26,20 +26,20 @@ void AlteSyntaxHighlighter::setCurrentLanguage(const QString& languageName, Alte
         return;
     }
     loadRulesForLanguage(languageName, themeManager);
-    rehighlight(); // Trigger re-highlighting of the entire document
+    rehighlight();
 }
 
 QTextCharFormat AlteSyntaxHighlighter::createFormatFromRule(const QJsonObject& ruleDetails,
-                                                      const QJsonObject& themeColors, // Not used directly, themeManager is used
+                                                      const QJsonObject& themeColors,
                                                       const QFont& defaultFont,
                                                       AlteThemeManager* themeManager) {
     QTextCharFormat format;
-    QString colorNameRef = ruleDetails.value("color_ref").toString(); // Changed from "color"
+    QString colorNameRef = ruleDetails.value("color_ref").toString();
     if (!colorNameRef.isEmpty()) {
-        QColor color = themeManager->getColor(colorNameRef); // Use color_ref
-        if (!color.isValid()) { // Fallback if color name is not in theme's "colors"
+        QColor color = themeManager->getColor(colorNameRef);
+        if (!color.isValid()) {
              qWarning() << "AlteSyntaxHighlighter: Color reference '" << colorNameRef << "' is invalid or not found in theme colors. Using default text color.";
-             color = themeManager->getColor("text", Qt::black); // Default to theme's text color
+             color = themeManager->getColor("text", Qt::black);
         }
         format.setForeground(color);
     }
@@ -54,8 +54,8 @@ QTextCharFormat AlteSyntaxHighlighter::createFormatFromRule(const QJsonObject& r
     if (ruleDetails.contains("fontPointSizeOffset")) {
         int offset = ruleDetails.value("fontPointSizeOffset").toInt(0);
         if (offset != 0) {
-            QFont currentFont = format.font(); // Get font if already modified by bold/italic
-            if (currentFont.pointSize() <= 0) { // If not set, use default
+            QFont currentFont = format.font();
+            if (currentFont.pointSize() <= 0) {
                  currentFont = defaultFont;
             }
             int newSize = currentFont.pointSize() + offset;
@@ -86,18 +86,11 @@ void AlteSyntaxHighlighter::loadRulesForLanguage(const QString& languageName, Al
     if (document()) {
         documentFont = document()->defaultFont();
     } else {
-        documentFont = QApplication::font(); // Fallback, should ideally not happen
+        documentFont = QApplication::font();
         qWarning() << "AlteSyntaxHighlighter: QTextDocument is null during rule loading. Using application default font.";
     }
 
-    // The themeColors parameter in createFormatFromRule is currently unused,
-    // as themeManager->getColor() is preferred for direct lookup or hex parsing.
-    // Passing an empty QJsonObject for now.
     QJsonObject dummyColors;
-
-    // In the new JSON structure, langRules is an object like:
-    // { "language_name": "Python", "file_extensions": [".py"], "highlighting_rules": [ {rule1}, {rule2} ] }
-    // We need to iterate over the "highlighting_rules" array.
 
     if (!langRules.contains("highlighting_rules") || !langRules.value("highlighting_rules").isArray()) {
         qWarning() << "AlteSyntaxHighlighter: 'highlighting_rules' array not found or not an array for language" << languageName << "Def:" << langRules;
@@ -107,11 +100,11 @@ void AlteSyntaxHighlighter::loadRulesForLanguage(const QString& languageName, Al
 
     for (const QJsonValue& ruleValue : rulesArray) {
         QJsonObject ruleDef = ruleValue.toObject();
-        QString ruleName = ruleDef.value("name").toString("Unnamed Rule"); // For logging
+        QString ruleName = ruleDef.value("name").toString("Unnamed Rule");
 
         HighlightingRule baseRuleSetup;
         baseRuleSetup.format = createFormatFromRule(ruleDef, dummyColors, documentFont, themeManager);
-        baseRuleSetup.isBlockRule = false; // Default
+        baseRuleSetup.isBlockRule = false;
 
         QString ruleType = ruleDef.value("type").toString();
 
@@ -200,7 +193,7 @@ void AlteSyntaxHighlighter::loadRulesForLanguage(const QString& languageName, Al
             }
             QJsonArray patternsArray = ruleDef.value("patterns").toArray();
             for (const QJsonValue& val : patternsArray) {
-                HighlightingRule specificRule = baseRuleSetup; // Copy format
+                HighlightingRule specificRule = baseRuleSetup;
                 QString patternString = "\\b" + QRegularExpression::escape(val.toString()) + "\\b";
                 specificRule.pattern = QRegularExpression(patternString);
                 if (specificRule.pattern.isValid()) {
@@ -210,10 +203,7 @@ void AlteSyntaxHighlighter::loadRulesForLanguage(const QString& languageName, Al
                 }
             }
         } else {
-            // Rule type not recognized or other issue.
-            // The ruleDef.value("block").toBool(false) was for a flatter structure.
-            // Now, "multi_line_string" is the explicit type for blocks.
-            if (!ruleName.startsWith("_comment_")) { // Don't warn for meta-comment keys in JSON
+            if (!ruleName.startsWith("_comment_")) {
                  qWarning() << "AlteSyntaxHighlighter: Rule" << ruleName << "has unknown type'" << ruleType << "' or is malformed. Def:" << ruleDef;
             }
         }
@@ -221,7 +211,6 @@ void AlteSyntaxHighlighter::loadRulesForLanguage(const QString& languageName, Al
 }
 
 void AlteSyntaxHighlighter::highlightBlock(const QString &text) {
-    // Apply non-block rules first
     for (const HighlightingRule &rule : m_highlightingRules) {
         if (rule.isBlockRule) continue;
 
@@ -232,13 +221,9 @@ void AlteSyntaxHighlighter::highlightBlock(const QString &text) {
         }
     }
 
-    // Handle block rules (multi-line comments, strings etc.)
-    // This state machine is simplified and assumes block rules don't nest in complex ways
-    // with other block rules. It processes one block type at a time per line.
+    int blockRuleIndex = previousBlockState();
 
-    int blockRuleIndex = previousBlockState(); // 0 = no state, >0 means rule index + 1
-
-    if (blockRuleIndex > 0) { // Resuming a block from previous line
+    if (blockRuleIndex > 0) {
         int ruleIdx = blockRuleIndex - 1;
         if (ruleIdx < m_highlightingRules.size() && m_highlightingRules[ruleIdx].isBlockRule) {
             const HighlightingRule& currentBlockRule = m_highlightingRules[ruleIdx];
@@ -246,29 +231,21 @@ void AlteSyntaxHighlighter::highlightBlock(const QString &text) {
             int endIndex = endMatch.capturedStart();
             int length;
 
-            if (endIndex == -1) { // Block does not end on this line
-                setCurrentBlockState(blockRuleIndex); // Continue this block state
+            if (endIndex == -1) {
+                setCurrentBlockState(blockRuleIndex);
                 length = text.length();
                 setFormat(0, length, currentBlockRule.format);
-                return; // Entire line is part of this block
-            } else { // Block ends on this line
+                return;
+            } else {
                 length = endIndex + endMatch.capturedLength();
                 setFormat(0, length, currentBlockRule.format);
-                setCurrentBlockState(0); // Block ended
-                // Now, search for new blocks *after* this one ended
-                // This recursive call is one way, or loop with adjusted startIndex
-                // For simplicity, we'll let the next loop handle new blocks.
-                // highlightBlock(text.mid(length)); // This is not how QSyntaxHighlighter works.
-                // Instead, we need to continue scanning from 'length'.
-                // The logic below will scan from 0, which is fine if blocks don't overlap.
-                // A more robust solution might need a loop here that advances a startIndex.
+                setCurrentBlockState(0);
             }
         } else {
-             setCurrentBlockState(0); // Invalid previous state
+             setCurrentBlockState(0);
         }
     }
 
-    // Search for new block starts
     for (int i = 0; i < m_highlightingRules.size(); ++i) {
         const HighlightingRule &rule = m_highlightingRules[i];
         if (!rule.isBlockRule) continue;
@@ -277,31 +254,21 @@ void AlteSyntaxHighlighter::highlightBlock(const QString &text) {
         while (matchIterator.hasNext()) {
             QRegularExpressionMatch startMatch = matchIterator.next();
 
-            // Check if this match is already formatted by a higher-priority rule or a completed block
-            // This is a simplification; proper handling of overlapping rules is complex.
-            // For now, we assume if currentBlockState became 0, we can format.
-            // A more robust check would involve checking formats at startMatch.capturedStart().
             if (currentBlockState() != 0 && startMatch.capturedStart() == 0) {
-                 // This part of the line is already consumed by a continued block.
-                 // This check is imperfect. A better way is to manage startIndex.
                 continue;
             }
 
 
             QRegularExpressionMatch endMatch = rule.endPattern.match(text, startMatch.capturedEnd());
             int length;
-            if (endMatch.capturedStart() == -1) { // Block starts here and does not end on this line
-                setCurrentBlockState(i + 1); // Store (rule index + 1) as block state
+            if (endMatch.capturedStart() == -1) {
+                setCurrentBlockState(i + 1);
                 length = text.length() - startMatch.capturedStart();
                 setFormat(startMatch.capturedStart(), length, rule.format);
-                return; // Rest of the line is this block
-            } else { // Block starts and ends on this line
+                return;
+            } else {
                 length = endMatch.capturedEnd() - startMatch.capturedStart();
                 setFormat(startMatch.capturedStart(), length, rule.format);
-                // Continue searching for more blocks after this one on the same line
-                // This basic loop doesn't handle that well. It will find subsequent blocks
-                // but might re-apply over earlier block matches if not careful.
-                // For now, let's assume one block type takes precedence or they don't overlap this way.
             }
         }
     }
