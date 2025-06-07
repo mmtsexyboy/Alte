@@ -58,7 +58,13 @@ MainWindow::MainWindow(AlteThemeManager* p_themeManager, QWidget *parent)
 
 // Destructor Implementation
 MainWindow::~MainWindow() {
-    delete highlighter; // Delete the highlighter instance
+    // delete highlighter; // Removed: highlighter is a child of textEdit->document()
+    // highlighter is a child of textEdit->document() due to the
+    // QSyntaxHighlighter(QTextDocument *parent) constructor.
+    // Qt's parent-child mechanism will handle its deletion when the
+    // document (and subsequently textEdit via its own parentage to MainWindow) is destroyed.
+    // Explicitly deleting it here would likely cause a double free.
+
     // m_focusTimer is parented to this, will be deleted by Qt.
     // textEdit is parented to this, will be deleted by Qt.
     // All QAction members are parented to this, will be deleted by Qt.
