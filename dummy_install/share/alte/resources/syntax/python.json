@@ -1,0 +1,56 @@
+{
+    "language_name": "Python",
+    "file_extensions": [".py", ".pyw"],
+    "highlighting_rules": [
+        {
+            "type": "keywords",
+            "list": ["def", "class", "if", "else", "elif", "for", "while", "return", "import", "from", "True", "False", "None", "try", "except", "finally", "with", "as", "in", "is", "lambda", "nonlocal", "global", "pass", "yield", "assert", "del"],
+            "style_key": "keyword"
+        },
+        {
+            "type": "line_comment",
+            "start_delimiter": "#",
+            "style_key": "comment"
+        },
+        {
+            "type": "multi_line_string",
+            "name": "Triple Double-Quoted String",
+            "start_pattern": "\"\"\"",
+            "end_pattern": "\"\"\"",
+            "style_key": "string",
+            "state_id": 2
+        },
+        {
+            "type": "multi_line_string",
+            "name": "Triple Single-Quoted String",
+            "start_pattern": "'''",
+            "end_pattern": "'''",
+            "style_key": "string",
+            "state_id": 3
+        },
+        {
+            "type": "strings_double_quotes",
+            "start_delimiter": "\"",
+            "end_delimiter": "\"",
+            "style_key": "string"
+        },
+        {
+            "type": "strings_single_quotes",
+            "start_delimiter": "'",
+            "end_delimiter": "'",
+            "style_key": "string"
+        },
+        {
+            "type": "number",
+            "name": "Hexadecimal Number",
+            "pattern": "\\b0[xX][0-9a-fA-F]+\\b",
+            "style_key": "number_hex", "comment": "Assuming a specific style key for hex, else use 'number'"
+        },
+        {
+            "type": "number",
+            "name": "Decimal Number",
+            "pattern": "\\b[0-9]+(?:\\.[0-9]*)?(?:[eE][-+]?[0-9]+)?\\b|\\b\\.[0-9]+(?:[eE][-+]?[0-9]+)?\\b",
+            "style_key": "number"
+        }
+    ]
+}

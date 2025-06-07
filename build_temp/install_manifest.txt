@@ -1,6 +1,0 @@
-/usr/bin/Alte
-/usr/share/alte/resources/syntax/python.json
-/usr/share/alte/resources/icons/alte_icon.png
-/usr/share/alte/resources/themes/default_dark.json
-/usr/share/icons/hicolor/128x128/apps/alte_icon.png
-/usr/share/applications/alte.desktop

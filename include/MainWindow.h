@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include <QString> // For currentFilePath and m_originalTextEditStyleSheet
 #include <QCloseEvent> // For closeEvent method
+#include <QMenuBar> // For menuBar()
 
 // Forward declarations
 class QTextEdit;
@@ -12,9 +13,10 @@ class QAction;
 class QTimer;
 class QEvent; // For eventFilter method
 
+#include "AlteSyntaxHighlighter.h" // Full definition for member variable
 // Forward declare custom classes used as pointers
-class AlteSyntaxHighlighter;
-class AlteThemeManager;
+// class AlteSyntaxHighlighter; // Replaced with full include
+class AlteThemeManager; // Forward declaration
 
 class MainWindow : public QMainWindow {
     Q_OBJECT

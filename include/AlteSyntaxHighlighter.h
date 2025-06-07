@@ -11,12 +11,12 @@
 class AlteThemeManager; // Forward declaration
 class QTextDocument;
 
-class SyntaxHighlighter : public QSyntaxHighlighter
+class AlteSyntaxHighlighter : public QSyntaxHighlighter
 {
     Q_OBJECT
 
 public:
-    SyntaxHighlighter(QTextDocument *parent, AlteThemeManager *themeManager, const QString& languageName);
+    AlteSyntaxHighlighter(QTextDocument *parent, AlteThemeManager *themeManager, const QString& languageName);
     void setCurrentLanguage(const QString& languageName, AlteThemeManager *themeManager);
 
 protected:
