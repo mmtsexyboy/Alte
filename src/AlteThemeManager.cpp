@@ -184,87 +184,29 @@ QString AlteThemeManager::getStyleSheet(const QString& widgetName) const {
 }
 
 QString AlteThemeManager::generateGlobalStyleSheet() const {
-    fprintf(stderr, "[generateGlobalStyleSheet] Entered function (fprintf).\n");
-    fflush(stderr); // Ensure it's flushed
+    qDebug() << ">>> generateGlobalStyleSheet V3 executing <<<";
 
-    qDebug() << "[generateGlobalStyleSheet] Entered function (qDebug).";
-    qDebug() << "[generateGlobalStyleSheet] Number of entries in 'styles' map:" << styles.size();
+    QStringList globalStylesList;
+    // const QJsonObject styles = this->styles; // 'styles' is a member
+    // const QJsonObject colors = this->colors; // 'colors' is a member
 
-    QStringList globalStylesList; // Renamed to avoid confusion with the 'styles' member
     if (styles.isEmpty()) {
-        fprintf(stderr, "[generateGlobalStyleSheet] 'styles' map is empty (fprintf).\n");
-        fflush(stderr);
         qWarning() << "No styles found in theme JSON's 'styles' section to generate global stylesheet.";
     }
-    fprintf(stderr, "[generateGlobalStyleSheet] Starting generation of global stylesheet entries loop (fprintf).\n");
-    fflush(stderr);
-    qDebug() << "Starting generation of global stylesheet entries loop (qDebug)...";
 
     for (const QString& widgetName : styles.keys()) {
-        fprintf(stderr, "[generateGlobalStyleSheet] Processing widgetName: %s (fprintf).\n", widgetName.toUtf8().constData());
-        fflush(stderr);
-        qDebug().noquote() << "Processing widgetName:" << widgetName;
-
         QString originalStyleValue = styles.value(widgetName).toString();
-        fprintf(stderr, "[generateGlobalStyleSheet]   Original styleValue: %s (fprintf).\n", originalStyleValue.toUtf8().constData());
-        fflush(stderr);
-        qDebug().noquote() << "  Original styleValue:" << originalStyleValue;
-
         QString processedStyleValue = originalStyleValue;
         for (auto it = colors.constBegin(); it != colors.constEnd(); ++it) {
             QString placeholderToReplace = QString("%%%1%%").arg(it.key());
             QString colorValue = it.value().toString();
-
-            fprintf(stderr, "[generateGlobalStyleSheet]     Looping for color key: '%s', placeholder: '%s', value: '%s' (fprintf).\n",
-                    it.key().toUtf8().constData(),
-                    placeholderToReplace.toUtf8().constData(),
-                    colorValue.toUtf8().constData());
-            fflush(stderr);
-            qDebug().noquote() << "    Looping for color key:" << it.key()
-                               << ", placeholder:" << placeholderToReplace
-                               << ", value:" << colorValue;
-
-            fprintf(stderr, "[generateGlobalStyleSheet]     processedStyleValue BEFORE replace for '%s': '%s' (fprintf).\n",
-                    placeholderToReplace.toUtf8().constData(),
-                    processedStyleValue.toUtf8().constData());
-            fflush(stderr);
-            qDebug().noquote() << "    processedStyleValue BEFORE replace for" << placeholderToReplace << ":" << processedStyleValue;
-
-            // Perform the replacement
             processedStyleValue.replace(placeholderToReplace, colorValue);
-
-            fprintf(stderr, "[generateGlobalStyleSheet]     processedStyleValue AFTER replace for '%s': '%s' (fprintf).\n",
-                    placeholderToReplace.toUtf8().constData(),
-                    processedStyleValue.toUtf8().constData());
-            fflush(stderr);
-            qDebug().noquote() << "    processedStyleValue AFTER replace for" << placeholderToReplace << ":" << processedStyleValue;
         }
-        fprintf(stderr, "[generateGlobalStyleSheet]   Processed styleValue: %s (fprintf).\n", processedStyleValue.toUtf8().constData());
-        fflush(stderr);
-        qDebug().noquote() << "  Processed styleValue:" << processedStyleValue;
-
         QString styleEntry = QString("%1 { %2 }").arg(widgetName, processedStyleValue);
-        fprintf(stderr, "[generateGlobalStyleSheet]   Generated styleEntry: %s (fprintf).\n", styleEntry.toUtf8().constData());
-        fflush(stderr);
-        qDebug().noquote() << "  Generated styleEntry:" << styleEntry;
         globalStylesList.append(styleEntry);
     }
 
-    fprintf(stderr, "[generateGlobalStyleSheet] Joining QStringList (fprintf).\n");
-    fflush(stderr);
     QString finalStyleSheet = globalStylesList.join("\n");
-
-    fprintf(stderr, "[generateGlobalStyleSheet] Generated global stylesheet with color replacement. Length: %lld (fprintf).\n", static_cast<long long>(finalStyleSheet.length()));
-    fflush(stderr);
-    qDebug() << "Generated global stylesheet with color replacement. Length:" << finalStyleSheet.length();
-
-    if (finalStyleSheet.length() < 3000) { // Also print final stylesheet if short
-        fprintf(stderr, "[generateGlobalStyleSheet] Final Global Stylesheet Content (fprintf):\n%s\n", finalStyleSheet.toUtf8().constData());
-        fflush(stderr);
-        qDebug().noquote() << "Final Global Stylesheet Content (qDebug):\n" << finalStyleSheet;
-    }
-    fprintf(stderr, "[generateGlobalStyleSheet] Returning final stylesheet (fprintf).\n");
-    fflush(stderr);
     return finalStyleSheet;
 }
 

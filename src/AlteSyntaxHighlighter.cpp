@@ -71,6 +71,7 @@ QTextCharFormat SyntaxHighlighter::createFormatFromRule(const QJsonObject& ruleD
 }
 
 void SyntaxHighlighter::loadRulesForLanguage(const QString& languageName, AlteThemeManager *themeManager) {
+    qDebug() << ">>> loadRulesForLanguage V3 executing <<<";
     qDebug() << "SyntaxHighlighter::loadRulesForLanguage - Loading rules for language:" << languageName;
     m_highlightingRules.clear();
     QJsonObject langRules = themeManager->getSyntaxRulesForLanguage(languageName);
