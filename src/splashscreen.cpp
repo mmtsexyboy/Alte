@@ -2,6 +2,7 @@
 #include <QApplication> // For QScreen, if needed, though not directly here now
 #include <QScreen>      // For screen geometry
 #include <QAnimationGroup>
+#include <QPainterPath>
 #include <QFontMetrics>
 
 #include <QParallelAnimationGroup> // Ensure this is included
@@ -77,6 +78,13 @@ void SplashScreen::paintEvent(QPaintEvent *event) {
         if (m_centralColumnHeight > 0 && m_centralColumnOpacity > 0) {
             painter.setOpacity(m_centralColumnOpacity);
             QColor neonColor(0, 199, 164); // #00c7a4
+
+            // Use m_centralColumnHeight as a progress factor (0.0 to height()/2.0)
+            // Normalize this progress: currentHeight / (splashHeight/2.0)
+            // The animation sets m_centralColumnHeight's EndValue to height() / 2.0
+            float fullProgress = m_centralColumnHeight / (height() / 2.0f);
+            fullProgress = qBound(0.0f, fullProgress, 1.0f); // Clamp between 0 and 1
+
             // Animated stroke width: Example: 2 to 6
             int currentStrokeWidth = 2 + static_cast<int>(fullProgress * 4);
             painter.setPen(QPen(neonColor, currentStrokeWidth, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
@@ -98,12 +106,6 @@ void SplashScreen::paintEvent(QPaintEvent *event) {
                            bottomY - charHeight * crossbarHeightRatio);
             QPointF p_cr(centerX + charWidth / 2.0f * (1.0f - crossbarHeightRatio),
                            bottomY - charHeight * crossbarHeightRatio);
-
-            // Use m_centralColumnHeight as a progress factor (0.0 to height()/2.0)
-            // Normalize this progress: currentHeight / (splashHeight/2.0)
-            // The animation sets m_centralColumnHeight's EndValue to height() / 2.0
-            float fullProgress = m_centralColumnHeight / (height() / 2.0f);
-            fullProgress = qBound(0.0f, fullProgress, 1.0f); // Clamp between 0 and 1
 
             // Draw parts of 'A' based on fullProgress
             // Part 1: Left leg (0.0 to 0.4 progress) - Curved
