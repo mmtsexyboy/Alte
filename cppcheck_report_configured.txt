@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<results version="2">
+    <cppcheck version="2.13.0"/>
+    <errors>
+        <error id="identicalConditionAfterEarlyExit" severity="warning" msg="Identical condition &apos;char_count==0&apos;, second condition is always false" verbose="Identical condition &apos;char_count==0&apos;, second condition is always false" cwe="398" file0="src/AlteRope.cpp">
+            <location file="src/AlteRope.cpp" line="246" column="57" info="Testing identical condition &apos;char_count==0&apos;"/>
+            <location file="src/AlteRope.cpp" line="242" column="20" info="If condition &apos;char_count==0&apos; is true, the function will return/exit"/>
+        </error>
+        <error id="identicalInnerCondition" severity="warning" msg="Identical inner &apos;if&apos; condition is always true." verbose="Identical inner &apos;if&apos; condition is always true (outer condition is &apos;char_index+char_count&gt;current_len&apos; and inner condition is &apos;char_index+char_count&gt;current_len&apos;)." cwe="398" file0="src/AlteRope.cpp">
+            <location file="src/AlteRope.cpp" line="247" column="47" info="identical inner condition: char_index+char_count&gt;current_len"/>
+            <location file="src/AlteRope.cpp" line="245" column="37" info="outer condition: char_index+char_count&gt;current_len"/>
+        </error>
+        <error id="knownConditionTrueFalse" severity="style" msg="Condition &apos;!(char_index+char_count==current_len&amp;&amp;char_count&gt;0)&apos; is always true" verbose="Condition &apos;!(char_index+char_count==current_len&amp;&amp;char_count&gt;0)&apos; is always true" cwe="571" file0="src/AlteRope.cpp">
+            <location file="src/AlteRope.cpp" line="245" column="54" info="Condition &apos;!(char_index+char_count==current_len&amp;&amp;char_count&gt;0)&apos; is always true"/>
+            <location file="src/AlteRope.cpp" line="245" column="37" info="Assuming that condition &apos;char_index+char_count&gt;current_len&apos; is not redundant"/>
+        </error>
+        <error id="knownConditionTrueFalse" severity="style" msg="Condition &apos;char_index+char_count==current_len&apos; is always false" verbose="Condition &apos;char_index+char_count==current_len&apos; is always false" cwe="570" file0="src/AlteRope.cpp">
+            <location file="src/AlteRope.cpp" line="245" column="80" info="Condition &apos;char_index+char_count==current_len&apos; is always false"/>
+            <location file="src/AlteRope.cpp" line="245" column="37" info="Assuming that condition &apos;char_index+char_count&gt;current_len&apos; is not redundant"/>
+        </error>
+        <error id="knownConditionTrueFalse" severity="style" msg="Condition &apos;char_count&gt;0&apos; is always true" verbose="Condition &apos;char_count&gt;0&apos; is always true" cwe="571" file0="src/AlteRope.cpp">
+            <location file="src/AlteRope.cpp" line="251" column="53" info="Condition &apos;char_count&gt;0&apos; is always true"/>
+            <location file="src/AlteRope.cpp" line="245" column="51" info="Assuming condition is false"/>
+            <location file="src/AlteRope.cpp" line="242" column="20" info="Assuming that condition &apos;char_count==0&apos; is not redundant"/>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Class &apos;MainWindow&apos; has a constructor with 1 argument that is not explicit." verbose="Class &apos;MainWindow&apos; has a constructor with 1 argument that is not explicit. Such, so called &quot;Converting constructors&quot;, should in general be explicit for type safety reasons as that prevents unintended implicit conversions." cwe="398" file0="src/MainWindow.cpp">
+            <location file="include/MainWindow.h" line="21" column="5"/>
+            <symbol>MainWindow</symbol>
+        </error>
+        <error id="checkersReport" severity="information" msg="Active checkers: 161/592 (use --checkers-report=&lt;filename&gt; to see details)" verbose="Active checkers: 161/592 (use --checkers-report=&lt;filename&gt; to see details)"/>
+    </errors>
+</results>

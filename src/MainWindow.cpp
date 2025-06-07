@@ -16,10 +16,15 @@
 #include <QDebug>       // For qWarning, qDebug
 #include <QTimer>       // For m_focusTimer
 #include <QFont>        // For QFont in constructor
+#include <QMimeData>    // For QDragEnterEvent, QDropEvent
+#include <QUrl>         // For QDragEnterEvent, QDropEvent
+#include <QDragEnterEvent> // For dragEnterEvent parameter
+#include <QDropEvent>   // For dropEvent parameter
+#include <QScrollBar>   // For textEdit->verticalScrollBar()
 
 // Constructor Implementation
 MainWindow::MainWindow(AlteThemeManager* p_themeManager, QWidget *parent)
-    : QMainWindow(parent), m_themeManager(p_themeManager), m_focusTimer(nullptr) {
+    : QMainWindow(parent), m_themeManager(p_themeManager), m_focusTimer(nullptr), typewriterModeEnabled(false) {
     setWindowTitle("Alte Editor"); // Will be updated by newFile()
     setWindowIcon(QIcon(":/icons/alte_icon.png")); // Set window icon from QRC
 
@@ -48,7 +53,9 @@ MainWindow::MainWindow(AlteThemeManager* p_themeManager, QWidget *parent)
     m_focusTimer = new QTimer(this);
     m_focusTimer->setSingleShot(true);
     connect(m_focusTimer, &QTimer::timeout, this, &MainWindow::resetTextEditBorderSlot);
+    connect(textEdit, &QTextEdit::cursorPositionChanged, this, &MainWindow::updateTypewriterCenter);
 
+    setAcceptDrops(true); // Enable Drag & Drop
     createActions();
     createMenus();
 
@@ -263,6 +270,11 @@ void MainWindow::createActions() {
     selectAllAction = new QAction(tr("Select &All"), this);
     selectAllAction->setShortcuts(QKeySequence::SelectAll);
     connect(selectAllAction, &QAction::triggered, textEdit, &QTextEdit::selectAll);
+
+    typewriterModeAction = new QAction(tr("Typewriter Mode"), this);
+    typewriterModeAction->setCheckable(true);
+    typewriterModeAction->setShortcut(QKeySequence("Ctrl+Shift+T"));
+    connect(typewriterModeAction, &QAction::triggered, this, &MainWindow::toggleTypewriterMode);
 }
 
 // createMenus Implementation
@@ -297,6 +309,8 @@ void MainWindow::createMenus() {
     // connect(zoomOutAction, &QAction::triggered, this, &MainWindow::zoomOut); // Placeholder
     zoomOutAction->setEnabled(false);
     viewMenu->addAction(zoomOutAction);
+    viewMenu->addSeparator(); // Optional: add a separator before the new action
+    viewMenu->addAction(typewriterModeAction);
 }
 
 // resolveTextEditStyleSheet Implementation
@@ -327,4 +341,87 @@ void MainWindow::applyTextEditFocusGlow() {
     }
     QString glowStyle = resolveTextEditStyleSheet(true);
     textEdit->setStyleSheet(glowStyle);
+}
+
+void MainWindow::toggleTypewriterMode() {
+    typewriterModeEnabled = !typewriterModeEnabled;
+    typewriterModeAction->setChecked(typewriterModeEnabled);
+    if (typewriterModeEnabled) {
+        updateTypewriterCenter(); // Initial centering when enabled
+    }
+    // Optional: May need to trigger a repaint or update of the textEdit if styling changes
+}
+
+void MainWindow::updateTypewriterCenter() {
+    if (typewriterModeEnabled) {
+        if (!textEdit) return; // Ensure textEdit is valid
+        QTextCursor cursor = textEdit->textCursor();
+        QRect cursorRect = textEdit->cursorRect(cursor);
+
+        QWidget *viewport = textEdit->viewport();
+        if (!viewport) return;
+        int viewportHeight = viewport->height();
+
+        // The y-coordinate of the cursor in the document.
+        int cursorY = textEdit->cursorRect().top();
+        // The current value of the vertical scrollbar.
+        // int scrollY = textEdit->verticalScrollBar()->value(); // Not directly needed for setValue
+
+        // Calculate the desired new value for the scrollbar to center the cursor line.
+        // We want the line where the cursor is to appear at the vertical center of the viewport.
+        // cursorY is the top of the cursor's bounding rectangle relative to the textEdit's viewport.
+        // To center this line, its position (cursorY) when scrolled should be viewportHeight/2 - cursorRect.height()/2.
+        // The scrollbar's value represents the top of the visible part of the document.
+        // So, if the document content at `newScrollY` is at the top of the viewport,
+        // and the cursor is at `cursorY` relative to the viewport,
+        // the cursor's position in the document is `newScrollY + cursorY`.
+        // We want `newScrollY + cursorY` to be `newScrollY + viewportHeight/2 - cursorRect.height()/2`
+        // This means `cursorY` should become `viewportHeight/2 - cursorRect.height()/2`.
+        // The current scrollbar value is `textEdit->verticalScrollBar()->value()`.
+        // The position of `cursorY` in the document is `textEdit->verticalScrollBar()->value() + cursorY`.
+        // We want this document position to be centered.
+        // So, `textEdit->verticalScrollBar()->value() + cursorY - (viewportHeight / 2) + (cursorRect.height() / 2)`
+        // should be the new scrollbar value.
+
+        int newScrollY = textEdit->verticalScrollBar()->value() + cursorY - (viewportHeight / 2) + (cursorRect.height() / 2);
+        textEdit->verticalScrollBar()->setValue(newScrollY);
+    }
+}
+
+void MainWindow::dragEnterEvent(QDragEnterEvent *event) {
+    if (event->mimeData()->hasUrls()) {
+        event->acceptProposedAction();
+    }
+}
+
+void MainWindow::dropEvent(QDropEvent *event) {
+    const QMimeData *mimeData = event->mimeData();
+    if (mimeData->hasUrls()) {
+        if (!maybeSave()) { // Use the existing maybeSave method
+             event->ignore();
+             return;
+        }
+        const QList<QUrl> urls = mimeData->urls();
+        if (!urls.isEmpty()) {
+            const QUrl url = urls.first(); // Process only the first file for simplicity
+            if (url.isLocalFile()) {
+                const QString filePath = url.toLocalFile();
+                QFile file(filePath);
+                if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+                    QTextStream in(&file);
+                    QString fileContent = in.readAll();
+                    textEdit->setPlainText(fileContent);
+                    currentFilePath = filePath; // Update currentFilePath
+                    // Update window title using the logic similar to openFile()
+                    setWindowTitle("Alte Editor - " + QFileInfo(filePath).fileName());
+                    textEdit->document()->setModified(false);
+                    file.close();
+                    event->acceptProposedAction();
+                } else {
+                     QMessageBox::warning(this, tr("Open File Error"), // Use tr() for translatable strings
+                                          tr("Could not open dropped file: %1").arg(file.errorString()));
+                }
+            }
+        }
+    }
 }

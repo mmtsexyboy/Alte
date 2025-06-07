@@ -226,38 +226,60 @@ RopeNode* AlteRope::insert_recursive(RopeNode* node, size_t& char_index_ref, con
             char_index_ref -= node->weight;
              throw std::logic_error("Insert_recursive: char_index out of bounds for leaf node processing.");
         }
-    } else {
+    } else { // Internal node
         if (char_index_ref <= node->weight) {
             node->left = insert_recursive(node->left, char_index_ref, text);
+            // Update weight only if left child was affected
+            node->weight = calculate_length(node->left);
         } else {
             char_index_ref -= node->weight;
             node->right = insert_recursive(node->right, char_index_ref, text);
+            // No change to node->weight (length of left subtree) if right subtree is modified
         }
-        node->weight = calculate_length(node->left);
     }
     return node;
 }
 
 void AlteRope::remove(size_t char_index, size_t char_count) {
-    if (char_count == 0) return;
-    size_t current_len = length();
-    if (char_index >= current_len || char_index + char_count > current_len) {
-        if (char_index + char_count > current_len && !(char_index + char_count == current_len && char_count > 0) ) {
-             if(char_index == current_len && char_count == 0) { }
-             else if (char_index + char_count > current_len) {
-                throw std::out_of_range("Deletion range out of bounds.");
-             }
-        }
-        if (char_index >= current_len && char_count > 0) {
-            throw std::out_of_range("Deletion start index out of bounds.");
-        }
+    if (char_count == 0) {
+        return; // Nothing to remove
     }
 
+    size_t current_len = length();
 
-    if (root == nullptr) return;
+    // Case 1: Start index is beyond or at the end of the rope.
+    if (char_index >= current_len) {
+        // If char_index == current_len, it means trying to delete AT the end (e.g. index 5 for length 5)
+        // which is only valid if char_count is also 0, but that's handled above.
+        // So, if char_count > 0, and char_index == current_len, it's an error.
+        // If char_index > current_len, it's definitely an error.
+        throw std::out_of_range("Deletion start index is out of bounds.");
+    }
 
-    size_t mutable_char_count = char_count;
-    root = delete_recursive(root, char_index, mutable_char_count);
+    // Case 2: Deletion range extends beyond the end of the rope.
+    // (char_index < current_len is established from above)
+    if (char_index + char_count > current_len) {
+        throw std::out_of_range("Deletion range (index + count) exceeds rope length.");
+    }
+
+    // If we reach here, the range is valid (char_index < current_len and char_index + char_count <= current_len).
+
+    // The original code had a check for root == nullptr here.
+    // If current_len > 0 (implied if char_index < current_len for a valid range),
+    // then root cannot be nullptr.
+    // If current_len == 0, then char_index >= current_len would have already thrown.
+    // So, an explicit check for root == nullptr might be redundant if length() is accurate
+    // and the range checks are correct. However, keeping it as a safeguard is fine if desired.
+    // For now, let's assume length() is correct and the above checks are sufficient before delete_recursive.
+    // The original code had: if (root == nullptr) return;
+    // This implies that if the rope is empty (current_len == 0), and somehow the previous checks passed
+    // (which they shouldn't if char_count > 0), then we just return.
+    // Given the checks, if current_len is 0, an exception is thrown if char_index >= 0 and char_count > 0.
+    // If char_index is 0, current_len is 0, char_count is 0, we return at the top.
+    // So the `if (root == nullptr) return;` seems truly redundant now.
+
+    size_t count_to_delete = char_count; // Use a different variable name for clarity
+    root = delete_recursive(root, char_index, count_to_delete);
 }
 
 RopeNode* AlteRope::delete_recursive(RopeNode* node, size_t char_idx_in_subtree, size_t& count_ref) {
@@ -289,11 +311,14 @@ RopeNode* AlteRope::delete_recursive(RopeNode* node, size_t char_idx_in_subtree,
 
     if (char_idx_in_subtree < left_len) {
         node->left = delete_recursive(node->left, char_idx_in_subtree, count_ref);
-        if (count_ref > 0) {
+        // After left child is processed, its length might have changed. So, node's weight needs update.
+        node->weight = calculate_length(node->left);
+        if (count_ref > 0) { // If deletion continues to right child
             node->right = delete_recursive(node->right, 0, count_ref);
         }
-    } else {
+    } else { // Deletion is only in the right subtree
         node->right = delete_recursive(node->right, char_idx_in_subtree - left_len, count_ref);
+        // node->weight (length of left subtree) does not change
     }
 
     if (node->left == nullptr && node->right == nullptr) {
