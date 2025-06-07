@@ -51,6 +51,7 @@ file(GLOB SOURCES "src/*.cpp")
 # If splashscreen is a QWidget, it needs MOC.
 # AlteThemeManager might need MOC if it's a QObject.
 set(MOC_HEADERS
+    include/MainWindow.h
     include/AlteSyntaxHighlighter.h
     include/AlteThemeManager.h
     # include/AlteRope.h # Assuming it's not a QObject
