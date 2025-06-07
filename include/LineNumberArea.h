@@ -2,13 +2,15 @@
 #define LINENUMBERAREA_H
 
 #include <QWidget>
-#include <QTextEdit> // Or forward-declare if only pointers/references are used in header
+#include <QTextEdit>
+#include <QPaintEvent>
 
-class LineNumberArea : public QWidget {
+class LineNumberArea : public QWidget
+{
     Q_OBJECT
-
 public:
-    LineNumberArea(QTextEdit *editor);
+    explicit LineNumberArea(QTextEdit *editor);
+    ~LineNumberArea() override;
 
     QSize sizeHint() const override;
 
@@ -18,10 +20,10 @@ protected:
 private slots:
     void updateLineNumberAreaWidth(int newBlockCount);
     void updateLineNumberArea(const QRect &rect, int dy);
-    void updateLineNumberAreaOnScroll(); // Custom slot for scrollbar valueChanged
+    void updateLineNumberAreaOnScroll();
 
 private:
-    int lineNumberAreaWidth(); // Helper function to calculate width
+    int lineNumberAreaWidth();
     QTextEdit *codeEditor;
 };
 
