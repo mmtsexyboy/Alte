@@ -9,8 +9,8 @@
             "list": [
                 "alignas", "alignof", "and", "and_eq", "asm", "auto",
                 "bitand", "bitor", "bool", "break", "case", "catch", "char",
-                "char8_t", "char16_t", "char32_t", "class", "compl", "concept",
-                "const", "consteval", "constexpr", "constinit", "const_cast",
+                "char16_t", "char32_t", "char8_t", "class", "compl", "concept",
+                "const", "const_cast", "consteval", "constexpr", "constinit",
                 "continue", "co_await", "co_return", "co_yield", "decltype",
                 "default", "delete", "do", "double", "dynamic_cast", "else",
                 "enum", "explicit", "export", "extern", "false", "final", "float",
@@ -25,6 +25,12 @@
                 "void", "volatile", "wchar_t", "while", "xor", "xor_eq"
             ],
             "style_key": "keyword"
+        },
+        {
+            "name": "Attributes",
+            "type": "pattern",
+            "pattern": "\\b\\[\\[[a-zA-Z0-9_:,\s]*\\]\\]",
+            "style_key": "annotation"
         },
         {
             "name": "Preprocessor Directives",
@@ -97,12 +103,14 @@
             "name": "Standard Library Types/Common Macros (examples)",
             "type": "keywords",
             "list": [
-                "std", "cout", "cin", "endl", "string", "vector", "map", "list", "array",
-                "deque", "set", "unordered_map", "unordered_set", "shared_ptr", "unique_ptr",
-                "weak_ptr", "thread", "mutex", "atomic", "chrono", "nullptr_t", "size_t",
-                "int8_t", "int16_t", "int32_t", "int64_t", "uint8_t", "uint16_t",
-                "uint32_t", "uint64_t", "iostream", "fstream", "sstream", "vector", "algorithm",
-                "iterator", "memory", "utility", "exception", "stdexcept", "regex", "filesystem"
+                "algorithm", "array", "atomic", "char16_t", "char32_t", "char8_t",
+                "chrono", "cin", "cout", "deque", "endl", "exception", "filesystem",
+                "fstream", "int16_t", "int32_t", "int64_t", "int8_t", "iostream",
+                "iterator", "list", "map", "memory", "mutex", "nullptr_t", "regex",
+                "set", "shared_ptr", "size_t", "sstream", "std", "stdexcept",
+                "string", "thread", "uint16_t", "uint32_t", "uint64_t", "uint8_t",
+                "unique_ptr", "unordered_map", "unordered_set", "utility", "vector",
+                "weak_ptr"
             ],
             "style_key": "type_name"
         }

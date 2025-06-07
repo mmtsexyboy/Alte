@@ -9,15 +9,14 @@
             "list": [
                 "abstract", "assert", "boolean", "break", "byte", "case", "catch",
                 "char", "class", "const", "continue", "default", "do", "double",
-                "else", "enum", "exports", "extends", "final", "finally", "float",
-                "for", "goto", "if", "implements", "import", "instanceof", "int",
-                "interface", "long", "module", "native", "new", "non-sealed", "opens",
-                "package", "permits", "private", "protected", "public", "provides",
-                "record", "requires", "return", "sealed", "short", "static",
-                "strictfp", "super", "switch", "synchronized", "this", "throw",
-                "throws", "to", "transient", "transitive", "try", "uses", "var",
-                "void", "volatile", "while", "with", "yield",
-                "true", "false", "null"
+                "else", "enum", "exports", "extends", "false", "final", "finally",
+                "float", "for", "goto", "if", "implements", "import", "instanceof",
+                "int", "interface", "long", "module", "native", "new", "non-sealed",
+                "null", "opens", "package", "permits", "private", "protected",
+                "public", "provides", "record", "requires", "return", "sealed",
+                "short", "static", "strictfp", "super", "switch", "synchronized",
+                "this", "throw", "throws", "to", "transient", "transitive", "true",
+                "try", "uses", "var", "void", "volatile", "while", "with", "yield"
             ],
             "style_key": "keyword"
         },
@@ -93,10 +92,10 @@
             "name": "Common Built-in Types/Classes (examples)",
             "type": "keywords",
             "list": [
-                "String", "Integer", "Double", "Boolean", "Object", "System",
-                "List", "ArrayList", "LinkedList", "Map", "HashMap", "TreeMap",
-                "Set", "HashSet", "TreeSet", "Exception", "RuntimeException",
-                "Byte", "Character", "Short", "Long", "Float", "Void", "Math"
+                "ArrayList", "Boolean", "Byte", "Character", "Double", "Exception",
+                "Float", "HashMap", "HashSet", "Integer", "LinkedList", "List",
+                "Long", "Map", "Math", "Object", "RuntimeException", "Set", "Short",
+                "String", "System", "TreeMap", "TreeSet", "Void"
             ],
             "style_key": "type_name"
         }

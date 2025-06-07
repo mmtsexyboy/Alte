@@ -27,6 +27,20 @@
             "style_key": "cdata_section"
         },
         {
+            "name": "JavaScript Content",
+            "type": "multi_line_string",
+            "start_pattern": "<script[^>]*>",
+            "end_pattern": "</script\\s*>",
+            "style_key": "script_content"
+        },
+        {
+            "name": "CSS Content",
+            "type": "multi_line_string",
+            "start_pattern": "<style[^>]*>",
+            "end_pattern": "</style\\s*>",
+            "style_key": "style_content"
+        },
+        {
             "name": "Processing Instruction",
             "type": "pattern",
             "pattern": "<\\?[\\w\\s=\"'.-]*?\\?>",
@@ -48,6 +62,12 @@
             "name": "Attribute Value (Single Quoted)",
             "type": "pattern",
             "pattern": "'(?:[^'\\\\]|\\\\.)*'",
+            "style_key": "attribute_value"
+        },
+        {
+            "name": "Attribute Value (Unquoted)",
+            "type": "pattern",
+            "pattern": "=\\s*([^\\s\"'=<>`]+)(?=[\\s>/])",
             "style_key": "attribute_value"
         },
         {
