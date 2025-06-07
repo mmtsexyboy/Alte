@@ -10,6 +10,7 @@
 #include <QApplication>
 #include <QFont>
 #include <QPalette>
+#include <QMap> // Added for getAvailableThemes
 
 class AlteThemeManager {
 public:
@@ -48,6 +49,8 @@ public:
     QJsonObject getSyntaxRulesForLanguage(const QString& languageName) const;
 
     int getStylesObjectSizeForDebug() const;
+
+    QMap<QString, QString> getAvailableThemes(const QString& directoryPath = "resources/themes/") const;
 };
 
 #endif // ALTETHEMEMANAGER_H

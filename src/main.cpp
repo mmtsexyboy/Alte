@@ -1,4 +1,5 @@
 #include <QApplication>
+#include <QSurfaceFormat> // Added for GPU rendering promotion
 // <QMainWindow> // Moved to MainWindow.h
 // <QTextEdit> // Moved to MainWindow.h/cpp
 // <QMenuBar> // Implicitly used by menuBar(), handled by QMainWindow
@@ -40,6 +41,24 @@
 // #include "main.moc" // Should be handled by build system for MainWindow. Q_OBJECT is not in main.cpp anymore.
 
 int main(int argc, char *argv[]) {
+    // Attempt to set a default surface format to promote hardware acceleration
+    QSurfaceFormat fmt;
+    fmt.setRenderableType(QSurfaceFormat::OpenGL); // Specify OpenGL
+    fmt.setProfile(QSurfaceFormat::CoreProfile);   // Request Core Profile
+    fmt.setVersion(3, 3); // Request OpenGL 3.3 (widely compatible)
+    // You could also request stencil buffer, depth buffer, samples for MSAA, etc. if needed
+    // fmt.setDepthBufferSize(24);
+    // fmt.setStencilBufferSize(8);
+    // fmt.setSamples(4); // For 4x MSAA
+    QSurfaceFormat::setDefaultFormat(fmt);
+
+    // Additionally, you can set attributes like AA_UseDesktopOpenGL
+    // It's often good practice to set these before the QApplication is instantiated.
+    QApplication::setAttribute(Qt::AA_UseDesktopOpenGL);
+    // For high-DPI displays, if not already handled elsewhere:
+    // QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+    // QApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
+
     QApplication app(argc, argv);
 
     // Log current working directory and application path
