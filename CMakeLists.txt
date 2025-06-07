@@ -69,6 +69,19 @@ enable_testing()
 # --------------------------------------------------------------------------
 # CPack configuration for DEB package
 # --------------------------------------------------------------------------
+
+# Copy resources directory to the build directory so the executable can find it
+set(RESOURCES_DIR ${CMAKE_CURRENT_SOURCE_DIR}/resources)
+set(DESTINATION_DIR ${CMAKE_CURRENT_BINARY_DIR}/resources)
+
+add_custom_command(
+    TARGET Alte POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+    ${RESOURCES_DIR}
+    ${DESTINATION_DIR}
+    COMMENT "Copying resources to build directory for local execution"
+)
+
 install(TARGETS Alte DESTINATION bin)
 
 # Install resource files (syntax definitions and themes)

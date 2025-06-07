@@ -4,9 +4,17 @@ Alte_autogen/timestamp: \
 	/app/build_temp/CMakeFiles/3.28.3/CMakeCXXCompiler.cmake \
 	/app/build_temp/CMakeFiles/3.28.3/CMakeSystem.cmake \
 	/app/include/AlteSyntaxHighlighter.h \
+	/app/include/AlteThemeManager.h \
+	/app/include/splashscreen.h \
+	/app/resources/Alte.qrc \
+	/app/src/AlteRope.cpp \
 	/app/src/AlteSyntaxHighlighter.cpp \
 	/app/src/AlteTheme.cpp \
+	/app/src/AlteThemeManager.cpp \
+	/app/src/LineNumberArea.cpp \
+	/app/src/LineNumberArea.h \
 	/app/src/main.cpp \
+	/app/src/splashscreen.cpp \
 	/usr/include/asm-generic/errno-base.h \
 	/usr/include/asm-generic/errno.h \
 	/usr/include/assert.h \
@@ -120,6 +128,7 @@ Alte_autogen/timestamp: \
 	/usr/include/c++/13/concepts \
 	/usr/include/c++/13/cstddef \
 	/usr/include/c++/13/cstdint \
+	/usr/include/c++/13/cstdio \
 	/usr/include/c++/13/cstdlib \
 	/usr/include/c++/13/cwchar \
 	/usr/include/c++/13/cwctype \
@@ -252,24 +261,54 @@ Alte_autogen/timestamp: \
 	/usr/include/x86_64-linux-gnu/c++/13/bits/os_defines.h \
 	/usr/include/x86_64-linux-gnu/gnu/stubs-64.h \
 	/usr/include/x86_64-linux-gnu/gnu/stubs.h \
+	/usr/include/x86_64-linux-gnu/qt5/QtCore/QCoreApplication \
+	/usr/include/x86_64-linux-gnu/qt5/QtCore/QDebug \
+	/usr/include/x86_64-linux-gnu/qt5/QtCore/QDir \
+	/usr/include/x86_64-linux-gnu/qt5/QtCore/QEvent \
+	/usr/include/x86_64-linux-gnu/qt5/QtCore/QFile \
+	/usr/include/x86_64-linux-gnu/qt5/QtCore/QFileInfo \
+	/usr/include/x86_64-linux-gnu/qt5/QtCore/QJsonDocument \
+	/usr/include/x86_64-linux-gnu/qt5/QtCore/QJsonObject \
+	/usr/include/x86_64-linux-gnu/qt5/QtCore/QList \
+	/usr/include/x86_64-linux-gnu/qt5/QtCore/QLocale \
+	/usr/include/x86_64-linux-gnu/qt5/QtCore/QObject \
+	/usr/include/x86_64-linux-gnu/qt5/QtCore/QPropertyAnimation \
+	/usr/include/x86_64-linux-gnu/qt5/QtCore/QRect \
 	/usr/include/x86_64-linux-gnu/qt5/QtCore/QRegularExpression \
+	/usr/include/x86_64-linux-gnu/qt5/QtCore/QSize \
+	/usr/include/x86_64-linux-gnu/qt5/QtCore/QSizeF \
+	/usr/include/x86_64-linux-gnu/qt5/QtCore/QString \
+	/usr/include/x86_64-linux-gnu/qt5/QtCore/QTextStream \
+	/usr/include/x86_64-linux-gnu/qt5/QtCore/QTimer \
 	/usr/include/x86_64-linux-gnu/qt5/QtCore/QVector \
+	/usr/include/x86_64-linux-gnu/qt5/QtCore/qabstractanimation.h \
 	/usr/include/x86_64-linux-gnu/qt5/QtCore/qalgorithms.h \
 	/usr/include/x86_64-linux-gnu/qt5/QtCore/qarraydata.h \
 	/usr/include/x86_64-linux-gnu/qt5/QtCore/qatomic.h \
 	/usr/include/x86_64-linux-gnu/qt5/QtCore/qatomic_cxx11.h \
 	/usr/include/x86_64-linux-gnu/qt5/QtCore/qbasicatomic.h \
+	/usr/include/x86_64-linux-gnu/qt5/QtCore/qbasictimer.h \
 	/usr/include/x86_64-linux-gnu/qt5/QtCore/qbytearray.h \
 	/usr/include/x86_64-linux-gnu/qt5/QtCore/qbytearraylist.h \
+	/usr/include/x86_64-linux-gnu/qt5/QtCore/qcborcommon.h \
+	/usr/include/x86_64-linux-gnu/qt5/QtCore/qcborvalue.h \
 	/usr/include/x86_64-linux-gnu/qt5/QtCore/qchar.h \
 	/usr/include/x86_64-linux-gnu/qt5/QtCore/qcompilerdetection.h \
 	/usr/include/x86_64-linux-gnu/qt5/QtCore/qconfig.h \
 	/usr/include/x86_64-linux-gnu/qt5/QtCore/qcontainerfwd.h \
 	/usr/include/x86_64-linux-gnu/qt5/QtCore/qcontainertools_impl.h \
+	/usr/include/x86_64-linux-gnu/qt5/QtCore/qcontiguouscache.h \
+	/usr/include/x86_64-linux-gnu/qt5/QtCore/qcoreapplication.h \
 	/usr/include/x86_64-linux-gnu/qt5/QtCore/qcoreevent.h \
 	/usr/include/x86_64-linux-gnu/qt5/QtCore/qdatastream.h \
+	/usr/include/x86_64-linux-gnu/qt5/QtCore/qdatetime.h \
+	/usr/include/x86_64-linux-gnu/qt5/QtCore/qdebug.h \
+	/usr/include/x86_64-linux-gnu/qt5/QtCore/qdir.h \
+	/usr/include/x86_64-linux-gnu/qt5/QtCore/qeasingcurve.h \
+	/usr/include/x86_64-linux-gnu/qt5/QtCore/qeventloop.h \
 	/usr/include/x86_64-linux-gnu/qt5/QtCore/qfile.h \
 	/usr/include/x86_64-linux-gnu/qt5/QtCore/qfiledevice.h \
+	/usr/include/x86_64-linux-gnu/qt5/QtCore/qfileinfo.h \
 	/usr/include/x86_64-linux-gnu/qt5/QtCore/qflags.h \
 	/usr/include/x86_64-linux-gnu/qt5/QtCore/qgenericatomic.h \
 	/usr/include/x86_64-linux-gnu/qt5/QtCore/qglobal.h \
@@ -278,8 +317,12 @@ Alte_autogen/timestamp: \
 	/usr/include/x86_64-linux-gnu/qt5/QtCore/qhashfunctions.h \
 	/usr/include/x86_64-linux-gnu/qt5/QtCore/qiodevice.h \
 	/usr/include/x86_64-linux-gnu/qt5/QtCore/qiterator.h \
+	/usr/include/x86_64-linux-gnu/qt5/QtCore/qjsondocument.h \
+	/usr/include/x86_64-linux-gnu/qt5/QtCore/qjsonobject.h \
+	/usr/include/x86_64-linux-gnu/qt5/QtCore/qjsonvalue.h \
 	/usr/include/x86_64-linux-gnu/qt5/QtCore/qline.h \
 	/usr/include/x86_64-linux-gnu/qt5/QtCore/qlist.h \
+	/usr/include/x86_64-linux-gnu/qt5/QtCore/qlocale.h \
 	/usr/include/x86_64-linux-gnu/qt5/QtCore/qlogging.h \
 	/usr/include/x86_64-linux-gnu/qt5/QtCore/qmap.h \
 	/usr/include/x86_64-linux-gnu/qt5/QtCore/qmargins.h \
@@ -293,6 +336,7 @@ Alte_autogen/timestamp: \
 	/usr/include/x86_64-linux-gnu/qt5/QtCore/qpair.h \
 	/usr/include/x86_64-linux-gnu/qt5/QtCore/qpoint.h \
 	/usr/include/x86_64-linux-gnu/qt5/QtCore/qprocessordetection.h \
+	/usr/include/x86_64-linux-gnu/qt5/QtCore/qpropertyanimation.h \
 	/usr/include/x86_64-linux-gnu/qt5/QtCore/qrect.h \
 	/usr/include/x86_64-linux-gnu/qt5/QtCore/qrefcount.h \
 	/usr/include/x86_64-linux-gnu/qt5/QtCore/qregexp.h \
@@ -312,24 +356,44 @@ Alte_autogen/timestamp: \
 	/usr/include/x86_64-linux-gnu/qt5/QtCore/qsysinfo.h \
 	/usr/include/x86_64-linux-gnu/qt5/QtCore/qsystemdetection.h \
 	/usr/include/x86_64-linux-gnu/qt5/QtCore/qtcore-config.h \
+	/usr/include/x86_64-linux-gnu/qt5/QtCore/qtextstream.h \
+	/usr/include/x86_64-linux-gnu/qt5/QtCore/qtimer.h \
 	/usr/include/x86_64-linux-gnu/qt5/QtCore/qtypeinfo.h \
 	/usr/include/x86_64-linux-gnu/qt5/QtCore/qurl.h \
+	/usr/include/x86_64-linux-gnu/qt5/QtCore/quuid.h \
 	/usr/include/x86_64-linux-gnu/qt5/QtCore/qvariant.h \
+	/usr/include/x86_64-linux-gnu/qt5/QtCore/qvariantanimation.h \
 	/usr/include/x86_64-linux-gnu/qt5/QtCore/qvarlengtharray.h \
 	/usr/include/x86_64-linux-gnu/qt5/QtCore/qvector.h \
 	/usr/include/x86_64-linux-gnu/qt5/QtCore/qversiontagging.h \
+	/usr/include/x86_64-linux-gnu/qt5/QtGui/QCloseEvent \
+	/usr/include/x86_64-linux-gnu/qt5/QtGui/QColor \
+	/usr/include/x86_64-linux-gnu/qt5/QtGui/QFont \
+	/usr/include/x86_64-linux-gnu/qt5/QtGui/QIcon \
+	/usr/include/x86_64-linux-gnu/qt5/QtGui/QPainter \
+	/usr/include/x86_64-linux-gnu/qt5/QtGui/QPalette \
+	/usr/include/x86_64-linux-gnu/qt5/QtGui/QScreen \
 	/usr/include/x86_64-linux-gnu/qt5/QtGui/QSyntaxHighlighter \
 	/usr/include/x86_64-linux-gnu/qt5/QtGui/QTextCharFormat \
+	/usr/include/x86_64-linux-gnu/qt5/QtGui/QTransform \
 	/usr/include/x86_64-linux-gnu/qt5/QtGui/qbrush.h \
 	/usr/include/x86_64-linux-gnu/qt5/QtGui/qcolor.h \
+	/usr/include/x86_64-linux-gnu/qt5/QtGui/qcursor.h \
 	/usr/include/x86_64-linux-gnu/qt5/QtGui/qevent.h \
 	/usr/include/x86_64-linux-gnu/qt5/QtGui/qfont.h \
 	/usr/include/x86_64-linux-gnu/qt5/QtGui/qfontdatabase.h \
+	/usr/include/x86_64-linux-gnu/qt5/QtGui/qfontinfo.h \
+	/usr/include/x86_64-linux-gnu/qt5/QtGui/qfontmetrics.h \
 	/usr/include/x86_64-linux-gnu/qt5/QtGui/qglyphrun.h \
+	/usr/include/x86_64-linux-gnu/qt5/QtGui/qguiapplication.h \
+	/usr/include/x86_64-linux-gnu/qt5/QtGui/qicon.h \
 	/usr/include/x86_64-linux-gnu/qt5/QtGui/qimage.h \
+	/usr/include/x86_64-linux-gnu/qt5/QtGui/qinputmethod.h \
 	/usr/include/x86_64-linux-gnu/qt5/QtGui/qkeysequence.h \
 	/usr/include/x86_64-linux-gnu/qt5/QtGui/qmatrix.h \
 	/usr/include/x86_64-linux-gnu/qt5/QtGui/qpaintdevice.h \
+	/usr/include/x86_64-linux-gnu/qt5/QtGui/qpainter.h \
+	/usr/include/x86_64-linux-gnu/qt5/QtGui/qpalette.h \
 	/usr/include/x86_64-linux-gnu/qt5/QtGui/qpen.h \
 	/usr/include/x86_64-linux-gnu/qt5/QtGui/qpixelformat.h \
 	/usr/include/x86_64-linux-gnu/qt5/QtGui/qpixmap.h \
@@ -338,8 +402,10 @@ Alte_autogen/timestamp: \
 	/usr/include/x86_64-linux-gnu/qt5/QtGui/qregion.h \
 	/usr/include/x86_64-linux-gnu/qt5/QtGui/qrgb.h \
 	/usr/include/x86_64-linux-gnu/qt5/QtGui/qrgba64.h \
+	/usr/include/x86_64-linux-gnu/qt5/QtGui/qscreen.h \
 	/usr/include/x86_64-linux-gnu/qt5/QtGui/qsyntaxhighlighter.h \
 	/usr/include/x86_64-linux-gnu/qt5/QtGui/qtextcursor.h \
+	/usr/include/x86_64-linux-gnu/qt5/QtGui/qtextdocument.h \
 	/usr/include/x86_64-linux-gnu/qt5/QtGui/qtextformat.h \
 	/usr/include/x86_64-linux-gnu/qt5/QtGui/qtextlayout.h \
 	/usr/include/x86_64-linux-gnu/qt5/QtGui/qtextobject.h \
@@ -350,6 +416,32 @@ Alte_autogen/timestamp: \
 	/usr/include/x86_64-linux-gnu/qt5/QtGui/qtransform.h \
 	/usr/include/x86_64-linux-gnu/qt5/QtGui/qvector2d.h \
 	/usr/include/x86_64-linux-gnu/qt5/QtGui/qwindowdefs.h \
+	/usr/include/x86_64-linux-gnu/qt5/QtWidgets/QAction \
+	/usr/include/x86_64-linux-gnu/qt5/QtWidgets/QApplication \
+	/usr/include/x86_64-linux-gnu/qt5/QtWidgets/QFileDialog \
+	/usr/include/x86_64-linux-gnu/qt5/QtWidgets/QMainWindow \
+	/usr/include/x86_64-linux-gnu/qt5/QtWidgets/QMenu \
+	/usr/include/x86_64-linux-gnu/qt5/QtWidgets/QMenuBar \
+	/usr/include/x86_64-linux-gnu/qt5/QtWidgets/QMessageBox \
+	/usr/include/x86_64-linux-gnu/qt5/QtWidgets/QTextEdit \
+	/usr/include/x86_64-linux-gnu/qt5/QtWidgets/QWidget \
+	/usr/include/x86_64-linux-gnu/qt5/QtWidgets/qabstractscrollarea.h \
+	/usr/include/x86_64-linux-gnu/qt5/QtWidgets/qaction.h \
+	/usr/include/x86_64-linux-gnu/qt5/QtWidgets/qactiongroup.h \
+	/usr/include/x86_64-linux-gnu/qt5/QtWidgets/qapplication.h \
+	/usr/include/x86_64-linux-gnu/qt5/QtWidgets/qdialog.h \
+	/usr/include/x86_64-linux-gnu/qt5/QtWidgets/qfiledialog.h \
+	/usr/include/x86_64-linux-gnu/qt5/QtWidgets/qframe.h \
+	/usr/include/x86_64-linux-gnu/qt5/QtWidgets/qmainwindow.h \
+	/usr/include/x86_64-linux-gnu/qt5/QtWidgets/qmenu.h \
+	/usr/include/x86_64-linux-gnu/qt5/QtWidgets/qmenubar.h \
+	/usr/include/x86_64-linux-gnu/qt5/QtWidgets/qmessagebox.h \
+	/usr/include/x86_64-linux-gnu/qt5/QtWidgets/qsizepolicy.h \
+	/usr/include/x86_64-linux-gnu/qt5/QtWidgets/qtabwidget.h \
+	/usr/include/x86_64-linux-gnu/qt5/QtWidgets/qtextedit.h \
+	/usr/include/x86_64-linux-gnu/qt5/QtWidgets/qtwidgets-config.h \
+	/usr/include/x86_64-linux-gnu/qt5/QtWidgets/qtwidgetsglobal.h \
+	/usr/include/x86_64-linux-gnu/qt5/QtWidgets/qwidget.h \
 	/usr/include/x86_64-linux-gnu/sys/cdefs.h \
 	/usr/include/x86_64-linux-gnu/sys/syscall.h \
 	/usr/lib/gcc/x86_64-linux-gnu/13/include/limits.h \
@@ -396,78 +488,19 @@ Alte_autogen/timestamp: \
 	/usr/lib/x86_64-linux-gnu/cmake/Qt5Widgets/Qt5WidgetsConfigExtras.cmake \
 	/usr/lib/x86_64-linux-gnu/cmake/Qt5Widgets/Qt5WidgetsConfigVersion.cmake \
 	/usr/lib/x86_64-linux-gnu/cmake/Qt5Widgets/Qt5WidgetsMacros.cmake \
-	/usr/share/cmake-3.28/Modules/CMakeCXXCompiler.cmake.in \
-	/usr/share/cmake-3.28/Modules/CMakeCXXCompilerABI.cpp \
 	/usr/share/cmake-3.28/Modules/CMakeCXXInformation.cmake \
 	/usr/share/cmake-3.28/Modules/CMakeCommonLanguageInclude.cmake \
-	/usr/share/cmake-3.28/Modules/CMakeCompilerIdDetection.cmake \
-	/usr/share/cmake-3.28/Modules/CMakeDetermineCXXCompiler.cmake \
-	/usr/share/cmake-3.28/Modules/CMakeDetermineCompileFeatures.cmake \
-	/usr/share/cmake-3.28/Modules/CMakeDetermineCompiler.cmake \
-	/usr/share/cmake-3.28/Modules/CMakeDetermineCompilerABI.cmake \
-	/usr/share/cmake-3.28/Modules/CMakeDetermineCompilerId.cmake \
-	/usr/share/cmake-3.28/Modules/CMakeDetermineSystem.cmake \
-	/usr/share/cmake-3.28/Modules/CMakeFindBinUtils.cmake \
 	/usr/share/cmake-3.28/Modules/CMakeGenericSystem.cmake \
 	/usr/share/cmake-3.28/Modules/CMakeInitializeConfigs.cmake \
 	/usr/share/cmake-3.28/Modules/CMakeLanguageInformation.cmake \
 	/usr/share/cmake-3.28/Modules/CMakeParseArguments.cmake \
-	/usr/share/cmake-3.28/Modules/CMakeParseImplicitIncludeInfo.cmake \
-	/usr/share/cmake-3.28/Modules/CMakeParseImplicitLinkInfo.cmake \
-	/usr/share/cmake-3.28/Modules/CMakeParseLibraryArchitecture.cmake \
-	/usr/share/cmake-3.28/Modules/CMakeSystem.cmake.in \
 	/usr/share/cmake-3.28/Modules/CMakeSystemSpecificInformation.cmake \
 	/usr/share/cmake-3.28/Modules/CMakeSystemSpecificInitialize.cmake \
-	/usr/share/cmake-3.28/Modules/CMakeTestCXXCompiler.cmake \
-	/usr/share/cmake-3.28/Modules/CMakeTestCompilerCommon.cmake \
-	/usr/share/cmake-3.28/Modules/CMakeUnixFindMake.cmake \
 	/usr/share/cmake-3.28/Modules/CPack.cmake \
 	/usr/share/cmake-3.28/Modules/CPackComponent.cmake \
-	/usr/share/cmake-3.28/Modules/Compiler/ADSP-DetermineCompiler.cmake \
-	/usr/share/cmake-3.28/Modules/Compiler/ARMCC-DetermineCompiler.cmake \
-	/usr/share/cmake-3.28/Modules/Compiler/ARMClang-DetermineCompiler.cmake \
-	/usr/share/cmake-3.28/Modules/Compiler/AppleClang-DetermineCompiler.cmake \
-	/usr/share/cmake-3.28/Modules/Compiler/Borland-DetermineCompiler.cmake \
 	/usr/share/cmake-3.28/Modules/Compiler/CMakeCommonCompilerMacros.cmake \
-	/usr/share/cmake-3.28/Modules/Compiler/Clang-DetermineCompiler.cmake \
-	/usr/share/cmake-3.28/Modules/Compiler/Clang-DetermineCompilerInternal.cmake \
-	/usr/share/cmake-3.28/Modules/Compiler/Comeau-CXX-DetermineCompiler.cmake \
-	/usr/share/cmake-3.28/Modules/Compiler/Compaq-CXX-DetermineCompiler.cmake \
-	/usr/share/cmake-3.28/Modules/Compiler/Cray-DetermineCompiler.cmake \
-	/usr/share/cmake-3.28/Modules/Compiler/CrayClang-DetermineCompiler.cmake \
-	/usr/share/cmake-3.28/Modules/Compiler/Embarcadero-DetermineCompiler.cmake \
-	/usr/share/cmake-3.28/Modules/Compiler/Fujitsu-DetermineCompiler.cmake \
-	/usr/share/cmake-3.28/Modules/Compiler/FujitsuClang-DetermineCompiler.cmake \
-	/usr/share/cmake-3.28/Modules/Compiler/GHS-DetermineCompiler.cmake \
-	/usr/share/cmake-3.28/Modules/Compiler/GNU-CXX-DetermineCompiler.cmake \
 	/usr/share/cmake-3.28/Modules/Compiler/GNU-CXX.cmake \
-	/usr/share/cmake-3.28/Modules/Compiler/GNU-FindBinUtils.cmake \
 	/usr/share/cmake-3.28/Modules/Compiler/GNU.cmake \
-	/usr/share/cmake-3.28/Modules/Compiler/HP-CXX-DetermineCompiler.cmake \
-	/usr/share/cmake-3.28/Modules/Compiler/IAR-DetermineCompiler.cmake \
-	/usr/share/cmake-3.28/Modules/Compiler/IBMCPP-CXX-DetermineVersionInternal.cmake \
-	/usr/share/cmake-3.28/Modules/Compiler/IBMClang-CXX-DetermineCompiler.cmake \
-	/usr/share/cmake-3.28/Modules/Compiler/Intel-DetermineCompiler.cmake \
-	/usr/share/cmake-3.28/Modules/Compiler/IntelLLVM-DetermineCompiler.cmake \
-	/usr/share/cmake-3.28/Modules/Compiler/LCC-CXX-DetermineCompiler.cmake \
-	/usr/share/cmake-3.28/Modules/Compiler/MSVC-DetermineCompiler.cmake \
-	/usr/share/cmake-3.28/Modules/Compiler/NVHPC-DetermineCompiler.cmake \
-	/usr/share/cmake-3.28/Modules/Compiler/NVIDIA-DetermineCompiler.cmake \
-	/usr/share/cmake-3.28/Modules/Compiler/OpenWatcom-DetermineCompiler.cmake \
-	/usr/share/cmake-3.28/Modules/Compiler/OrangeC-DetermineCompiler.cmake \
-	/usr/share/cmake-3.28/Modules/Compiler/PGI-DetermineCompiler.cmake \
-	/usr/share/cmake-3.28/Modules/Compiler/PathScale-DetermineCompiler.cmake \
-	/usr/share/cmake-3.28/Modules/Compiler/SCO-DetermineCompiler.cmake \
-	/usr/share/cmake-3.28/Modules/Compiler/SunPro-CXX-DetermineCompiler.cmake \
-	/usr/share/cmake-3.28/Modules/Compiler/TI-DetermineCompiler.cmake \
-	/usr/share/cmake-3.28/Modules/Compiler/Tasking-DetermineCompiler.cmake \
-	/usr/share/cmake-3.28/Modules/Compiler/VisualAge-CXX-DetermineCompiler.cmake \
-	/usr/share/cmake-3.28/Modules/Compiler/Watcom-DetermineCompiler.cmake \
-	/usr/share/cmake-3.28/Modules/Compiler/XL-CXX-DetermineCompiler.cmake \
-	/usr/share/cmake-3.28/Modules/Compiler/XLClang-CXX-DetermineCompiler.cmake \
-	/usr/share/cmake-3.28/Modules/Compiler/zOS-CXX-DetermineCompiler.cmake \
-	/usr/share/cmake-3.28/Modules/Internal/FeatureTesting.cmake \
-	/usr/share/cmake-3.28/Modules/Platform/Linux-Determine-CXX.cmake \
 	/usr/share/cmake-3.28/Modules/Platform/Linux-GNU-CXX.cmake \
 	/usr/share/cmake-3.28/Modules/Platform/Linux-GNU.cmake \
 	/usr/share/cmake-3.28/Modules/Platform/Linux-Initialize.cmake \

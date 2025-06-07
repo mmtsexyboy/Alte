@@ -451,9 +451,7 @@ int main(int argc, char *argv[]) {
             qDebug() << "Primary screen not found, using fallback geometry for main window.";
             mainWindow.setGeometry(100, 100, 1024, 768); // A slightly larger default
         }
-
-            mainWindow.setGeometry(100, 100, 1024, 768); // A slightly larger default
-        }
+        // The extra setGeometry and brace that were here have been removed.
 
         qDebug() << "Before mainWindow.show()";
         mainWindow.show();
