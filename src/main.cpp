@@ -20,6 +20,7 @@
 #include <QScreen>             // For QScreen to center splash
 #include <QCoreApplication>    // For applicationDirPath
 #include <QIcon>               // For QIcon (moved to top)
+#include <stdexcept>           // For std::exception
 
 // Forward declare AlteThemeManager if its definition isn't needed in this header part
 // class AlteThemeManager; // Not needed here as it's in main()
@@ -412,6 +413,9 @@ int main(int argc, char *argv[]) {
 
     // Connect the splash screen's animationFinished signal to show main window
     QObject::connect(&splash, &SplashScreen::animationFinished, &app, [&]() {
+    try {
+        qDebug() << "Splash animation finished. Attempting to show main window...";
+
         if (QScreen *screen = QApplication::primaryScreen()) {
             QRect screenGeometry = screen->availableGeometry(); // Use availableGeometry for usable space
 
@@ -427,15 +431,24 @@ int main(int argc, char *argv[]) {
             qDebug() << "Set main window geometry to:" << x << y << desiredWidth << desiredHeight;
         } else {
             // Fallback if primary screen is not available (should be rare)
-            // You might want to set a default fixed size here, or use the old fixed geometry
-            mainWindow.setGeometry(100, 100, 1024, 768); // A slightly larger default
             qDebug() << "Primary screen not found, using fallback geometry for main window.";
+            mainWindow.setGeometry(100, 100, 1024, 768); // A slightly larger default
         }
 
+        qDebug() << "Showing main window...";
         mainWindow.show();
+        qDebug() << "Main window shown. Calling newFile()...";
         mainWindow.newFile(); // Initialize with newFile as before
+        qDebug() << "newFile() called. Activating window...";
         mainWindow.activateWindow(); // Ensure main window gets focus
+        qDebug() << "Main window activated. Closing splash screen.";
         splash.close(); // Close the splash screen widget
+        qDebug() << "Splash screen closed. Main window setup complete.";
+    } catch (const std::exception& e) {
+        qCritical() << "Std::exception caught during main window setup: " << e.what();
+    } catch (...) {
+        qCritical() << "Unknown exception caught during main window setup.";
+    }
     });
 
     // splash.startAnimation(1500); // Old animation call
@@ -444,7 +457,7 @@ int main(int argc, char *argv[]) {
     // New: Show splash, then after a delay, start the glyph animation
     // The glyph animation itself will take 'glyphAnimationDurationMs'
     int initialBlackScreenMs = 750;
-    int glyphAnimationDurationMs = 1000; // Duration for the glyph to draw and fade in
+    int glyphAnimationDurationMs = 900; // Duration for the glyph to draw and fade in
 
     QTimer::singleShot(initialBlackScreenMs, &splash, [=, &splash]() {
         splash.startGlyphAnimation(glyphAnimationDurationMs);
