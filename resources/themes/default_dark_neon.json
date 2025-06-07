@@ -1,102 +1,615 @@
 {
-  "name": "Default Dark Neon",
-  "author": "User & Jules",
-  "font": {
-    "applicationFontFamily": "DejaVu Sans Mono",
-    "applicationFontSize": 10,
-    "editorFontFamily": "DejaVu Sans Mono",
-    "editorFontSize": 11
-  },
-  "colors": {
-    "midnightInk": "#1a1b26",
-    "voidBlack": "#10111c",
-    "cyberPulse": "#00c7a4",
-    "creativeFlame": "#ff9e64",
-    "purpleLogic": "#bb9af7",
-    "greenWhisper": "#9ece6a",
-    "blueSerenity": "#7aa2f7",
-    "grayEcho": "#5c6370",
-    "lightMist": "#a9b1d6",
-    "errorRed": "#f7768e",
-    "warningYellow": "#e0af68",
-
-    "windowBackground": "#1a1b26",
-    "text": "#a9b1d6",
-    "textDisabled": "#5c6370",
-    "base": "#20212e",
-    "alternateBase": "#1e1f2a",
-    "highlight": "#00c7a4",
-    "highlightedText": "#10111c",
-    "button": "#2a2b36",
-    "buttonText": "#a9b1d6",
-    "border": "#0f0f14",
-    "tooltipBase": "#2a2b36",
-    "tooltipText": "#a9b1d6",
-    "accent": "#00c7a4"
-  },
-  "token_styles": {
-    "default":           { "color": "lightMist" },
-    "keyword":           { "color": "purpleLogic", "font_weight": "bold" },
-    "comment":           { "color": "grayEcho", "font_style": "italic" },
-    "string":            { "color": "greenWhisper" },
-    "string_multiline":  { "color": "greenWhisper" },
-    "number":            { "color": "creativeFlame" },
-    "number_hex":        { "color": "errorRed" },
-    "operator":          { "color": "lightMist" },
-    "preprocessor":      { "color": "purpleLogic", "font_weight": "bold" },
-    "function_call":     { "color": "blueSerenity" },
-    "class_name":        { "color": "creativeFlame", "font_weight": "bold" },
-    "decorator":         { "color": "purpleLogic", "font_style": "italic" }
-  },
-  "syntax_highlighting": {
-    "python": {
-      "keywords":         { "color_ref": "purpleLogic", "bold": true },
-      "booleans":         { "color_ref": "creativeFlame", "bold": true },
-      "none_type":        { "color_ref": "creativeFlame", "bold": true },
-      "operators":        { "color_ref": "lightMist" },
-      "delimiters":       { "color_ref": "lightMist" },
-      "function_calls":   { "color_ref": "blueSerenity" },
-      "class_names":      { "color_ref": "creativeFlame", "bold": true },
-      "self_arg":         { "color_ref": "orangeCoral", "italic": true },
-      "numbers":          { "color_ref": "creativeFlame" },
-      "docstrings_triple":{ "color_ref": "greenWhisper", "italic": true },
-      "strings":          { "color_ref": "greenWhisper" },
-      "comments":         { "color_ref": "grayEcho", "italic": true, "fontPointSizeOffset": -1 },
-      "decorators":       { "color_ref": "purpleLogic", "italic": true }
+    "name": "Default Dark Neon",
+    "author": "User & Jules",
+    "font": {
+        "applicationFontFamily": "DejaVu Sans Mono",
+        "applicationFontSize": 10,
+        "editorFontFamily": "DejaVu Sans Mono",
+        "editorFontSize": 11
     },
-    "cpp": {
-      "keywords":         { "color_ref": "purpleLogic", "bold": true },
-      "types":            { "color_ref": "creativeFlame" },
-      "operators":        { "color_ref": "lightMist" },
-      "delimiters":       { "color_ref": "lightMist" },
-      "function_calls":   { "color_ref": "blueSerenity" },
-      "class_names":      { "color_ref": "creativeFlame", "bold": true },
-      "numbers":          { "color_ref": "errorRed" },
-      "preprocessor":     { "color_ref": "purpleLogic", "bold": true },
-      "strings":          { "color_ref": "greenWhisper" },
-      "char_literals":    { "color_ref": "greenWhisper" },
-      "comments_single":  { "color_ref": "grayEcho", "italic": true, "fontPointSizeOffset": -1 },
-      "comments_multi":   { "color_ref": "grayEcho", "italic": true, "fontPointSizeOffset": -1, "block": true, "start_pattern_dummy": "/\\*", "end_pattern_dummy": "\\*/" }
+    "colors": {
+        "midnightInk": "#1a1b26",
+        "voidBlack": "#10111c",
+        "cyberPulse": "#00c7a4",
+        "creativeFlame": "#ff9e64",
+        "purpleLogic": "#bb9af7",
+        "greenWhisper": "#9ece6a",
+        "blueSerenity": "#7aa2f7",
+        "grayEcho": "#5c6370",
+        "lightMist": "#a9b1d6",
+        "errorRed": "#f7768e",
+        "warningYellow": "#e0af68",
+        "windowBackground": "#1a1b26",
+        "text": "#a9b1d6",
+        "textDisabled": "#5c6370",
+        "base": "#20212e",
+        "alternateBase": "#1e1f2a",
+        "highlight": "#00c7a4",
+        "highlightedText": "#10111c",
+        "button": "#2a2b36",
+        "buttonText": "#a9b1d6",
+        "border": "#0f0f14",
+        "tooltipBase": "#2a2b36",
+        "tooltipText": "#a9b1d6",
+        "accent": "#00c7a4"
+    },
+    "token_styles": {
+        "default": {
+            "color": "lightMist"
+        },
+        "keyword": {
+            "color": "purpleLogic",
+            "font_weight": "bold"
+        },
+        "comment": {
+            "color": "grayEcho",
+            "font_style": "italic"
+        },
+        "string": {
+            "color": "greenWhisper"
+        },
+        "string_multiline": {
+            "color": "greenWhisper"
+        },
+        "number": {
+            "color": "creativeFlame"
+        },
+        "number_hex": {
+            "color": "errorRed"
+        },
+        "operator": {
+            "color": "lightMist"
+        },
+        "preprocessor": {
+            "color": "purpleLogic",
+            "font_weight": "bold"
+        },
+        "function_call": {
+            "color": "blueSerenity"
+        },
+        "class_name": {
+            "color": "creativeFlame",
+            "font_weight": "bold"
+        },
+        "decorator": {
+            "color": "purpleLogic",
+            "font_style": "italic"
+        }
+    },
+    "syntax_highlighting": {
+        "python": {
+            "keywords": {
+                "color_ref": "purpleLogic",
+                "bold": true
+            },
+            "booleans": {
+                "color_ref": "creativeFlame",
+                "bold": true
+            },
+            "none_type": {
+                "color_ref": "creativeFlame",
+                "bold": true
+            },
+            "operators": {
+                "color_ref": "lightMist"
+            },
+            "delimiters": {
+                "color_ref": "lightMist"
+            },
+            "function_calls": {
+                "color_ref": "blueSerenity"
+            },
+            "class_names": {
+                "color_ref": "creativeFlame",
+                "bold": true
+            },
+            "self_arg": {
+                "color_ref": "orangeCoral",
+                "italic": true
+            },
+            "numbers": {
+                "color_ref": "creativeFlame"
+            },
+            "docstrings_triple": {
+                "color_ref": "greenWhisper",
+                "italic": true
+            },
+            "strings": {
+                "color_ref": "greenWhisper"
+            },
+            "comments": {
+                "color_ref": "grayEcho",
+                "italic": true,
+                "fontPointSizeOffset": -1
+            },
+            "decorators": {
+                "color_ref": "purpleLogic",
+                "italic": true
+            }
+        },
+        "cpp": {
+            "language_name": "C++",
+            "file_extensions": [
+                ".cpp",
+                ".hpp",
+                ".cxx",
+                ".hxx",
+                ".cc",
+                ".hh",
+                ".c",
+                ".h"
+            ],
+            "highlighting_rules": [
+                {
+                    "type": "keywords",
+                    "list": [
+                        "alignas",
+                        "alignof",
+                        "and",
+                        "and_eq",
+                        "asm",
+                        "atomic_cancel",
+                        "atomic_commit",
+                        "atomic_noexcept",
+                        "auto",
+                        "bitand",
+                        "bitor",
+                        "bool",
+                        "break",
+                        "case",
+                        "catch",
+                        "char",
+                        "char8_t",
+                        "char16_t",
+                        "char32_t",
+                        "class",
+                        "compl",
+                        "concept",
+                        "const",
+                        "consteval",
+                        "constexpr",
+                        "constinit",
+                        "const_cast",
+                        "continue",
+                        "co_await",
+                        "co_return",
+                        "co_yield",
+                        "decltype",
+                        "default",
+                        "delete",
+                        "do",
+                        "double",
+                        "dynamic_cast",
+                        "else",
+                        "enum",
+                        "explicit",
+                        "export",
+                        "extern",
+                        "false",
+                        "float",
+                        "for",
+                        "friend",
+                        "goto",
+                        "if",
+                        "inline",
+                        "int",
+                        "long",
+                        "mutable",
+                        "namespace",
+                        "new",
+                        "noexcept",
+                        "not",
+                        "not_eq",
+                        "nullptr",
+                        "operator",
+                        "or",
+                        "or_eq",
+                        "private",
+                        "protected",
+                        "public",
+                        "reflexpr",
+                        "register",
+                        "reinterpret_cast",
+                        "requires",
+                        "return",
+                        "short",
+                        "signed",
+                        "sizeof",
+                        "static",
+                        "static_assert",
+                        "static_cast",
+                        "struct",
+                        "switch",
+                        "synchronized",
+                        "template",
+                        "this",
+                        "thread_local",
+                        "throw",
+                        "true",
+                        "try",
+                        "typedef",
+                        "typeid",
+                        "typename",
+                        "union",
+                        "unsigned",
+                        "using",
+                        "virtual",
+                        "void",
+                        "volatile",
+                        "wchar_t",
+                        "while",
+                        "xor",
+                        "xor_eq"
+                    ],
+                    "style_key": "keyword"
+                },
+                {
+                    "type": "line_comment",
+                    "start_delimiter": "//",
+                    "style_key": "comment"
+                },
+                {
+                    "type": "multi_line_string",
+                    "name": "Block Comment",
+                    "start_pattern": "/\\*",
+                    "end_pattern": "\\*/",
+                    "style_key": "comment"
+                },
+                {
+                    "type": "multi_line_string",
+                    "name": "String",
+                    "start_pattern": "\"",
+                    "end_pattern": "\"",
+                    "style_key": "string"
+                },
+                {
+                    "type": "pattern",
+                    "name": "Character",
+                    "pattern": "'([^']|\\\\.)'",
+                    "style_key": "string"
+                },
+                {
+                    "type": "pattern",
+                    "name": "Preprocessor",
+                    "pattern": "^\\s*#.*",
+                    "style_key": "preprocessor"
+                },
+                {
+                    "type": "pattern",
+                    "name": "Number",
+                    "pattern": "\\\\b([0-9]+\\\\.?[0-9]*|\\\\.[0-9]+)([eE][-+]?[0-9]+)?f?\\\\b|\\\\b0[xX][0-9a-fA-F]+L?U?\\\\b|\\\\b[0-9]+L?U?\\\\b",
+                    "style_key": "number"
+                },
+                {
+                    "type": "keywords",
+                    "name": "Common Types",
+                    "list": [
+                        "std::string",
+                        "std::vector",
+                        "std::map",
+                        "std::list",
+                        "std::cout",
+                        "std::cin",
+                        "std::endl",
+                        "size_t",
+                        "int8_t",
+                        "int16_t",
+                        "int32_t",
+                        "int64_t",
+                        "uint8_t",
+                        "uint16_t",
+                        "uint32_t",
+                        "uint64_t"
+                    ],
+                    "style_key": "type_name"
+                }
+            ]
+        },
+        "java": {
+            "language_name": "Java",
+            "file_extensions": [
+                ".java"
+            ],
+            "highlighting_rules": [
+                {
+                    "type": "keywords",
+                    "list": [
+                        "abstract",
+                        "assert",
+                        "boolean",
+                        "break",
+                        "byte",
+                        "case",
+                        "catch",
+                        "char",
+                        "class",
+                        "const",
+                        "continue",
+                        "default",
+                        "do",
+                        "double",
+                        "else",
+                        "enum",
+                        "extends",
+                        "final",
+                        "finally",
+                        "float",
+                        "for",
+                        "goto",
+                        "if",
+                        "implements",
+                        "import",
+                        "instanceof",
+                        "int",
+                        "interface",
+                        "long",
+                        "native",
+                        "new",
+                        "package",
+                        "private",
+                        "protected",
+                        "public",
+                        "return",
+                        "short",
+                        "static",
+                        "strictfp",
+                        "super",
+                        "switch",
+                        "synchronized",
+                        "this",
+                        "throw",
+                        "throws",
+                        "transient",
+                        "try",
+                        "void",
+                        "volatile",
+                        "while",
+                        "true",
+                        "false",
+                        "null"
+                    ],
+                    "style_key": "keyword"
+                },
+                {
+                    "type": "line_comment",
+                    "start_delimiter": "//",
+                    "style_key": "comment"
+                },
+                {
+                    "type": "multi_line_string",
+                    "name": "Block Comment",
+                    "start_pattern": "/\\*",
+                    "end_pattern": "\\*/",
+                    "style_key": "comment"
+                },
+                {
+                    "type": "multi_line_string",
+                    "name": "String",
+                    "start_pattern": "\"",
+                    "end_pattern": "\"",
+                    "style_key": "string"
+                },
+                {
+                    "type": "pattern",
+                    "name": "Character",
+                    "pattern": "'([^']|\\\\.)'",
+                    "style_key": "string"
+                },
+                {
+                    "type": "pattern",
+                    "name": "Annotations",
+                    "pattern": "@[A-Za-z_][A-Za-z0-9_]*",
+                    "style_key": "preprocessor"
+                },
+                {
+                    "type": "pattern",
+                    "name": "Number",
+                    "pattern": "\\\\b([0-9]+\\\\.?[0-9]*|\\\\.[0-9]+)([eE][-+]?[0-9]+)?([fFdDlL])?\\\\b|\\\\b0[xX][0-9a-fA-F]+L?\\\\b|\\\\b[0-9]+L?\\\\b",
+                    "style_key": "number"
+                },
+                {
+                    "type": "keywords",
+                    "name": "Common Types",
+                    "list": [
+                        "String",
+                        "Integer",
+                        "Double",
+                        "Boolean",
+                        "List",
+                        "ArrayList",
+                        "Map",
+                        "HashMap",
+                        "Object",
+                        "Byte",
+                        "Short",
+                        "Long",
+                        "Float",
+                        "Character",
+                        "Void"
+                    ],
+                    "style_key": "type_name"
+                }
+            ]
+        },
+        "javascript": {
+            "language_name": "JavaScript",
+            "file_extensions": [
+                ".js",
+                ".mjs",
+                ".cjs"
+            ],
+            "highlighting_rules": [
+                {
+                    "type": "keywords",
+                    "list": [
+                        "abstract",
+                        "arguments",
+                        "await",
+                        "boolean",
+                        "break",
+                        "byte",
+                        "case",
+                        "catch",
+                        "char",
+                        "class",
+                        "const",
+                        "continue",
+                        "debugger",
+                        "default",
+                        "delete",
+                        "do",
+                        "double",
+                        "else",
+                        "enum",
+                        "eval",
+                        "export",
+                        "extends",
+                        "false",
+                        "final",
+                        "finally",
+                        "float",
+                        "for",
+                        "function",
+                        "goto",
+                        "if",
+                        "implements",
+                        "import",
+                        "in",
+                        "instanceof",
+                        "int",
+                        "interface",
+                        "let",
+                        "long",
+                        "native",
+                        "new",
+                        "null",
+                        "package",
+                        "private",
+                        "protected",
+                        "public",
+                        "return",
+                        "short",
+                        "static",
+                        "super",
+                        "switch",
+                        "synchronized",
+                        "this",
+                        "throw",
+                        "throws",
+                        "transient",
+                        "true",
+                        "try",
+                        "typeof",
+                        "var",
+                        "void",
+                        "volatile",
+                        "while",
+                        "with",
+                        "yield",
+                        "async",
+                        "of",
+                        "get",
+                        "set"
+                    ],
+                    "style_key": "keyword"
+                },
+                {
+                    "type": "line_comment",
+                    "start_delimiter": "//",
+                    "style_key": "comment"
+                },
+                {
+                    "type": "multi_line_string",
+                    "name": "Block Comment",
+                    "start_pattern": "/\\*",
+                    "end_pattern": "\\*/",
+                    "style_key": "comment"
+                },
+                {
+                    "type": "multi_line_string",
+                    "name": "Double Quoted String",
+                    "start_pattern": "\"",
+                    "end_pattern": "\"",
+                    "style_key": "string"
+                },
+                {
+                    "type": "multi_line_string",
+                    "name": "Single Quoted String",
+                    "start_pattern": "'",
+                    "end_pattern": "'",
+                    "style_key": "string"
+                },
+                {
+                    "type": "multi_line_string",
+                    "name": "Template Literal",
+                    "start_pattern": "`",
+                    "end_pattern": "`",
+                    "style_key": "string"
+                },
+                {
+                    "type": "pattern",
+                    "name": "Regular Expression",
+                    "pattern": "/[^/\\n\\\\]*(?:\\\\[^\\n]|[^/\\n\\\\])*/[gimyus]*",
+                    "style_key": "preprocessor"
+                },
+                {
+                    "type": "pattern",
+                    "name": "Number",
+                    "pattern": "\\\\b([0-9]+\\\\.?[0-9]*|\\\\.[0-9]+)([eE][-+]?[0-9]+)?\\\\b|\\\\b0[xX][0-9a-fA-F]+\\\\b|\\\\b0[bB][01]+\\\\b|\\\\b0[oO][0-7]+\\\\b|\\\\b[0-9]+\\\\b",
+                    "style_key": "number"
+                },
+                {
+                    "type": "keywords",
+                    "name": "Common Objects/Functions",
+                    "list": [
+                        "console",
+                        "log",
+                        "Math",
+                        "JSON",
+                        "Promise",
+                        "Array",
+                        "Object",
+                        "String",
+                        "Number",
+                        "Boolean",
+                        "Function",
+                        "Symbol",
+                        "Date",
+                        "RegExp",
+                        "Error",
+                        "Map",
+                        "Set",
+                        "WeakMap",
+                        "WeakSet",
+                        "document",
+                        "window",
+                        "require",
+                        "module",
+                        "exports"
+                    ],
+                    "style_key": "type_name"
+                }
+            ]
+        }
+    },
+    "styles": {
+        "QMainWindow": "background-color: %%midnightInk%%; color: %%lightMist%%;",
+        "QMenuBar": "background-color: %%voidBlack%%; color: %%lightMist%%;",
+        "QMenuBar::item": "background-color: transparent; padding: 4px 8px;",
+        "QMenuBar::item:selected": "background-color: %%base%%; color: %%cyberPulse%%; box-shadow: 0 0 8px %%cyberPulse%%;",
+        "QMenuBar::item:hover": "background-color: %%base%%; color: %%cyberPulse%%; box-shadow: 0 0 8px %%cyberPulse%%;",
+        "QMenu": "background-color: %%alternateBase%%; color: %%lightMist%%; border: 1px solid %%border%%; padding: 4px;",
+        "QMenu::item": "padding: 4px 20px;",
+        "QMenu::item:selected": "background-color: %%base%%; color: %%cyberPulse%%; box-shadow: 0 0 8px %%cyberPulse%%;",
+        "QMenu::item:hover": "background-color: %%base%%; color: %%cyberPulse%%; box-shadow: 0 0 8px %%cyberPulse%%;",
+        "QMenu::separator": "height: 1px; background-color: %%border%%; margin: 4px 0px;",
+        "QPlainTextEdit, QTextEdit": "background-color: %%alternateBase%%; color: %%lightMist%%; border: 1px solid %%border%%; selection-background-color: %%cyberPulse%%; selection-color: %%highlightedText%%;",
+        "QLabel": "color: %%lightMist%%;",
+        "QPushButton": "background-color: %%base%%; color: %%buttonText%%; border: 1px solid %%border%%; padding: 5px 10px; border-radius: 3px; min-width: 60px;",
+        "QPushButton:hover": "background-color: #2a2b3a; border: 1px solid %%accent%%;",
+        "QPushButton:pressed": "background-color: %%accent%%; color: %%highlightedText%%;",
+        "QStatusBar": "background-color: %%voidBlack%%; color: %%lightMist%%;",
+        "QLineEdit": "background-color: %%base%%; color: %%text%%; border: 1px solid %%grayEcho%%; border-radius: 3px; padding: 4px;",
+        "QLineEdit:focus": "border: 1px solid %%accent%%;"
     }
-  },
-  "styles": {
-    "QMainWindow": "background-color: %%midnightInk%%; color: %%lightMist%%;",
-    "QMenuBar": "background-color: %%voidBlack%%; color: %%lightMist%%;",
-    "QMenuBar::item": "background-color: transparent; padding: 4px 8px;",
-    "QMenuBar::item:selected": "background-color: %%base%%; color: %%cyberPulse%%; box-shadow: 0 0 8px %%cyberPulse%%;",
-    "QMenuBar::item:hover": "background-color: %%base%%; color: %%cyberPulse%%; box-shadow: 0 0 8px %%cyberPulse%%;",
-    "QMenu": "background-color: %%alternateBase%%; color: %%lightMist%%; border: 1px solid %%border%%; padding: 4px;",
-    "QMenu::item": "padding: 4px 20px;",
-    "QMenu::item:selected": "background-color: %%base%%; color: %%cyberPulse%%; box-shadow: 0 0 8px %%cyberPulse%%;",
-    "QMenu::item:hover": "background-color: %%base%%; color: %%cyberPulse%%; box-shadow: 0 0 8px %%cyberPulse%%;",
-    "QMenu::separator": "height: 1px; background-color: %%border%%; margin: 4px 0px;",
-    "QPlainTextEdit, QTextEdit": "background-color: %%alternateBase%%; color: %%lightMist%%; border: 1px solid %%border%%; selection-background-color: %%cyberPulse%%; selection-color: %%highlightedText%%;",
-    "QLabel": "color: %%lightMist%%;",
-    "QPushButton": "background-color: %%base%%; color: %%buttonText%%; border: 1px solid %%border%%; padding: 5px 10px; border-radius: 3px; min-width: 60px;",
-    "QPushButton:hover": "background-color: #2a2b3a; border: 1px solid %%accent%%;",
-    "QPushButton:pressed": "background-color: %%accent%%; color: %%highlightedText%%;",
-    "QStatusBar": "background-color: %%voidBlack%%; color: %%lightMist%%;",
-    "QLineEdit": "background-color: %%base%%; color: %%text%%; border: 1px solid %%grayEcho%%; border-radius: 3px; padding: 4px;",
-    "QLineEdit:focus": "border: 1px solid %%accent%%;"
-  }
 }
