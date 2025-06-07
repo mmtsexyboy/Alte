@@ -22,6 +22,7 @@ class MainWindow : public QMainWindow {
 public:
     // Updated constructor to accept AlteThemeManager
     MainWindow(AlteThemeManager* p_themeManager, QWidget *parent = nullptr);
+    ~MainWindow(); // Destructor
 
 protected:
     void closeEvent(QCloseEvent *event) override;

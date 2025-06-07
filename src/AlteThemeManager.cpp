@@ -212,14 +212,13 @@ QString AlteThemeManager::generateGlobalStyleSheet() const {
 
         QString processedStyleValue = originalStyleValue;
         for (auto it = colors.constBegin(); it != colors.constEnd(); ++it) {
-            QString placeholder = QString("%%%%%1%%%%").arg(it.key()); // Current: e.g., %%%%cyberPulse%%%%
-            QString correctPlaceholder = QString("%%%1%%").arg(it.key()); // Corrected: e.g., %%cyberPulse%%
-            if (originalStyleValue.contains(correctPlaceholder)) { // Log only if placeholder is relevant
-                fprintf(stderr, "[generateGlobalStyleSheet]     Replacing placeholder: %s with color: %s (fprintf).\n", correctPlaceholder.toUtf8().constData(), it.value().toString().toUtf8().constData());
+            QString placeholderToReplace = QString("%%%1%%").arg(it.key()); // Format: %%colorName%%
+            if (originalStyleValue.contains(placeholderToReplace)) { // Log only if placeholder is relevant for debugging
+                fprintf(stderr, "[generateGlobalStyleSheet]     Attempting to replace placeholder: %s with color: %s (fprintf).\n", placeholderToReplace.toUtf8().constData(), it.value().toString().toUtf8().constData());
                 fflush(stderr);
-                qDebug().noquote() << "    Replacing placeholder:" << correctPlaceholder << "with color:" << it.value().toString();
+                qDebug().noquote() << "    Attempting to replace placeholder:" << placeholderToReplace << "with color:" << it.value().toString();
             }
-            processedStyleValue.replace(correctPlaceholder, it.value().toString());
+            processedStyleValue.replace(placeholderToReplace, it.value().toString());
         }
         fprintf(stderr, "[generateGlobalStyleSheet]   Processed styleValue: %s (fprintf).\n", processedStyleValue.toUtf8().constData());
         fflush(stderr);
