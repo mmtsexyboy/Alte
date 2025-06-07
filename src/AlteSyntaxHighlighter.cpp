@@ -4,7 +4,7 @@
 #include <QJsonArray>
 #include <QDebug>
 
-SyntaxHighlighter::SyntaxHighlighter(QTextDocument *parent, AlteThemeManager *themeManager, const QString& languageName)
+AlteSyntaxHighlighter::AlteSyntaxHighlighter(QTextDocument *parent, AlteThemeManager *themeManager, const QString& languageName)
     : QSyntaxHighlighter(parent) {
     if (themeManager && !languageName.isEmpty()) {
         setCurrentLanguage(languageName, themeManager);
@@ -13,15 +13,15 @@ SyntaxHighlighter::SyntaxHighlighter(QTextDocument *parent, AlteThemeManager *th
     }
 }
 
-void SyntaxHighlighter::setCurrentLanguage(const QString& languageName, AlteThemeManager *themeManager) {
+void AlteSyntaxHighlighter::setCurrentLanguage(const QString& languageName, AlteThemeManager *themeManager) {
     m_highlightingRules.clear();
     if (!themeManager) {
-        qWarning() << "SyntaxHighlighter::setCurrentLanguage: ThemeManager is null.";
+        qWarning() << "AlteSyntaxHighlighter::setCurrentLanguage: ThemeManager is null.";
         rehighlight();
         return;
     }
     if (languageName.isEmpty()){
-        qWarning() << "SyntaxHighlighter::setCurrentLanguage: languageName is empty.";
+        qWarning() << "AlteSyntaxHighlighter::setCurrentLanguage: languageName is empty.";
         rehighlight();
         return;
     }
@@ -29,7 +29,7 @@ void SyntaxHighlighter::setCurrentLanguage(const QString& languageName, AlteThem
     rehighlight(); // Trigger re-highlighting of the entire document
 }
 
-QTextCharFormat SyntaxHighlighter::createFormatFromRule(const QJsonObject& ruleDetails,
+QTextCharFormat AlteSyntaxHighlighter::createFormatFromRule(const QJsonObject& ruleDetails,
                                                       const QJsonObject& themeColors, // Not used directly, themeManager is used
                                                       const QFont& defaultFont,
                                                       AlteThemeManager* themeManager) {
@@ -38,7 +38,7 @@ QTextCharFormat SyntaxHighlighter::createFormatFromRule(const QJsonObject& ruleD
     if (!colorNameRef.isEmpty()) {
         QColor color = themeManager->getColor(colorNameRef); // Use color_ref
         if (!color.isValid()) { // Fallback if color name is not in theme's "colors"
-             qWarning() << "SyntaxHighlighter: Color reference '" << colorNameRef << "' is invalid or not found in theme colors. Using default text color.";
+             qWarning() << "AlteSyntaxHighlighter: Color reference '" << colorNameRef << "' is invalid or not found in theme colors. Using default text color.";
              color = themeManager->getColor("text", Qt::black); // Default to theme's text color
         }
         format.setForeground(color);
@@ -63,22 +63,22 @@ QTextCharFormat SyntaxHighlighter::createFormatFromRule(const QJsonObject& ruleD
                 currentFont.setPointSize(newSize);
                 format.setFont(currentFont); // Apply the font with new size
             } else {
-                qWarning() << "SyntaxHighlighter: Calculated font point size is not positive (" << newSize << "). Ignoring offset.";
+                qWarning() << "AlteSyntaxHighlighter: Calculated font point size is not positive (" << newSize << "). Ignoring offset.";
             }
         }
     }
     return format;
 }
 
-void SyntaxHighlighter::loadRulesForLanguage(const QString& languageName, AlteThemeManager *themeManager) {
+void AlteSyntaxHighlighter::loadRulesForLanguage(const QString& languageName, AlteThemeManager *themeManager) {
     qDebug() << ">>> loadRulesForLanguage V3 executing <<<";
-    qDebug() << "SyntaxHighlighter::loadRulesForLanguage - Loading rules for language:" << languageName;
+    qDebug() << "AlteSyntaxHighlighter::loadRulesForLanguage - Loading rules for language:" << languageName;
     m_highlightingRules.clear();
     QJsonObject langRules = themeManager->getSyntaxRulesForLanguage(languageName);
-    qDebug() << "SyntaxHighlighter::loadRulesForLanguage - Received langRules from ThemeManager:" << langRules;
+    qDebug() << "AlteSyntaxHighlighter::loadRulesForLanguage - Received langRules from ThemeManager:" << langRules;
 
     if (langRules.isEmpty()) {
-        qWarning() << "SyntaxHighlighter: No syntax rules found for language" << languageName << "(langRules object is empty).";
+        qWarning() << "AlteSyntaxHighlighter: No syntax rules found for language" << languageName << "(langRules object is empty).";
         return;
     }
 
@@ -87,7 +87,7 @@ void SyntaxHighlighter::loadRulesForLanguage(const QString& languageName, AlteTh
         documentFont = document()->defaultFont();
     } else {
         documentFont = QApplication::font(); // Fallback, should ideally not happen
-        qWarning() << "SyntaxHighlighter: QTextDocument is null during rule loading. Using application default font.";
+        qWarning() << "AlteSyntaxHighlighter: QTextDocument is null during rule loading. Using application default font.";
     }
 
     // The themeColors parameter in createFormatFromRule is currently unused,
@@ -100,7 +100,7 @@ void SyntaxHighlighter::loadRulesForLanguage(const QString& languageName, AlteTh
     // We need to iterate over the "highlighting_rules" array.
 
     if (!langRules.contains("highlighting_rules") || !langRules.value("highlighting_rules").isArray()) {
-        qWarning() << "SyntaxHighlighter: 'highlighting_rules' array not found or not an array for language" << languageName << "Def:" << langRules;
+        qWarning() << "AlteSyntaxHighlighter: 'highlighting_rules' array not found or not an array for language" << languageName << "Def:" << langRules;
         return;
     }
     QJsonArray rulesArray = langRules.value("highlighting_rules").toArray();
@@ -116,13 +116,13 @@ void SyntaxHighlighter::loadRulesForLanguage(const QString& languageName, AlteTh
         QString ruleType = ruleDef.value("type").toString();
 
         if (ruleType.isEmpty()) {
-            qWarning() << "SyntaxHighlighter: Rule" << ruleName << "is missing 'type' field. Def:" << ruleDef;
+            qWarning() << "AlteSyntaxHighlighter: Rule" << ruleName << "is missing 'type' field. Def:" << ruleDef;
             continue;
         }
 
         if (ruleType == "keywords") {
             if (!ruleDef.contains("list")) {
-                qWarning() << "SyntaxHighlighter: 'keywords' rule" << ruleName << "is missing 'list' field. Def:" << ruleDef;
+                qWarning() << "AlteSyntaxHighlighter: 'keywords' rule" << ruleName << "is missing 'list' field. Def:" << ruleDef;
                 continue;
             }
             QJsonArray patternsArray = ruleDef.value("list").toArray();
@@ -133,12 +133,12 @@ void SyntaxHighlighter::loadRulesForLanguage(const QString& languageName, AlteTh
                 if (specificRule.pattern.isValid()) {
                     m_highlightingRules.append(specificRule);
                 } else {
-                    qWarning() << "SyntaxHighlighter: Invalid regex from keyword in list" << val.toString() << "for rule" << ruleName;
+                    qWarning() << "AlteSyntaxHighlighter: Invalid regex from keyword in list" << val.toString() << "for rule" << ruleName;
                 }
             }
         } else if (ruleType == "line_comment") {
             if (!ruleDef.contains("start_delimiter")) {
-                qWarning() << "SyntaxHighlighter: 'line_comment' rule" << ruleName << "is missing 'start_delimiter' field. Def:" << ruleDef;
+                qWarning() << "AlteSyntaxHighlighter: 'line_comment' rule" << ruleName << "is missing 'start_delimiter' field. Def:" << ruleDef;
                 continue;
             }
             HighlightingRule specificRule = baseRuleSetup;
@@ -148,18 +148,18 @@ void SyntaxHighlighter::loadRulesForLanguage(const QString& languageName, AlteTh
                 if (specificRule.pattern.isValid()) {
                     m_highlightingRules.append(specificRule);
                 } else {
-                    qWarning() << "SyntaxHighlighter: Invalid regex from line_comment rule" << ruleName << "for delimiter" << delimiter;
+                    qWarning() << "AlteSyntaxHighlighter: Invalid regex from line_comment rule" << ruleName << "for delimiter" << delimiter;
                 }
             } else {
-                qWarning() << "SyntaxHighlighter: Empty delimiter for line_comment rule" << ruleName;
+                qWarning() << "AlteSyntaxHighlighter: Empty delimiter for line_comment rule" << ruleName;
             }
         } else if (ruleType == "multi_line_string") {
             if (!ruleDef.contains("start_pattern")) {
-                qWarning() << "SyntaxHighlighter: 'multi_line_string' rule" << ruleName << "is missing 'start_pattern' field. Def:" << ruleDef;
+                qWarning() << "AlteSyntaxHighlighter: 'multi_line_string' rule" << ruleName << "is missing 'start_pattern' field. Def:" << ruleDef;
                 continue;
             }
             if (!ruleDef.contains("end_pattern")) {
-                qWarning() << "SyntaxHighlighter: 'multi_line_string' rule" << ruleName << "is missing 'end_pattern' field. Def:" << ruleDef;
+                qWarning() << "AlteSyntaxHighlighter: 'multi_line_string' rule" << ruleName << "is missing 'end_pattern' field. Def:" << ruleDef;
                 continue;
             }
             HighlightingRule blockRule = baseRuleSetup;
@@ -169,33 +169,33 @@ void SyntaxHighlighter::loadRulesForLanguage(const QString& languageName, AlteTh
             if (blockRule.pattern.isValid() && blockRule.endPattern.isValid()) {
                 m_highlightingRules.append(blockRule);
             } else {
-                qWarning() << "SyntaxHighlighter: Invalid regex for 'multi_line_string' rule" << ruleName
+                qWarning() << "AlteSyntaxHighlighter: Invalid regex for 'multi_line_string' rule" << ruleName
                            << ": Start:" << ruleDef.value("start_pattern").toString()
                            << "End:" << ruleDef.value("end_pattern").toString();
             }
         } else if (ruleType == "pattern") {
             if (!ruleDef.contains("pattern")) {
-                qWarning() << "SyntaxHighlighter: 'pattern' rule" << ruleName << "is missing 'pattern' field. Def:" << ruleDef;
+                qWarning() << "AlteSyntaxHighlighter: 'pattern' rule" << ruleName << "is missing 'pattern' field. Def:" << ruleDef;
                 continue;
             }
             HighlightingRule singlePatternRule = baseRuleSetup;
             QString patternStr = ruleDef.value("pattern").toString();
             if (patternStr.isEmpty()){
-                 qWarning() << "SyntaxHighlighter: Empty pattern string for 'pattern' rule" << ruleName;
+                 qWarning() << "AlteSyntaxHighlighter: Empty pattern string for 'pattern' rule" << ruleName;
                  continue;
             }
             singlePatternRule.pattern = QRegularExpression(patternStr);
             if (singlePatternRule.pattern.isValid()) {
                 m_highlightingRules.append(singlePatternRule);
             } else {
-                qWarning() << "SyntaxHighlighter: Invalid regex for 'pattern' rule" << ruleName << ":" << patternStr;
+                qWarning() << "AlteSyntaxHighlighter: Invalid regex for 'pattern' rule" << ruleName << ":" << patternStr;
             }
         } else if (ruleDef.contains("patterns")) { // Legacy path, if still needed
             // This can be kept for backward compatibility or removed if all JSONs are updated.
             // For now, let's assume it's similar to "keywords" with "list" but uses "patterns" key.
-            qWarning() << "SyntaxHighlighter: Rule" << ruleName << "uses legacy 'patterns' key. Consider updating to 'list' under 'keywords' type.";
+            qWarning() << "AlteSyntaxHighlighter: Rule" << ruleName << "uses legacy 'patterns' key. Consider updating to 'list' under 'keywords' type.";
             if (!ruleDef.contains("patterns")) { // Should not happen if previous 'contains' is true
-                 qWarning() << "SyntaxHighlighter: 'patterns' rule" << ruleName << "is missing 'patterns' field. Def:" << ruleDef;
+                 qWarning() << "AlteSyntaxHighlighter: 'patterns' rule" << ruleName << "is missing 'patterns' field. Def:" << ruleDef;
                  continue;
             }
             QJsonArray patternsArray = ruleDef.value("patterns").toArray();
@@ -206,7 +206,7 @@ void SyntaxHighlighter::loadRulesForLanguage(const QString& languageName, AlteTh
                 if (specificRule.pattern.isValid()) {
                     m_highlightingRules.append(specificRule);
                 } else {
-                    qWarning() << "SyntaxHighlighter: Invalid regex from legacy 'patterns' list" << val.toString() << "for rule" << ruleName;
+                    qWarning() << "AlteSyntaxHighlighter: Invalid regex from legacy 'patterns' list" << val.toString() << "for rule" << ruleName;
                 }
             }
         } else {
@@ -214,13 +214,13 @@ void SyntaxHighlighter::loadRulesForLanguage(const QString& languageName, AlteTh
             // The ruleDef.value("block").toBool(false) was for a flatter structure.
             // Now, "multi_line_string" is the explicit type for blocks.
             if (!ruleName.startsWith("_comment_")) { // Don't warn for meta-comment keys in JSON
-                 qWarning() << "SyntaxHighlighter: Rule" << ruleName << "has unknown type'" << ruleType << "' or is malformed. Def:" << ruleDef;
+                 qWarning() << "AlteSyntaxHighlighter: Rule" << ruleName << "has unknown type'" << ruleType << "' or is malformed. Def:" << ruleDef;
             }
         }
     }
 }
 
-void SyntaxHighlighter::highlightBlock(const QString &text) {
+void AlteSyntaxHighlighter::highlightBlock(const QString &text) {
     // Apply non-block rules first
     for (const HighlightingRule &rule : m_highlightingRules) {
         if (rule.isBlockRule) continue;

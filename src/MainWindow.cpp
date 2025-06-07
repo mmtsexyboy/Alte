@@ -1,4 +1,5 @@
-#include "include/MainWindow.h" // Use "include/" prefix
+#include "MainWindow.h" // Use "include/" prefix
+#include <QMenuBar>     // For menuBar() -> addMenu()
 #include "AlteSyntaxHighlighter.h" // Already in .h but good for cpp if direct methods used
 #include "AlteThemeManager.h"    // Already in .h but good for cpp if direct methods used
 
@@ -32,7 +33,7 @@ MainWindow::MainWindow(AlteThemeManager* p_themeManager, QWidget *parent)
         textEdit->setFont(editorFont);
 
         // Default to "python" or "cpp" for testing
-        highlighter = new SyntaxHighlighter(textEdit->document(), m_themeManager, "python");
+        highlighter = new AlteSyntaxHighlighter(textEdit->document(), m_themeManager, "python");
 
         m_originalTextEditStyleSheet = resolveTextEditStyleSheet(false); // false for not using glow color
         textEdit->setStyleSheet(m_originalTextEditStyleSheet); // Apply it once to be sure
@@ -40,7 +41,7 @@ MainWindow::MainWindow(AlteThemeManager* p_themeManager, QWidget *parent)
     } else {
         qWarning() << "MainWindow: ThemeManager is null, syntax highlighter and focus glow might not work correctly.";
         // Fallback if themeManager is somehow null - ensure highlighter is still created
-        highlighter = new SyntaxHighlighter(textEdit->document(), nullptr, ""); // Pass nullptr for themeManager
+        highlighter = new AlteSyntaxHighlighter(textEdit->document(), nullptr, ""); // Pass nullptr for themeManager
     }
 
     textEdit->installEventFilter(this);

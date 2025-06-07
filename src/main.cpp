@@ -12,7 +12,8 @@
 // <QFileInfo> // Moved to MainWindow.cpp
 // <QCloseEvent> // Moved to MainWindow.h
 #include <QLocale>    // Required for QLocale
-#include <QDir>       // Required for QDir::homePath() in main() for file dialogs, but MainWindow uses it too. Keep for main, MainWindow.cpp has it.
+#include <QDir>       // Required for QDir
+#include <QStandardPaths> // Required for QStandardPaths (though not directly used in this iteration, good for future)
 // "AlteSyntaxHighlighter.h" // Moved to MainWindow.h/cpp
 #include "splashscreen.h"      // For SplashScreen
 #include "AlteThemeManager.h"  // For ThemeManager
@@ -23,8 +24,9 @@
 #include <stdexcept>           // For std::exception
 #include <QDebug>              // For qDebug messages
 #include <cstdio>              // For fprintf
+#include <QFileInfo>           // For QFile::exists() and QFileInfo::exists()
 
-#include "include/MainWindow.h" // Include the new MainWindow header
+#include "MainWindow.h" // Include the new MainWindow header
 
 // Forward declare AlteThemeManager if its definition isn't needed in this header part
 // class AlteThemeManager; // Not needed here as AlteThemeManager.h is included by AlteThemeManager.h (indirectly if main needs it) or directly.
@@ -47,21 +49,48 @@ int main(int argc, char *argv[]) {
 
     // ThemeManager setup
     AlteThemeManager themeManager;
-    // Construct path to theme file relative to application executable
-    // Assuming themes are in: <app_dir>/../resources/themes/ (common for deployed apps)
-    // or <app_dir>/resources/themes/ (common for build dir execution)
-    QString themeFilePath = QCoreApplication::applicationDirPath() + "/resources/themes/default_dark_neon.json";
-    QFile themeFile(themeFilePath);
-    if (!themeFile.exists()) { // Fallback for development environment structure
-        themeFilePath = QCoreApplication::applicationDirPath() + "/../resources/themes/default_dark_neon.json";
-        if (!QFile(themeFilePath).exists()) {
-             themeFilePath = "./resources/themes/default_dark_neon.json"; // Even further fallback
+
+    QString appPath = QCoreApplication::applicationDirPath();
+    qDebug() << "Application directory path:" << appPath;
+
+    QString themeFilePath = "";
+    QString themeName = "default_dark_neon.json"; // Define theme name
+
+    QList<QString> potentialBasePaths;
+    potentialBasePaths.append(appPath + "/../share/alte/resources"); // a. /opt/alte/bin/../share/alte/resources -> /opt/alte/share/alte/resources
+    potentialBasePaths.append(appPath + "/resources");                // b. <app_dir>/resources
+    potentialBasePaths.append(appPath + "/../resources");             // c. <app_dir>/../resources (e.g. build/bin/ -> build/resources)
+
+    for (const QString& basePath : potentialBasePaths) {
+        QString currentThemePath = basePath + "/themes/" + themeName;
+        qDebug() << "Attempting resource path:" << currentThemePath;
+        QFileInfo fileInfo(currentThemePath);
+        if (fileInfo.exists() && fileInfo.isFile()) {
+            themeFilePath = currentThemePath;
+            qDebug() << "Theme file found at:" << themeFilePath;
+            break;
+        } else {
+            qDebug() << "Theme file not found at:" << currentThemePath;
         }
     }
-    qDebug() << "Final theme file path attempted:" << themeFilePath;
+
+    if (themeFilePath.isEmpty()) {
+        // Fallback to the original potentially unreliable path
+        QString fallbackPath = "./resources/themes/" + themeName;
+        qWarning() << "Falling back to relative path, application might not find resources if run from a different directory:" << fallbackPath;
+        themeFilePath = fallbackPath; // Use this path, even if it might not exist, to match original behavior if all else fails
+    }
+
+    // Ensure themeFilePath is normalized to avoid issues with ".." or "."
+    if (!themeFilePath.isEmpty()) {
+        QFileInfo fileInfo(themeFilePath);
+        themeFilePath = fileInfo.absoluteFilePath(); // Normalize the path
+        qDebug() << "Normalized theme file path to be used:" << themeFilePath;
+    }
+
+
     if (themeManager.loadTheme(themeFilePath)) {
-        // qDebug() << "Theme loaded successfully from:" << themeFilePath; // Potentially problematic
-        qDebug() << "MAIN: loadTheme call completed."; // Test with simple string literal
+        qDebug() << "MAIN: loadTheme call completed for:" << themeFilePath;
 
         // Simplest possible fprintf test
         fprintf(stderr, "MAIN: fprintf test immediately after loadTheme returns.\n");
