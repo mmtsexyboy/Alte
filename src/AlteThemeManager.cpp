@@ -96,53 +96,53 @@ void AlteThemeManager::applyTheme(QApplication* app) const {
     qDebug() << "Global palette applied. Window background:" << globalPalette.color(QPalette::Window).name();
 
     // Generate and apply the global stylesheet
-    // QString globalStyleSheet = generateGlobalStyleSheet(); // Commented out for individual application
-    // if (!globalStyleSheet.isEmpty()) {
-    //     qDebug() << "Global stylesheet generated. Length:" << globalStyleSheet.length();
-    //     if (globalStyleSheet.length() < 3000) {
-    //         qDebug().noquote() << "Full Global Stylesheet Content:\n" << globalStyleSheet;
-    //     } else {
-    //         qDebug().noquote() << "Global Stylesheet Content (first 1500 chars):\n" << globalStyleSheet.left(1500);
-    //     }
-    //     app->setStyleSheet(globalStyleSheet);
-    // } else {
-    //     qWarning() << "Generated global stylesheet is empty. Check theme JSON 'styles' section.";
-    // }
-
-    if (this->styles.isEmpty()) {
-        qWarning() << "No styles found in theme JSON's 'styles' section to apply individually.";
-    } else {
-        qDebug() << "Attempting to apply styles individually...";
-        for (auto styleIt = this->styles.constBegin(); styleIt != this->styles.constEnd(); ++styleIt) {
-            QString widgetName = styleIt.key();
-            QString originalStyleValue = styleIt.value().toString();
-            QString processedStyleValue = originalStyleValue;
-
-            for (auto colorIt = this->colors.constBegin(); colorIt != this->colors.constEnd(); ++colorIt) {
-                QString placeholder = QString("%%%%%1%%%%").arg(colorIt.key());
-                processedStyleValue.replace(placeholder, colorIt.value().toString());
-            }
-
-            QString individualRule = QString("%1 { %2 }").arg(widgetName, processedStyleValue);
-            qDebug().noquote() << "Attempting to apply individual QSS rule:" << individualRule;
-
-            QString currentStyleSheet = app->styleSheet();
-            // QString currentStyleSheet = app->styleSheet(); // Start fresh each time
-            // QString newStyleSheet = currentStyleSheet;
-            // if (!currentStyleSheet.isEmpty()) {
-            //     newStyleSheet += "\n"; // Add a newline separator if current sheet is not empty
-            // }
-            // newStyleSheet += individualRule;
-
-            app->setStyleSheet(individualRule); // Apply only the current rule, replacing previous
-            // It's hard to check for immediate warnings here without more complex Qt signal handling.
-            // We will rely on the global Qt message handler for "Could not parse..."
-            // If a rule is bad, the warning should appear after its application attempt.
+    QString globalStyleSheet = generateGlobalStyleSheet();
+    if (!globalStyleSheet.isEmpty()) {
+        qDebug() << "Global stylesheet generated. Length:" << globalStyleSheet.length();
+        if (globalStyleSheet.length() < 3000) {
+            qDebug().noquote() << "Full Global Stylesheet Content:\n" << globalStyleSheet;
+        } else {
+            qDebug().noquote() << "Global Stylesheet Content (first 1500 chars):\n" << globalStyleSheet.left(1500);
         }
-        qDebug() << "Clearing stylesheet after individual attempts.";
-        app->setStyleSheet(""); // Clear the stylesheet
-        // qDebug().noquote() << "Final stylesheet after applying individual rules:\n" << app->styleSheet(); // This will just be the last rule
+        app->setStyleSheet(globalStyleSheet);
+    } else {
+        qWarning() << "Generated global stylesheet is empty. Check theme JSON 'styles' section.";
     }
+
+    // if (this->styles.isEmpty()) {
+    //     qWarning() << "No styles found in theme JSON's 'styles' section to apply individually.";
+    // } else {
+    //     qDebug() << "Attempting to apply styles individually...";
+    //     for (auto styleIt = this->styles.constBegin(); styleIt != this->styles.constEnd(); ++styleIt) {
+    //         QString widgetName = styleIt.key();
+    //         QString originalStyleValue = styleIt.value().toString();
+    //         QString processedStyleValue = originalStyleValue;
+
+    //         for (auto colorIt = this->colors.constBegin(); colorIt != this->colors.constEnd(); ++colorIt) {
+    //             QString placeholder = QString("%%%%%1%%%%").arg(colorIt.key());
+    //             processedStyleValue.replace(placeholder, colorIt.value().toString());
+    //         }
+
+    //         QString individualRule = QString("%1 { %2 }").arg(widgetName, processedStyleValue);
+    //         qDebug().noquote() << "Attempting to apply individual QSS rule:" << individualRule;
+
+    //         QString currentStyleSheet = app->styleSheet();
+    //         // QString currentStyleSheet = app->styleSheet(); // Start fresh each time
+    //         // QString newStyleSheet = currentStyleSheet;
+    //         // if (!currentStyleSheet.isEmpty()) {
+    //         //     newStyleSheet += "\n"; // Add a newline separator if current sheet is not empty
+    //         // }
+    //         // newStyleSheet += individualRule;
+
+    //         app->setStyleSheet(individualRule); // Apply only the current rule, replacing previous
+    //         // It's hard to check for immediate warnings here without more complex Qt signal handling.
+    //         // We will rely on the global Qt message handler for "Could not parse..."
+    //         // If a rule is bad, the warning should appear after its application attempt.
+    //     }
+    //     qDebug() << "Clearing stylesheet after individual attempts.";
+    //     app->setStyleSheet(""); // Clear the stylesheet
+    //     // qDebug().noquote() << "Final stylesheet after applying individual rules:\n" << app->styleSheet(); // This will just be the last rule
+    // }
 }
 
 QColor AlteThemeManager::getColor(const QString& name, const QColor& defaultValue) const {
