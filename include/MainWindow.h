@@ -18,15 +18,19 @@ class MainWindow : public QMainWindow {
     Q_OBJECT
 
 public:
-    MainWindow(AlteThemeManager* p_themeManager, QWidget *parent = nullptr);
+    explicit MainWindow(AlteThemeManager* p_themeManager, QWidget *parent = nullptr);
     ~MainWindow();
 
 protected:
     void closeEvent(QCloseEvent *event) override;
     bool eventFilter(QObject *obj, QEvent *event) override;
+    void dragEnterEvent(QDragEnterEvent *event) override;
+    void dropEvent(QDropEvent *event) override;
 
 public slots:
     void resetTextEditBorderSlot();
+    void toggleTypewriterMode();
+    void updateTypewriterCenter();
     void newFile();
     void openFile();
     bool saveFileInternal(const QString &filePath);
@@ -41,6 +45,8 @@ private:
     void applyTextEditFocusGlow();
 
     QTextEdit *textEdit;
+    QAction *typewriterModeAction;
+    bool typewriterModeEnabled;
     QAction *newAction;
     QAction *openAction;
     QAction *saveAction;
