@@ -39,6 +39,9 @@ public: // Public accessors for fonts
 
 public: // Make it public for SyntaxHighlighter to access easily
     QJsonObject getSyntaxRulesForLanguage(const QString& languageName) const;
+
+    // Method for debugging
+    int getStylesObjectSizeForDebug() const;
 };
 
 #endif // ALTETHEMEMANAGER_H

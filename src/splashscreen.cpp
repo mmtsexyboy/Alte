@@ -3,6 +3,7 @@
 #include <QScreen>      // For screen geometry
 #include <QAnimationGroup>
 #include <QPainterPath>
+#include <QDebug>
 #include <QFontMetrics>
 
 #include <QParallelAnimationGroup> // Ensure this is included
@@ -22,7 +23,7 @@ SplashScreen::SplashScreen(QWidget *parent)
     // or for smooth edges if the glyph is drawn near edges.
     // For a fully black initial screen, this is fine.
     setAttribute(Qt::WA_TranslucentBackground);
-    setAttribute(Qt::WA_DeleteOnClose);
+    // setAttribute(Qt::WA_DeleteOnClose); // Removed: Object is stack-allocated in main
 
     // Setup for the animation
     m_centralColumnAnimationGroup = new QParallelAnimationGroup(this);
@@ -60,6 +61,7 @@ void SplashScreen::startGlyphAnimation(int durationMs) {
     m_columnOpacityAnimation->setStartValue(0.0);      // Start fully transparent
     m_columnOpacityAnimation->setEndValue(1.0);        // End fully opaque
 
+    qDebug() << "Starting glyph animation";
     m_centralColumnAnimationGroup->start();
     update(); // Ensure a repaint is scheduled
 }
