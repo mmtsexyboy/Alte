@@ -56,6 +56,14 @@ MainWindow::MainWindow(AlteThemeManager* p_themeManager, QWidget *parent)
     // textEdit->document()->setModified(false); // Set in newFile
 }
 
+// Destructor Implementation
+MainWindow::~MainWindow() {
+    delete highlighter; // Delete the highlighter instance
+    // m_focusTimer is parented to this, will be deleted by Qt.
+    // textEdit is parented to this, will be deleted by Qt.
+    // All QAction members are parented to this, will be deleted by Qt.
+}
+
 // closeEvent Implementation
 void MainWindow::closeEvent(QCloseEvent *event) {
     if (maybeSave()) {
