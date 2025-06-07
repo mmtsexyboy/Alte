@@ -29,6 +29,18 @@
             "style_key": "string"
         },
         {
+            "name": "CSS Custom Property Definition",
+            "type": "pattern",
+            "pattern": "--(?:[a-zA-Z_][a-zA-Z0-9_-]*)(?=\\s*:)",
+            "style_key": "variable_name"
+        },
+        {
+            "name": "Property Name",
+            "type": "pattern",
+            "pattern": "\\b([a-zA-Z-]+)(?=\\s*:)",
+            "style_key": "keyword_property"
+        },
+        {
             "name": "ID Selector",
             "type": "pattern",
             "pattern": "#([a-zA-Z_][a-zA-Z0-9_-]*)",
@@ -43,7 +55,7 @@
         {
             "name": "Pseudo-classes and Pseudo-elements",
             "type": "pattern",
-            "pattern": ":{1,2}([a-zA-Z_][a-zA-Z0-9_-]+)(?:\\((?:[^()\"']|\"(?:\\\\.|[^\"\\\\])*\"|'(?:\\\\.|[^'\\\\])*')*\\))?",
+            "pattern": ":{1,2}([a-zA-Z_][a-zA-Z0-9_-]+)(?:\\((?:[^()\"']|\"(?:\\\\.|[^\"\\\\])*\"|'(?:\\\\.|[^'\\])*')*\\))?",
             "style_key": "selector_pseudo"
         },
         {
@@ -65,12 +77,6 @@
             "style_key": "operator"
         },
         {
-            "name": "Property Name",
-            "type": "pattern",
-            "pattern": "\\b([a-zA-Z-]+)(?=\\s*:)",
-            "style_key": "keyword_property"
-        },
-        {
             "name": "Important Keyword",
             "type": "pattern",
             "pattern": "!important\\b",
@@ -83,9 +89,15 @@
             "style_key": "number_hex"
         },
         {
-            "name": "URL Function",
+            "name": "CSS var() Function",
             "type": "pattern",
-            "pattern": "\\burl\\((?:[^)\\\\]|\\\\.)*\\)",
+            "pattern": "\\bvar\\s*\\(\\s*--[a-zA-Z_][a-zA-Z0-9_-]*\\s*(?:,\\s*(?:[^()\"']|\"(?:\\\\.|[^\"\\])*\"|'(?:\\\\.|[^'\\])*'|\\([^()]*\\))*\\s*)?\\)",
+            "style_key": "function_variable"
+        },
+        {
+            "name": "CSS Functions (e.g., url(), rgb(), calc())",
+            "type": "pattern",
+            "pattern": "\\b([a-zA-Z_][a-zA-Z0-9_-]*)\\s*\\(",
             "style_key": "function"
         },
         {
@@ -104,37 +116,36 @@
             "name": "Value Keywords (examples)",
             "type": "keywords",
             "list": [
-                "auto", "inherit", "initial", "unset", "revert", "none", "hidden", "visible",
-                "block", "inline", "inline-block", "flex", "grid", "table", "list-item",
-                "absolute", "relative", "static", "fixed", "sticky",
-                "normal", "bold", "italic", "oblique",
-                "solid", "dotted", "dashed", "double", "groove", "ridge", "inset", "outset",
-                "transparent", "currentColor",
-                "aliceblue", "antiquewhite", "aqua", "aquamarine", "azure", "beige", "bisque",
-                "black", "blanchedalmond", "blue", "blueviolet", "brown", "burlywood",
-                "cadetblue", "chartreuse", "chocolate", "coral", "cornflowerblue", "cornsilk",
-                "crimson", "cyan", "darkblue", "darkcyan", "darkgoldenrod", "darkgray", "darkgreen",
-                "darkgrey", "darkkhaki", "darkmagenta", "darkolivegreen", "darkorange", "darkorchid",
-                "darkred", "darksalmon", "darkseagreen", "darkslateblue", "darkslategray",
-                "darkslategrey", "darkturquoise", "darkviolet", "deeppink", "deepskyblue",
-                "dimgray", "dimgrey", "dodgerblue", "firebrick", "floralwhite", "forestgreen",
-                "fuchsia", "gainsboro", "ghostwhite", "gold", "goldenrod", "gray", "green",
-                "greenyellow", "grey", "honeydew", "hotpink", "indianred", "indigo", "ivory",
-                "khaki", "lavender", "lavenderblush", "lawngreen", "lemonchiffon", "lightblue",
-                "lightcoral", "lightcyan", "lightgoldenrodyellow", "lightgray", "lightgreen",
-                "lightgrey", "lightpink", "lightsalmon", "lightseagreen", "lightskyblue",
-                "lightslategray", "lightslategrey", "lightsteelblue", "lightyellow", "lime",
-                "limegreen", "linen", "magenta", "maroon", "mediumaquamarine", "mediumblue",
+                "absolute", "aliceblue", "antiquewhite", "aqua", "aquamarine", "auto", "azure",
+                "beige", "bisque", "black", "blanchedalmond", "block", "blue", "blueviolet",
+                "bold", "brown", "burlywood", "cadetblue", "chartreuse", "chocolate", "coral",
+                "cornflowerblue", "cornsilk", "crimson", "currentColor", "cyan", "darkblue",
+                "darkcyan", "darkgoldenrod", "darkgray", "darkgreen", "darkgrey", "darkkhaki",
+                "darkmagenta", "darkolivegreen", "darkorange", "darkorchid", "darkred",
+                "darksalmon", "darkseagreen", "darkslateblue", "darkslategray", "darkslategrey",
+                "darkturquoise", "darkviolet", "dashed", "deeppink", "deepskyblue", "dimgray",
+                "dimgrey", "dodgerblue", "dotted", "double", "firebrick", "fixed", "flex",
+                "floralwhite", "forestgreen", "fuchsia", "gainsboro", "ghostwhite", "gold",
+                "goldenrod", "gray", "green", "greenyellow", "grid", "grey", "groove",
+                "hidden", "honeydew", "hotpink", "indianred", "indigo", "inherit", "initial",
+                "inline", "inline-block", "inset", "italic", "ivory", "khaki", "lavender",
+                "lavenderblush", "lawngreen", "lemonchiffon", "lightblue", "lightcoral",
+                "lightcyan", "lightgoldenrodyellow", "lightgray", "lightgreen", "lightgrey",
+                "lightpink", "lightsalmon", "lightseagreen", "lightskyblue", "lightslategray",
+                "lightslategrey", "lightsteelblue", "lightyellow", "lime", "limegreen",
+                "linen", "list-item", "magenta", "maroon", "mediumaquamarine", "mediumblue",
                 "mediumorchid", "mediumpurple", "mediumseagreen", "mediumslateblue",
                 "mediumspringgreen", "mediumturquoise", "mediumvioletred", "midnightblue",
-                "mintcream", "mistyrose", "moccasin", "navajowhite", "navy", "oldlace", "olive",
-                "olivedrab", "orange", "orangered", "orchid", "palegoldenrod", "palegreen",
-                "paleturquoise", "palevioletred", "papayawhip", "peachpuff", "peru", "pink",
-                "plum", "powderblue", "purple", "rebeccapurple", "red", "rosybrown", "royalblue",
+                "mintcream", "mistyrose", "moccasin", "navajowhite", "navy", "none", "normal",
+                "oblique", "oldlace", "olive", "olivedrab", "orange", "orangered", "orchid",
+                "outset", "palegoldenrod", "palegreen", "paleturquoise", "palevioletred",
+                "papayawhip", "peachpuff", "peru", "pink", "plum", "powderblue", "purple",
+                "rebeccapurple", "red", "relative", "revert", "ridge", "rosybrown", "royalblue",
                 "saddlebrown", "salmon", "sandybrown", "seagreen", "seashell", "sienna",
-                "silver", "skyblue", "slateblue", "slategray", "slategrey", "snow", "springgreen",
-                "steelblue", "tan", "teal", "thistle", "tomato", "turquoise", "violet",
-                "wheat", "white", "whitesmoke", "yellow", "yellowgreen"
+                "silver", "skyblue", "slateblue", "slategray", "slategrey", "snow", "solid",
+                "springgreen", "static", "steelblue", "sticky", "table", "tan", "teal",
+                "thistle", "tomato", "transparent", "turquoise", "union", "unset", "violet",
+                "visible", "wheat", "white", "whitesmoke", "yellow", "yellowgreen"
             ],
             "style_key": "constant_value"
         },

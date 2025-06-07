@@ -1,6 +1,6 @@
 {
     "language_name": "JavaScript",
-    "file_extensions": [".js", ".mjs", ".cjs", ".jsx", ".json"],
+    "file_extensions": [".js", ".mjs", ".cjs", ".jsx"],
     "first_line_patterns": [
         "^#!.*node",
         "^#!.*deno",
@@ -11,19 +11,25 @@
             "name": "Keywords",
             "type": "keywords",
             "list": [
-                "abstract", "arguments", "await", "boolean", "break", "byte",
-                "case", "catch", "char", "class", "const", "constructor",
+                "abstract", "arguments", "async", "await", "boolean", "break",
+                "byte", "case", "catch", "char", "class", "const", "constructor",
                 "continue", "debugger", "default", "delete", "do", "double",
                 "else", "enum", "eval", "export", "extends", "false", "final",
-                "finally", "float", "for", "function", "get", "goto", "if",
-                "implements", "import", "in", "instanceof", "int", "interface",
-                "let", "long", "native", "new", "null", "package", "private",
-                "protected", "public", "return", "set", "short", "static", "super",
-                "switch", "synchronized", "this", "throw", "throws", "transient",
-                "true", "try", "typeof", "undefined", "var", "void", "volatile",
-                "while", "with", "yield", "async", "of", "from"
+                "finally", "float", "for", "from", "function", "get", "goto",
+                "if", "implements", "import", "in", "instanceof", "int",
+                "interface", "let", "long", "native", "new", "null", "of",
+                "package", "private", "protected", "public", "return", "set",
+                "short", "static", "super", "switch", "synchronized", "this",
+                "throw", "throws", "transient", "true", "try", "typeof",
+                "undefined", "var", "void", "volatile", "while", "with", "yield"
             ],
             "style_key": "keyword"
+        },
+        {
+            "name": "Decorators",
+            "type": "pattern",
+            "pattern": "@[a-zA-Z_][a-zA-Z0-9_\\.]*(?:\\s*\\([^)]*\\))?",
+            "style_key": "decorator"
         },
         {
             "name": "Line Comment",
@@ -62,6 +68,30 @@
             "start_pattern": "`",
             "end_pattern": "`",
             "style_key": "string"
+        },
+        {
+            "name": "JSX Tag Name",
+            "type": "pattern",
+            "pattern": "(?<=</?|\\s</?)([A-Z][a-zA-Z0-9_\\.]*|[a-z][a-z0-9_]*)(?=[\\s>/])",
+            "style_key": "tag"
+        },
+        {
+            "name": "JSX Attribute Name",
+            "type": "pattern",
+            "pattern": "\\b([a-zA-Z_][a-zA-Z0-9_\\-]*)(?=\\s*=)",
+            "style_key": "attribute_name"
+        },
+        {
+            "name": "JSX Tag Brackets",
+            "type": "pattern",
+            "pattern": "</?|/?>",
+            "style_key": "tag_punctuation"
+        },
+        {
+            "name": "JSX Expression Braces",
+            "type": "pattern",
+            "pattern": "\\{|\\}",
+            "style_key": "meta_tag"
         },
         {
             "name": "Hexadecimal Numbers",
@@ -104,18 +134,18 @@
             "type": "keywords",
             "list": [
                 "Array", "ArrayBuffer", "Atomics", "BigInt", "BigInt64Array",
-                "BigUint64Array", "Boolean", "DataView", "Date", "Error",
-                "EvalError", "FinalizationRegistry", "Float32Array", "Float64Array",
-                "Function", "Infinity", "Int16Array", "Int32Array", "Int8Array",
-                "InternalError", "Intl", "JSON", "Map", "Math", "NaN", "Number",
-                "Object", "Promise", "Proxy", "RangeError", "ReferenceError",
-                "Reflect", "RegExp", "Set", "SharedArrayBuffer", "String", "Symbol",
-                "SyntaxError", "TypeError", "URIError", "Uint16Array", "Uint32Array",
-                "Uint8Array", "Uint8ClampedArray", "WeakMap", "WeakRef", "WeakSet",
-                "console", "document", "window", "navigator", "localStorage",
-                "sessionStorage", "fetch", "setTimeout", "setInterval", "clearTimeout",
-                "clearInterval", "isNaN", "isFinite", "parseFloat", "parseInt", "decodeURI",
-                "decodeURIComponent", "encodeURI", "encodeURIComponent"
+                "BigUint64Array", "Boolean", "DataView", "Date", "Error", "EvalError",
+                "FinalizationRegistry", "Float32Array", "Float64Array", "Function",
+                "Infinity", "Int16Array", "Int32Array", "Int8Array", "InternalError",
+                "Intl", "JSON", "Map", "Math", "NaN", "Number", "Object", "Promise",
+                "Proxy", "RangeError", "ReferenceError", "Reflect", "RegExp", "Set",
+                "SharedArrayBuffer", "String", "Symbol", "SyntaxError", "TypeError",
+                "URIError", "Uint16Array", "Uint32Array", "Uint8Array",
+                "Uint8ClampedArray", "WeakMap", "WeakRef", "WeakSet", "clearInterval",
+                "clearTimeout", "console", "decodeURI", "decodeURIComponent",
+                "document", "encodeURI", "encodeURIComponent", "fetch", "isFinite",
+                "isNaN", "localStorage", "navigator", "parseFloat", "parseInt",
+                "sessionStorage", "setInterval", "setTimeout", "window"
             ],
             "style_key": "builtin"
         }
