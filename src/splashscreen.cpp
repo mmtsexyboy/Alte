@@ -77,7 +77,9 @@ void SplashScreen::paintEvent(QPaintEvent *event) {
         if (m_centralColumnHeight > 0 && m_centralColumnOpacity > 0) {
             painter.setOpacity(m_centralColumnOpacity);
             QColor neonColor(0, 199, 164); // #00c7a4
-            painter.setPen(QPen(neonColor, 3)); // Pen thickness 3
+            // Animated stroke width: Example: 2 to 6
+            int currentStrokeWidth = 2 + static_cast<int>(fullProgress * 4);
+            painter.setPen(QPen(neonColor, currentStrokeWidth, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
 
             // Define 'A' geometry based on splash screen size and m_centralColumnHeight
             // All coordinates relative to center of the splash screen.
@@ -104,22 +106,49 @@ void SplashScreen::paintEvent(QPaintEvent *event) {
             fullProgress = qBound(0.0f, fullProgress, 1.0f); // Clamp between 0 and 1
 
             // Draw parts of 'A' based on fullProgress
-            // Part 1: Left leg (0.0 to 0.4 progress)
+            // Part 1: Left leg (0.0 to 0.4 progress) - Curved
             if (fullProgress > 0) {
                 float part1Progress = qBound(0.0f, fullProgress / 0.4f, 1.0f);
-                painter.drawLine(p_top, p_top + (p_bl - p_top) * part1Progress);
+                if (part1Progress > 0) { // Only draw if there's progress
+                    QPainterPath leftLegPath;
+                    leftLegPath.moveTo(p_top);
+                    // Control point: slightly to the left and halfway down the leg
+                    QPointF control_p1_bl(p_top.x() - charWidth * 0.25f, p_top.y() + (p_bl.y() - p_top.y()) * 0.5f);
+                    QPointF target_p_bl = p_top + (p_bl - p_top) * part1Progress;
+
+                    // If part1Progress is very small, quadTo might behave unexpectedly if control and target are too close to p_top.
+                    // A simple approach is to animate the target point of the curve.
+                    // For a more sophisticated partial curve drawing, one would need to evaluate the Bezier curve equation.
+                    // Here, we animate the end point of the curve itself.
+                    QPointF animated_control_p1_bl = p_top + (control_p1_bl - p_top) * part1Progress;
+
+                    leftLegPath.quadTo(animated_control_p1_bl, target_p_bl);
+                    painter.drawPath(leftLegPath);
+                }
             }
 
-            // Part 2: Right leg (drawn from 0.2 to 0.7 progress)
+            // Part 2: Right leg (drawn from 0.2 to 0.7 progress) - Curved
             if (fullProgress > 0.2f) {
                 float part2Progress = qBound(0.0f, (fullProgress - 0.2f) / 0.5f, 1.0f);
-                painter.drawLine(p_top, p_top + (p_br - p_top) * part2Progress);
+                if (part2Progress > 0) { // Only draw if there's progress
+                    QPainterPath rightLegPath;
+                    rightLegPath.moveTo(p_top);
+                    // Control point: slightly to the right and halfway down the leg
+                    QPointF control_p1_br(p_top.x() + charWidth * 0.25f, p_top.y() + (p_br.y() - p_top.y()) * 0.5f);
+                    QPointF target_p_br = p_top + (p_br - p_top) * part2Progress;
+                    QPointF animated_control_p1_br = p_top + (control_p1_br - p_top) * part2Progress;
+
+                    rightLegPath.quadTo(animated_control_p1_br, target_p_br);
+                    painter.drawPath(rightLegPath);
+                }
             }
 
             // Part 3: Crossbar (drawn from 0.5 to 1.0 progress)
             if (fullProgress > 0.5f) {
                 float part3Progress = qBound(0.0f, (fullProgress - 0.5f) / 0.5f, 1.0f);
-                painter.drawLine(p_cl, p_cl + (p_cr - p_cl) * part3Progress);
+                if (part3Progress > 0) { // Only draw if there's progress
+                    painter.drawLine(p_cl, p_cl + (p_cr - p_cl) * part3Progress);
+                }
             }
         }
     }

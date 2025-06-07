@@ -23,35 +23,47 @@
 
 // Forward declare AlteThemeManager if its definition isn't needed in this header part
 // class AlteThemeManager; // Not needed here as it's in main()
+#include <QTimer> // For QTimer in MainWindow for focus glow
+#include <QEvent> // For QEvent in eventFilter
 
 class MainWindow : public QMainWindow {
     Q_OBJECT
 
 public:
     // Updated constructor to accept AlteThemeManager
-    MainWindow(AlteThemeManager* themeManager, QWidget *parent = nullptr) : QMainWindow(parent) {
+    MainWindow(AlteThemeManager* p_themeManager, QWidget *parent = nullptr)
+        : QMainWindow(parent), m_themeManager(p_themeManager), m_focusTimer(nullptr) {
         setWindowTitle("Alte Editor"); // Will be updated by newFile()
-        // setGeometry(100, 100, 800, 600); // Removed, will be set in main() after splash
         setWindowIcon(QIcon(":/icons/alte_icon.png")); // Set window icon from QRC
 
         textEdit = new QTextEdit(this);
         setCentralWidget(textEdit);
 
         // Initialize highlighter with theme manager and a default language
-        // The actual themeManager instance will come from main()
-        if (themeManager) {
+        if (m_themeManager) {
             // Apply editor-specific font
-            QFont editorFont = themeManager->getEditorFont(textEdit->font());
+            QFont editorFont = m_themeManager->getEditorFont(textEdit->font());
             textEdit->setFont(editorFont);
 
             // Default to "python" or "cpp" for testing
-            highlighter = new SyntaxHighlighter(textEdit->document(), themeManager, "python");
+            highlighter = new SyntaxHighlighter(textEdit->document(), m_themeManager, "python");
+
+            // Store original stylesheet after textEdit is created and theme is presumably applied
+            // This needs to be done carefully. resolveTextEditStyleSheet needs m_themeManager.
+            // We will call a helper to fully resolve it.
+            m_originalTextEditStyleSheet = resolveTextEditStyleSheet(false); // false for not using glow color
+            textEdit->setStyleSheet(m_originalTextEditStyleSheet); // Apply it once to be sure
+
         } else {
             // Fallback if themeManager is somehow null
-            qWarning() << "MainWindow: ThemeManager is null, syntax highlighter might not work correctly.";
-            // Initialize highlighter with null themeManager and empty language to avoid crash, though it won't highlight.
+            qWarning() << "MainWindow: ThemeManager is null, syntax highlighter and focus glow might not work correctly.";
             highlighter = new SyntaxHighlighter(textEdit->document(), nullptr, "");
         }
+
+        textEdit->installEventFilter(this);
+        m_focusTimer = new QTimer(this);
+        m_focusTimer->setSingleShot(true);
+        connect(m_focusTimer, &QTimer::timeout, this, &MainWindow::resetTextEditBorderSlot);
 
         createActions();
         createMenus();
@@ -70,7 +82,30 @@ protected:
         }
     }
 
-public slots: // Make file operations public slots
+protected: // Change from public for eventFilter
+    bool eventFilter(QObject *obj, QEvent *event) override {
+        if (obj == textEdit) {
+            if (event->type() == QEvent::FocusIn) {
+                applyTextEditFocusGlow();
+                m_focusTimer->start(250); // Glow duration in ms
+            } else if (event->type() == QEvent::FocusOut) {
+                m_focusTimer->stop();
+                resetTextEditBorderSlot(); // Use the slot directly
+            }
+        }
+        return QMainWindow::eventFilter(obj, event);
+    }
+
+public slots:
+    void resetTextEditBorderSlot() {
+        if (m_themeManager && !m_originalTextEditStyleSheet.isEmpty()) {
+            textEdit->setStyleSheet(m_originalTextEditStyleSheet);
+        } else if (m_themeManager) { // Fallback if m_originalTextEditStyleSheet was empty
+            textEdit->setStyleSheet(resolveTextEditStyleSheet(false));
+        }
+        // If m_themeManager is null, no easy way to reset to a themed style.
+    }
+
     void newFile() {
         if (maybeSave()) {
             textEdit->clear();
@@ -287,6 +322,46 @@ private:
 
     QString currentFilePath;
     SyntaxHighlighter *highlighter; // Member variable for the highlighter
+    AlteThemeManager* m_themeManager;
+    QTimer* m_focusTimer;
+    QString m_originalTextEditStyleSheet;
+
+private: // Helper methods for focus glow
+    QString resolveTextEditStyleSheet(bool useGlowColor) {
+        if (!m_themeManager) return "";
+
+        QString baseStyle = m_themeManager->getStyleSheet("QPlainTextEdit, QTextEdit");
+        if (baseStyle.isEmpty()) {
+            qWarning() << "resolveTextEditStyleSheet: Could not get base style for QPlainTextEdit, QTextEdit";
+            // Fallback to a very basic border if nothing is defined in theme
+            return QString("border: 1px solid %1;").arg(useGlowColor ? m_themeManager->getColor("cyberPulse").name() : m_themeManager->getColor("border").name());
+        }
+
+        // Resolve the border color first
+        QColor borderColorToUse = useGlowColor ? m_themeManager->getColor("cyberPulse") : m_themeManager->getColor("border");
+        baseStyle.replace("%%border%%", borderColorToUse.name());
+
+        // Resolve other known color placeholders (add more if TextEdit style uses them)
+        baseStyle.replace("%%alternateBase%%", m_themeManager->getColor("alternateBase").name());
+        baseStyle.replace("%%lightMist%%", m_themeManager->getColor("lightMist").name()); // for text color
+        baseStyle.replace("%%cyberPulse%%", m_themeManager->getColor("cyberPulse").name()); // for selection-background
+        baseStyle.replace("%%highlightedText%%", m_themeManager->getColor("highlightedText").name());
+        // Add any other placeholders that might be in this specific style rule
+
+        return baseStyle;
+    }
+
+    void applyTextEditFocusGlow() {
+        if (!m_themeManager) return;
+        // Store original style if not already stored (e.g. first focus in)
+        // This is now done in constructor, but as a fallback:
+        if (m_originalTextEditStyleSheet.isEmpty()) {
+             m_originalTextEditStyleSheet = resolveTextEditStyleSheet(false);
+        }
+        QString glowStyle = resolveTextEditStyleSheet(true); // true for glow color
+        textEdit->setStyleSheet(glowStyle);
+    }
+
 };
 
 #include "main.moc"
