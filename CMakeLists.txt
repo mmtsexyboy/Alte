@@ -56,6 +56,9 @@ set(MOC_HEADERS
 # Add executable
 add_executable(Alte ${SOURCES} ${MOC_HEADERS} ${RESOURCE_FILES})
 
+# Set the output name for the executable to lowercase "alte"
+set_target_properties(Alte PROPERTIES OUTPUT_NAME "alte")
+
 # Link Qt libraries
 target_link_libraries(Alte PRIVATE ${QT_WIDGETS_LIB}) # Links Core, Gui, and Widgets
 

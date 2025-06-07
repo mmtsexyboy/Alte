@@ -1,11 +1,14 @@
 [Desktop Entry]
 Version=1.0
 Name=Alte Text Editor
+Name[fa]=ویرایشگر متن Alte
 GenericName=Text Editor
+GenericName[fa]=ویرایشگر متن
 Comment=Lightweight and Fast Text Editor
+Comment[fa]=ویرایشگر متن سبک، سریع و مدرن
 Exec=alte
 Icon=alte_icon
 Terminal=false
 Type=Application
-Categories=Utility;TextEditor;Development;
+Categories=Utility;TextEditor;Development;Qt;
 StartupWMClass=Alte # May need adjustment if QMainWindow's objectName or class name is set differently
