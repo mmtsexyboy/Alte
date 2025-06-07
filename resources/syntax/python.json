@@ -1,11 +1,37 @@
 {
     "language_name": "Python",
     "file_extensions": [".py", ".pyw"],
+    "first_line_patterns": [
+        "^#!.*python[0-9.]*$"
+    ],
     "highlighting_rules": [
         {
             "type": "keywords",
-            "list": ["def", "class", "if", "else", "elif", "for", "while", "return", "import", "from", "True", "False", "None", "try", "except", "finally", "with", "as", "in", "is", "lambda", "nonlocal", "global", "pass", "yield", "assert", "del"],
+            "list": [
+                "if", "else", "elif", "for", "while", "return", "import", "from",
+                "True", "False", "None", "try", "except", "finally", "with", "as",
+                "in", "is", "lambda", "nonlocal", "global", "pass", "yield",
+                "assert", "del", "async", "await", "continue", "break"
+            ],
             "style_key": "keyword"
+        },
+        {
+            "name": "Function Definition",
+            "type": "pattern",
+            "pattern": "\\bdef\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s*\\(",
+            "style_key": "function"
+        },
+        {
+            "name": "Class Definition",
+            "type": "pattern",
+            "pattern": "\\bclass\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s*[:\\(]",
+            "style_key": "class"
+        },
+        {
+            "name": "Decorator",
+            "type": "pattern",
+            "pattern": "^\\s*@\\s*([a-zA-Z_][a-zA-Z0-9_\\.]*)",
+            "style_key": "decorator"
         },
         {
             "type": "line_comment",
@@ -17,40 +43,62 @@
             "name": "Triple Double-Quoted String",
             "start_pattern": "\"\"\"",
             "end_pattern": "\"\"\"",
-            "style_key": "string",
-            "state_id": 2
+            "style_key": "string"
         },
         {
             "type": "multi_line_string",
             "name": "Triple Single-Quoted String",
             "start_pattern": "'''",
             "end_pattern": "'''",
-            "style_key": "string",
-            "state_id": 3
-        },
-        {
-            "type": "strings_double_quotes",
-            "start_delimiter": "\"",
-            "end_delimiter": "\"",
             "style_key": "string"
         },
         {
-            "type": "strings_single_quotes",
-            "start_delimiter": "'",
-            "end_delimiter": "'",
+            "name": "Double-Quoted String",
+            "type": "pattern",
+            "pattern": "\"(?:\\\\.|[^\"\\\\])*\"",
             "style_key": "string"
         },
         {
-            "type": "number",
+            "name": "Single-Quoted String",
+            "type": "pattern",
+            "pattern": "'(?:\\\\.|[^'\\\\])*'",
+            "style_key": "string"
+        },
+        {
+            "type": "pattern",
             "name": "Hexadecimal Number",
             "pattern": "\\b0[xX][0-9a-fA-F]+\\b",
-            "style_key": "number_hex", "comment": "Assuming a specific style key for hex, else use 'number'"
+            "style_key": "number_hex"
         },
         {
-            "type": "number",
+            "type": "pattern",
             "name": "Decimal Number",
             "pattern": "\\b[0-9]+(?:\\.[0-9]*)?(?:[eE][-+]?[0-9]+)?\\b|\\b\\.[0-9]+(?:[eE][-+]?[0-9]+)?\\b",
             "style_key": "number"
+        },
+        {
+            "name": "Operators",
+            "type": "pattern",
+            "pattern": "[+\\-*/%<>=!&|^~]=?|!=|//|\\*\\*|\\b(?:and|or|not)\\b",
+            "style_key": "operator"
+        },
+        {
+            "name": "Booleans and None (standalone, if not covered by keywords)",
+            "type": "pattern",
+            "pattern": "\\b(?:True|False|None)\\b",
+            "style_key": "literal"
+        },
+        {
+            "name": "Self keyword",
+            "type": "pattern",
+            "pattern": "\\bself\\b",
+            "style_key": "keyword_pseudo"
+        },
+        {
+            "name": "Built-in functions/types (example)",
+            "type": "pattern",
+            "pattern": "\\b(?:print|len|range|dict|list|str|int|float|set|tuple|Exception|object)\\b",
+            "style_key": "builtin"
         }
     ]
 }

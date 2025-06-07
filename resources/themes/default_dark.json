@@ -11,13 +11,13 @@
         "default": {
             "color": "#D0D0D0"
         },
-        "keyword": {
-            "color": "#CC7832",
-            "font_weight": "bold"
-        },
         "comment": {
             "color": "#808080",
             "font_style": "italic"
+        },
+        "keyword": {
+            "color": "#CC7832",
+            "font_weight": "bold"
         },
         "string": {
             "color": "#A5C261"
@@ -25,11 +25,53 @@
         "number": {
             "color": "#6897BB"
         },
+        "number_hex": {
+            "color": "#6897BB"
+        },
         "operator": {
             "color": "#D0D0D0"
         },
         "preprocessor": {
             "color": "#BBB529"
+        },
+        "function": {
+            "color": "#DCDCAA"
+        },
+        "class": {
+            "color": "#4EC9B0"
+        },
+        "decorator": {
+            "color": "#C586C0"
+        },
+        "type": {
+            "color": "#569CD6"
+        },
+        "type_name": {
+            "color": "#569CD6"
+        },
+        "tag": {
+            "color": "#569CD6"
+        },
+        "attribute_name": {
+            "color": "#9CDCFE"
+        },
+        "attribute_value": {
+            "color": "#CE9178"
+        },
+        "variable": {
+            "color": "#D0D0D0"
+        },
+        "constant": {
+            "color": "#4FC1FF"
+        },
+        "literal": {
+            "color": "#569CD6"
+        },
+        "keyword_pseudo": {
+            "color": "#CC7832"
+        },
+        "builtin": {
+            "color": "#569CD6"
         }
     },
     "syntax_highlighting": {
@@ -49,103 +91,16 @@
                 {
                     "type": "keywords",
                     "list": [
-                        "alignas",
-                        "alignof",
-                        "and",
-                        "and_eq",
-                        "asm",
-                        "atomic_cancel",
-                        "atomic_commit",
-                        "atomic_noexcept",
-                        "auto",
-                        "bitand",
-                        "bitor",
-                        "bool",
-                        "break",
-                        "case",
-                        "catch",
-                        "char",
-                        "char8_t",
-                        "char16_t",
-                        "char32_t",
-                        "class",
-                        "compl",
-                        "concept",
-                        "const",
-                        "consteval",
-                        "constexpr",
-                        "constinit",
-                        "const_cast",
-                        "continue",
-                        "co_await",
-                        "co_return",
-                        "co_yield",
-                        "decltype",
-                        "default",
-                        "delete",
-                        "do",
-                        "double",
-                        "dynamic_cast",
-                        "else",
-                        "enum",
-                        "explicit",
-                        "export",
-                        "extern",
-                        "false",
-                        "float",
-                        "for",
-                        "friend",
-                        "goto",
-                        "if",
-                        "inline",
-                        "int",
-                        "long",
-                        "mutable",
-                        "namespace",
-                        "new",
-                        "noexcept",
-                        "not",
-                        "not_eq",
-                        "nullptr",
-                        "operator",
-                        "or",
-                        "or_eq",
-                        "private",
-                        "protected",
-                        "public",
-                        "reflexpr",
-                        "register",
-                        "reinterpret_cast",
-                        "requires",
-                        "return",
-                        "short",
-                        "signed",
-                        "sizeof",
-                        "static",
-                        "static_assert",
-                        "static_cast",
-                        "struct",
-                        "switch",
-                        "synchronized",
-                        "template",
-                        "this",
-                        "thread_local",
-                        "throw",
-                        "true",
-                        "try",
-                        "typedef",
-                        "typeid",
-                        "typename",
-                        "union",
-                        "unsigned",
-                        "using",
-                        "virtual",
-                        "void",
-                        "volatile",
-                        "wchar_t",
-                        "while",
-                        "xor",
-                        "xor_eq"
+                        "alignas", "alignof", "and", "and_eq", "asm", "atomic_cancel", "atomic_commit", "atomic_noexcept", "auto",
+                        "bitand", "bitor", "bool", "break", "case", "catch", "char", "char8_t", "char16_t", "char32_t", "class",
+                        "compl", "concept", "const", "consteval", "constexpr", "constinit", "const_cast", "continue", "co_await",
+                        "co_return", "co_yield", "decltype", "default", "delete", "do", "double", "dynamic_cast", "else", "enum",
+                        "explicit", "export", "extern", "false", "float", "for", "friend", "goto", "if", "inline", "int", "long",
+                        "mutable", "namespace", "new", "noexcept", "not", "not_eq", "nullptr", "operator", "or", "or_eq", "private",
+                        "protected", "public", "reflexpr", "register", "reinterpret_cast", "requires", "return", "short", "signed",
+                        "sizeof", "static", "static_assert", "static_cast", "struct", "switch", "synchronized", "template", "this",
+                        "thread_local", "throw", "true", "try", "typedef", "typeid", "typename", "union", "unsigned", "using",
+                        "virtual", "void", "volatile", "wchar_t", "while", "xor", "xor_eq"
                     ],
                     "style_key": "keyword"
                 },
@@ -190,22 +145,8 @@
                     "type": "keywords",
                     "name": "Common Types",
                     "list": [
-                        "std::string",
-                        "std::vector",
-                        "std::map",
-                        "std::list",
-                        "std::cout",
-                        "std::cin",
-                        "std::endl",
-                        "size_t",
-                        "int8_t",
-                        "int16_t",
-                        "int32_t",
-                        "int64_t",
-                        "uint8_t",
-                        "uint16_t",
-                        "uint32_t",
-                        "uint64_t"
+                        "std::string", "std::vector", "std::map", "std::list", "std::cout", "std::cin", "std::endl",
+                        "size_t", "int8_t", "int16_t", "int32_t", "int64_t", "uint8_t", "uint16_t", "uint32_t", "uint64_t"
                     ],
                     "style_key": "type_name"
                 }
@@ -213,66 +154,16 @@
         },
         "java": {
             "language_name": "Java",
-            "file_extensions": [
-                ".java"
-            ],
+            "file_extensions": [ ".java" ],
             "highlighting_rules": [
                 {
                     "type": "keywords",
                     "list": [
-                        "abstract",
-                        "assert",
-                        "boolean",
-                        "break",
-                        "byte",
-                        "case",
-                        "catch",
-                        "char",
-                        "class",
-                        "const",
-                        "continue",
-                        "default",
-                        "do",
-                        "double",
-                        "else",
-                        "enum",
-                        "extends",
-                        "final",
-                        "finally",
-                        "float",
-                        "for",
-                        "goto",
-                        "if",
-                        "implements",
-                        "import",
-                        "instanceof",
-                        "int",
-                        "interface",
-                        "long",
-                        "native",
-                        "new",
-                        "package",
-                        "private",
-                        "protected",
-                        "public",
-                        "return",
-                        "short",
-                        "static",
-                        "strictfp",
-                        "super",
-                        "switch",
-                        "synchronized",
-                        "this",
-                        "throw",
-                        "throws",
-                        "transient",
-                        "try",
-                        "void",
-                        "volatile",
-                        "while",
-                        "true",
-                        "false",
-                        "null"
+                        "abstract", "assert", "boolean", "break", "byte", "case", "catch", "char", "class", "const", "continue",
+                        "default", "do", "double", "else", "enum", "extends", "final", "finally", "float", "for", "goto", "if",
+                        "implements", "import", "instanceof", "int", "interface", "long", "native", "new", "package", "private",
+                        "protected", "public", "return", "short", "static", "strictfp", "super", "switch", "synchronized", "this",
+                        "throw", "throws", "transient", "try", "void", "volatile", "while", "true", "false", "null"
                     ],
                     "style_key": "keyword"
                 },
@@ -305,7 +196,7 @@
                     "type": "pattern",
                     "name": "Annotations",
                     "pattern": "@[A-Za-z_][A-Za-z0-9_]*",
-                    "style_key": "preprocessor"
+                    "style_key": "decorator"
                 },
                 {
                     "type": "pattern",
@@ -317,21 +208,8 @@
                     "type": "keywords",
                     "name": "Common Types",
                     "list": [
-                        "String",
-                        "Integer",
-                        "Double",
-                        "Boolean",
-                        "List",
-                        "ArrayList",
-                        "Map",
-                        "HashMap",
-                        "Object",
-                        "Byte",
-                        "Short",
-                        "Long",
-                        "Float",
-                        "Character",
-                        "Void"
+                        "String", "Integer", "Double", "Boolean", "List", "ArrayList", "Map", "HashMap", "Object",
+                        "Byte", "Short", "Long", "Float", "Character", "Void"
                     ],
                     "style_key": "type_name"
                 }
@@ -339,83 +217,18 @@
         },
         "javascript": {
             "language_name": "JavaScript",
-            "file_extensions": [
-                ".js",
-                ".mjs",
-                ".cjs"
-            ],
+            "file_extensions": [ ".js", ".mjs", ".cjs" ],
             "highlighting_rules": [
                 {
                     "type": "keywords",
                     "list": [
-                        "abstract",
-                        "arguments",
-                        "await",
-                        "boolean",
-                        "break",
-                        "byte",
-                        "case",
-                        "catch",
-                        "char",
-                        "class",
-                        "const",
-                        "continue",
-                        "debugger",
-                        "default",
-                        "delete",
-                        "do",
-                        "double",
-                        "else",
-                        "enum",
-                        "eval",
-                        "export",
-                        "extends",
-                        "false",
-                        "final",
-                        "finally",
-                        "float",
-                        "for",
-                        "function",
-                        "goto",
-                        "if",
-                        "implements",
-                        "import",
-                        "in",
-                        "instanceof",
-                        "int",
-                        "interface",
-                        "let",
-                        "long",
-                        "native",
-                        "new",
-                        "null",
-                        "package",
-                        "private",
-                        "protected",
-                        "public",
-                        "return",
-                        "short",
-                        "static",
-                        "super",
-                        "switch",
-                        "synchronized",
-                        "this",
-                        "throw",
-                        "throws",
-                        "transient",
-                        "true",
-                        "try",
-                        "typeof",
-                        "var",
-                        "void",
-                        "volatile",
-                        "while",
-                        "with",
-                        "yield",
-                        "async",
-                        "of",
-                        "get",
-                        "set"
+                        "abstract", "arguments", "await", "boolean", "break", "byte", "case", "catch", "char", "class", "const",
+                        "continue", "debugger", "default", "delete", "do", "double", "else", "enum", "eval", "export", "extends",
+                        "false", "final", "finally", "float", "for", "function", "goto", "if", "implements", "import", "in",
+                        "instanceof", "int", "interface", "let", "long", "native", "new", "null", "package", "private", "protected",
+                        "public", "return", "short", "static", "super", "switch", "synchronized", "this", "throw", "throws",
+                        "transient", "true", "try", "typeof", "var", "void", "volatile", "while", "with", "yield", "async", "of",
+                        "get", "set"
                     ],
                     "style_key": "keyword"
                 },
@@ -468,30 +281,9 @@
                     "type": "keywords",
                     "name": "Common Objects/Functions",
                     "list": [
-                        "console",
-                        "log",
-                        "Math",
-                        "JSON",
-                        "Promise",
-                        "Array",
-                        "Object",
-                        "String",
-                        "Number",
-                        "Boolean",
-                        "Function",
-                        "Symbol",
-                        "Date",
-                        "RegExp",
-                        "Error",
-                        "Map",
-                        "Set",
-                        "WeakMap",
-                        "WeakSet",
-                        "document",
-                        "window",
-                        "require",
-                        "module",
-                        "exports"
+                        "console", "log", "Math", "JSON", "Promise", "Array", "Object", "String", "Number", "Boolean", "Function",
+                        "Symbol", "Date", "RegExp", "Error", "Map", "Set", "WeakMap", "WeakSet", "document", "window", "require",
+                        "module", "exports"
                     ],
                     "style_key": "type_name"
                 }

@@ -4,8 +4,19 @@
 #include <QStyleFactory>
 #include <QFontDatabase>
 #include <cstdio>
+#include <QDir>
+#include <QFileInfo>
+#include <QRegularExpression>
 
 AlteThemeManager::AlteThemeManager() {
+    // Consider a default path or a path from settings later
+    // For now, let's assume syntax definitions are in a known relative path
+    // This path should be relative to where the application expects resources.
+    // For development, this might be relative to the build directory or source directory.
+    // For deployment, it should be a path within the installed application bundle.
+    // Let's use a path that might work if "resources" is alongside the executable.
+    // Alternatively, it could be ":/syntax/" if using Qt Resource System.
+    loadLanguageDefinitions("resources/syntax/");
 }
 
 bool AlteThemeManager::loadTheme(const QString& filePath) {
@@ -171,10 +182,18 @@ QString AlteThemeManager::generateGlobalStyleSheet() const {
 }
 
 QJsonObject AlteThemeManager::getSyntaxRulesForLanguage(const QString& languageName) const {
-    if (syntaxHighlightingRules.contains(languageName)) {
-        return syntaxHighlightingRules.value(languageName).toObject();
+    if (m_languageDefinitions.contains(languageName)) {
+        // The stored QJsonObject IS the language definition itself,
+        // which contains "highlighting_rules", "file_extensions", etc.
+        // AlteSyntaxHighlighter expects the object that *contains* "highlighting_rules" array.
+        return m_languageDefinitions.value(languageName);
     }
-    qWarning() << "Syntax rules not found for language:" << languageName;
+    qWarning() << "Syntax rules (language definition) not found for language:" << languageName << "in m_languageDefinitions.";
+    // Attempt to fallback to theme's embedded rules if still desired (though goal is to remove them)
+    // For this refactoring step, we strictly use m_languageDefinitions.
+    // If a language definition (e.g. "cpp.json") was not loaded into m_languageDefinitions,
+    // or if languageName is something like "C++" but the file was "cpp.json" and loaded as "cpp",
+    // then it won't be found. This is expected.
     return QJsonObject();
 }
 
@@ -224,4 +243,157 @@ QFont AlteThemeManager::getEditorFont(const QFont& defaultFont) const {
 
 int AlteThemeManager::getStylesObjectSizeForDebug() const {
     return styles.size();
+}
+
+void AlteThemeManager::loadLanguageDefinitions(const QString& directoryPath) {
+    m_languageDefinitions.clear();
+    QDir syntaxDir(directoryPath);
+    if (!syntaxDir.exists()) {
+        qWarning() << "Syntax definition directory does not exist:" << directoryPath;
+        // Try a path relative to the application executable for deployed scenarios
+        QDir appDir(QApplication::applicationDirPath());
+        QString fallbackPath = appDir.filePath(directoryPath);
+        qDebug() << "Attempting fallback syntax definition directory:" << fallbackPath;
+        syntaxDir.setPath(fallbackPath);
+        if (!syntaxDir.exists()) {
+            qWarning() << "Fallback syntax definition directory also does not exist:" << fallbackPath;
+            // If using Qt resources, the path might be like ":/syntax/"
+            // Check one more common location for development: relative to current working dir
+            QDir currentDir(QDir::currentPath());
+            QString devPath = currentDir.filePath(directoryPath);
+             qDebug() << "Attempting development syntax definition directory:" << devPath;
+            syntaxDir.setPath(devPath);
+             if (!syntaxDir.exists()) {
+                qWarning() << "Development syntax definition directory also not found:" << devPath;
+                 // Try Qt resource system path
+                syntaxDir.setPath(":/syntax");
+                if(!syntaxDir.exists()){
+                    qWarning() << "Qt resource path ':/syntax' also not found. No language definitions will be loaded.";
+                    return;
+                } else {
+                     qDebug() << "Found syntax definitions in Qt resource path ':/syntax'";
+                }
+            } else {
+                 qDebug() << "Found syntax definitions in development path:" << devPath;
+            }
+        } else {
+            qDebug() << "Found syntax definitions in fallback path:" << fallbackPath;
+        }
+    } else {
+         qDebug() << "Found syntax definitions in primary path:" << directoryPath;
+    }
+
+
+    QStringList filters;
+    filters << "*.json";
+    QFileInfoList fileList = syntaxDir.entryInfoList(filters, QDir::Files);
+
+    for (const QFileInfo& fileInfo : fileList) {
+        QFile langFile(fileInfo.filePath());
+        if (!langFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
+            qWarning() << "Could not open language file:" << fileInfo.filePath();
+            continue;
+        }
+        QByteArray langData = langFile.readAll();
+        langFile.close();
+
+        QJsonParseError parseError;
+        QJsonDocument doc = QJsonDocument::fromJson(langData, &parseError);
+        if (parseError.error != QJsonParseError::NoError) {
+            qWarning() << "Error parsing language JSON" << fileInfo.fileName() << ":" << parseError.errorString();
+            continue;
+        }
+        if (!doc.isObject()) {
+            qWarning() << "Language JSON is not an object:" << fileInfo.fileName();
+            continue;
+        }
+
+        QJsonObject langObject = doc.object();
+        QString langName = langObject.value("language_name").toString();
+        if (langName.isEmpty()) {
+            langName = fileInfo.baseName(); // Fallback to filename without extension
+            qWarning() << "Language file" << fileInfo.fileName() << "is missing 'language_name'. Using filename '" << langName << "' as language name.";
+        }
+
+        // Ensure essential keys are present
+        if (!langObject.contains("file_extensions") || !langObject.value("file_extensions").isArray()) {
+            qWarning() << "Language" << langName << "is missing 'file_extensions' array. Skipping.";
+            continue;
+        }
+
+        m_languageDefinitions.insert(langName, langObject);
+        qDebug() << "Loaded language definition:" << langName << "from" << fileInfo.fileName();
+    }
+    if(m_languageDefinitions.isEmpty()){
+        qWarning() << "No language definitions loaded. Syntax highlighting might not work as expected.";
+    } else {
+        qDebug() << "Total languages loaded:" << m_languageDefinitions.count();
+    }
+}
+
+QString AlteThemeManager::detectLanguage(const QString& filePath, const QString& firstLineContent) const {
+    if (m_languageDefinitions.isEmpty()) {
+        qWarning() << "No language definitions loaded. Cannot detect language.";
+        return QString(); // Or "Plain Text"
+    }
+
+    QFileInfo fileInfo(filePath);
+    QString fileSuffix = fileInfo.suffix(); // e.g., "py"
+    QString completeSuffix = fileInfo.completeSuffix(); // e.g., "tar.gz" - useful for multi-part extensions
+
+    // Pass 1: Match by file extension
+    for (auto it = m_languageDefinitions.constBegin(); it != m_languageDefinitions.constEnd(); ++it) {
+        const QJsonObject& langDef = it.value();
+        QJsonArray extensions = langDef.value("file_extensions").toArray();
+        for (const QJsonValue& extVal : extensions) {
+            QString ext = extVal.toString().mid(1); // Remove leading "." e.g. ".py" -> "py"
+            if (!ext.isEmpty() && (ext == fileSuffix || ext == completeSuffix)) {
+                qDebug() << "Detected language by extension:" << it.key() << "for file:" << filePath;
+                return it.key();
+            }
+        }
+    }
+
+    // Pass 2: Match by first line content (if not empty)
+    if (!firstLineContent.isEmpty()) {
+        for (auto it = m_languageDefinitions.constBegin(); it != m_languageDefinitions.constEnd(); ++it) {
+            const QJsonObject& langDef = it.value();
+            if (langDef.contains("first_line_patterns")) {
+                QJsonArray patterns = langDef.value("first_line_patterns").toArray();
+                for (const QJsonValue& patternVal : patterns) {
+                    QString patternStr = patternVal.toString();
+                    if (patternStr.isEmpty()) continue;
+                    QRegularExpression regex(patternStr);
+                    if (regex.isValid() && regex.match(firstLineContent).hasMatch()) {
+                        qDebug() << "Detected language by first line pattern:" << it.key() << "for file:" << filePath;
+                        return it.key();
+                    }
+                }
+            }
+        }
+    }
+
+    qDebug() << "Language not detected for:" << filePath << ". Defaulting to Plain Text or empty.";
+    // Fallback: if a "Plain Text" language is defined, use it for .txt or unknown
+    if ( (fileSuffix == "txt" || completeSuffix == "txt") && m_languageDefinitions.contains("Plain Text")) {
+        return "Plain Text";
+    }
+    // Return specific default if defined, otherwise empty
+    return m_languageDefinitions.contains("Plain Text") ? "Plain Text" : QString();
+}
+
+QStringList AlteThemeManager::getAvailableLanguages() const {
+    return m_languageDefinitions.keys();
+}
+
+QStringList AlteThemeManager::getExtensionsForLanguage(const QString& languageName) const {
+    QStringList extensionsList;
+    if (m_languageDefinitions.contains(languageName)) {
+        const QJsonObject& langDef = m_languageDefinitions.value(languageName);
+        QJsonArray extensions = langDef.value("file_extensions").toArray();
+        for (const QJsonValue& extVal : extensions) {
+            extensionsList.append(extVal.toString());
+        }
+    }
+    return extensionsList;
 }

@@ -30,8 +30,15 @@ private:
     QJsonObject styles;
     QJsonObject syntaxHighlightingRules;
     QJsonObject fontInfo;
+    QMap<QString, QJsonObject> m_languageDefinitions;
 
     QString generateGlobalStyleSheet() const;
+
+public:
+    void loadLanguageDefinitions(const QString& directoryPath);
+    QString detectLanguage(const QString& filePath, const QString& firstLineContent) const;
+    QStringList getAvailableLanguages() const;
+    QStringList getExtensionsForLanguage(const QString& languageName) const;
 
 public:
     QFont getApplicationFont(const QFont& defaultFont = QApplication::font()) const;

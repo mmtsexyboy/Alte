@@ -1,0 +1,104 @@
+{
+    "language_name": "Java",
+    "file_extensions": [".java"],
+    "first_line_patterns": [],
+    "highlighting_rules": [
+        {
+            "name": "Keywords",
+            "type": "keywords",
+            "list": [
+                "abstract", "assert", "boolean", "break", "byte", "case", "catch",
+                "char", "class", "const", "continue", "default", "do", "double",
+                "else", "enum", "exports", "extends", "final", "finally", "float",
+                "for", "goto", "if", "implements", "import", "instanceof", "int",
+                "interface", "long", "module", "native", "new", "non-sealed", "opens",
+                "package", "permits", "private", "protected", "public", "provides",
+                "record", "requires", "return", "sealed", "short", "static",
+                "strictfp", "super", "switch", "synchronized", "this", "throw",
+                "throws", "to", "transient", "transitive", "try", "uses", "var",
+                "void", "volatile", "while", "with", "yield",
+                "true", "false", "null"
+            ],
+            "style_key": "keyword"
+        },
+        {
+            "name": "Annotations",
+            "type": "pattern",
+            "pattern": "@\\s*[a-zA-Z_][a-zA-Z0-9_\\.]*",
+            "style_key": "decorator"
+        },
+        {
+            "name": "Line Comment",
+            "type": "pattern",
+            "pattern": "//.*",
+            "style_key": "comment"
+        },
+        {
+            "name": "Block Comment (includes Javadoc)",
+            "type": "multi_line_string",
+            "start_pattern": "/\\*",
+            "end_pattern": "\\*/",
+            "style_key": "comment"
+        },
+        {
+            "name": "String Literals",
+            "type": "pattern",
+            "pattern": "\"(?:\\\\.|[^\"\\\\])*\"",
+            "style_key": "string"
+        },
+        {
+            "name": "Text Blocks (Java 15+)",
+            "type": "multi_line_string",
+            "start_pattern": "\"\"\"",
+            "end_pattern": "\"\"\"",
+            "style_key": "string"
+        },
+        {
+            "name": "Character Literals",
+            "type": "pattern",
+            "pattern": "'(?:\\\\.|[^'\\\\])'",
+            "style_key": "string"
+        },
+        {
+            "name": "Hexadecimal Numbers",
+            "type": "pattern",
+            "pattern": "\\b0[xX][0-9a-fA-F_]+[lL]?\\b",
+            "style_key": "number_hex"
+        },
+        {
+            "name": "Binary Numbers",
+            "type": "pattern",
+            "pattern": "\\b0[bB][01_]+[lL]?\\b",
+            "style_key": "number"
+        },
+        {
+            "name": "Octal Numbers",
+            "type": "pattern",
+            "pattern": "\\b0[0-7_]+[lL]?\\b",
+            "style_key": "number"
+        },
+        {
+            "name": "Decimal and Floating Point Numbers",
+            "type": "pattern",
+            "pattern": "\\b(?:[0-9](?:[0-9_]*[0-9])*(?:\\.(?:[0-9](?:[0-9_]*[0-9])*)?)?|\\.(?:[0-9](?:[0-9_]*[0-9])*))(?:[eE][-+]?[0-9](?:[0-9_]*[0-9])*)?[dDfFlL]?\\b",
+            "style_key": "number"
+        },
+        {
+            "name": "Operators",
+            "type": "pattern",
+            "pattern": "[+\\-*\\/%&|^!=<>]=?|&&|\\|\\||\\+\\+|--|~|\\?|:|<<=?|>>>?=?>?",
+            "style_key": "operator"
+        },
+        {
+            "name": "Common Built-in Types/Classes (examples)",
+            "type": "keywords",
+            "list": [
+                "String", "Integer", "Double", "Boolean", "Object", "System",
+                "List", "ArrayList", "LinkedList", "Map", "HashMap", "TreeMap",
+                "Set", "HashSet", "TreeSet", "Exception", "RuntimeException",
+                "Byte", "Character", "Short", "Long", "Float", "Void", "Math"
+            ],
+            "style_key": "type_name"
+        }
+    ]
+}

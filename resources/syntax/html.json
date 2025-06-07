@@ -1,0 +1,72 @@
+{
+    "language_name": "HTML",
+    "file_extensions": [".html", ".htm", ".xhtml"],
+    "first_line_patterns": [
+        "<!DOCTYPE html.*>",
+        "<html.*>"
+    ],
+    "highlighting_rules": [
+        {
+            "name": "Comment",
+            "type": "multi_line_string",
+            "start_pattern": "<!--",
+            "end_pattern": "-->",
+            "style_key": "comment"
+        },
+        {
+            "name": "DOCTYPE",
+            "type": "pattern",
+            "pattern": "<!DOCTYPE[^>]*>",
+            "style_key": "meta_tag"
+        },
+        {
+            "name": "CDATA Section",
+            "type": "multi_line_string",
+            "start_pattern": "<!\\[CDATA\\[",
+            "end_pattern": "]]>",
+            "style_key": "cdata_section"
+        },
+        {
+            "name": "Processing Instruction",
+            "type": "pattern",
+            "pattern": "<\\?[\\w\\s=\"'.-]*?\\?>",
+            "style_key": "preprocessor"
+        },
+        {
+            "name": "HTML Entity",
+            "type": "pattern",
+            "pattern": "&[a-zA-Z0-9#]+;",
+            "style_key": "constant"
+        },
+        {
+            "name": "Attribute Value (Double Quoted)",
+            "type": "pattern",
+            "pattern": "\"(?:[^\"\\\\]|\\\\.)*\"",
+            "style_key": "attribute_value"
+        },
+        {
+            "name": "Attribute Value (Single Quoted)",
+            "type": "pattern",
+            "pattern": "'(?:[^'\\\\]|\\\\.)*'",
+            "style_key": "attribute_value"
+        },
+        {
+            "name": "Attribute Name",
+            "type": "pattern",
+            "pattern": "\\b([a-zA-Z_:][-\\w.:]*)\\s*=",
+            "style_key": "attribute_name"
+        },
+        {
+            "name": "Tag Name",
+            "type": "pattern",
+            "pattern": "</?\\s*([a-zA-Z_:][-\\w.:]*)",
+            "style_key": "tag"
+        },
+        {
+            "name": "Tag Punctuation",
+            "type": "pattern",
+            "pattern": "[<>/]+",
+            "style_key": "tag_punctuation"
+        }
+    ]
+}
