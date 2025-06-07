@@ -10,7 +10,7 @@ class QTextEdit;
 class QAction;
 class QDragEnterEvent;
 class QDropEvent;
-class LineNumberArea; // Forward declaration
+class LineNumberArea;
 QT_END_NAMESPACE
 
 class MainWindow : public QMainWindow {
@@ -36,7 +36,7 @@ private slots:
 
 private:
     void updateWindowTitle();
-    bool maybeSave(); // Helper for prompting to save
+    bool maybeSave();
 
     QTextEdit *textEdit;
     bool typewriterModeEnabled;

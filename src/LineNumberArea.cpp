@@ -6,7 +6,6 @@
 #include <QDebug>
 
 LineNumberArea::LineNumberArea(QTextEdit *editor) : QWidget(editor), codeEditor(editor) {
-    // کد اصلاح شده برای سازگاری با Qt5
     connect(codeEditor->document(), &QTextDocument::blockCountChanged, this, &LineNumberArea::updateLineNumberAreaWidth);
 
     connect(codeEditor->document()->documentLayout(), &QAbstractTextDocumentLayout::documentSizeChanged, this, [this](){ update(); });
@@ -16,10 +15,7 @@ LineNumberArea::LineNumberArea(QTextEdit *editor) : QWidget(editor), codeEditor(
     updateLineNumberAreaWidth(0);
 }
 
-// Destructor - added as per user's .h file
 LineNumberArea::~LineNumberArea() {
-    // No specific cleanup needed for raw pointers if ownership is handled by Qt's parent-child system
-    // or if codeEditor is owned elsewhere.
 }
 
 QSize LineNumberArea::sizeHint() const {
@@ -44,7 +40,6 @@ void LineNumberArea::updateLineNumberAreaWidth(int /* newBlockCount */) {
 
 void LineNumberArea::updateLineNumberArea(const QRect &/*rect*/, int dy) {
     if (dy != 0) {
-        // scroll(0, dy);
     }
     update();
 }
@@ -59,7 +54,6 @@ void LineNumberArea::paintEvent(QPaintEvent *event) {
 
     QAbstractTextDocumentLayout *layout = codeEditor->document()->documentLayout();
 
-    // کد اصلاح شده برای سازگاری با Qt5
     QPointF editorViewportOffset(codeEditor->horizontalScrollBar()->value(), codeEditor->verticalScrollBar()->value());
 
     QTextCursor cursor = codeEditor->cursorForPosition(QPoint(0, static_cast<int>(editorViewportOffset.y())));

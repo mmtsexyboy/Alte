@@ -4,11 +4,11 @@
 #include <QSyntaxHighlighter>
 #include <QTextCharFormat>
 #include <QRegularExpression>
-#include <QVector>      // Using QVector as it's common, can revert to QList if preferred
+#include <QVector>
 #include <QJsonObject>
-#include <QFont>        // For font point size adjustments
+#include <QFont>
 
-class AlteThemeManager; // Forward declaration
+class AlteThemeManager;
 class QTextDocument;
 
 class AlteSyntaxHighlighter : public QSyntaxHighlighter
@@ -27,20 +27,16 @@ private:
     {
         QRegularExpression pattern;
         QTextCharFormat format;
-        bool isBlockRule; // For multi-line comments/strings
-        QRegularExpression endPattern; // Only for block rules
+        bool isBlockRule;
+        QRegularExpression endPattern;
     };
-    QVector<HighlightingRule> m_highlightingRules; // Changed to QVector and renamed
-
-    // Removed C++ specific format members
-    // QRegularExpression commentStartExpression; // Will be part of HighlightingRule if needed for block comments
-    // QRegularExpression commentEndExpression;   // Same as above
+    QVector<HighlightingRule> m_highlightingRules;
 
     void loadRulesForLanguage(const QString& languageName, AlteThemeManager *themeManager);
     QTextCharFormat createFormatFromRule(const QJsonObject& ruleDetails,
-                                         const QJsonObject& themeColors, // General theme colors
+                                         const QJsonObject& themeColors,
                                          const QFont& defaultFont,
-                                         AlteThemeManager* themeManager); // To use themeManager->getColor
+                                         AlteThemeManager* themeManager);
 };
 
 #endif // SYNTAXHIGHLIGHTER_H

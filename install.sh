@@ -1,21 +1,17 @@
 #!/bin/bash
 
-# Exit immediately if a command exits with a non-zero status.
 set -e
 
-# 1. Check for root privileges
 if [ "$EUID" -ne 0 ]; then
   echo "Please run this script with sudo: sudo ./install.sh"
   exit 1
 fi
 
-# 2. Define the .deb package path and related variables
 DEB_PACKAGE_NAME="alte-0.1.0-Linux.deb"
 BUILD_DIR="build_temp"
 DEB_PACKAGE_PATH="$BUILD_DIR/$DEB_PACKAGE_NAME"
 REBUILD_FLAG=false
 
-# Parse arguments
 for arg in "$@"
 do
     if [ "$arg" == "--rebuild" ]
@@ -25,7 +21,6 @@ do
     fi
 done
 
-# 3. Check if the .deb package exists or if rebuild is forced
 if [ "$REBUILD_FLAG" = true ] || [ ! -f "$DEB_PACKAGE_PATH" ]; then
   if [ "$REBUILD_FLAG" = true ]; then
     echo "Rebuilding package as requested..."
@@ -82,7 +77,6 @@ else
   echo "$DEB_PACKAGE_PATH found."
 fi
 
-# 4. Confirm installation
 echo "Found $DEB_PACKAGE_PATH."
 read -p "Proceed with installation? (y/N) " confirm
 if [[ "$confirm" != [yY] ]]; then
@@ -90,13 +84,9 @@ if [[ "$confirm" != [yY] ]]; then
   exit 0
 fi
 
-# 5. Install the package
 echo "Installing $DEB_PACKAGE_PATH..."
-# The initial dpkg -i command might fail if dependencies are missing.
-# We capture its exit code but proceed to apt-get -f install regardless.
 dpkg -i "$DEB_PACKAGE_PATH" || true
 
-# 6. Fix dependencies
 echo "Attempting to fix any missing dependencies..."
 echo "Running apt-get update..."
 if apt-get update; then

@@ -56,19 +56,17 @@ rules_to_add = {
 }
 
 for theme_file_path in theme_files:
-    # Ensure the directory exists before trying to open the file
     theme_dir = os.path.dirname(theme_file_path)
     if not os.path.exists(theme_dir):
         print(f"Theme directory {theme_dir} does not exist. Skipping {theme_file_path}.")
         continue
 
     try:
-        # Check if file exists, if not, initialize with a base structure
         if not os.path.exists(theme_file_path):
             print(f"Theme file {theme_file_path} does not exist. Initializing with default structure.")
             theme_dict = {
                 "name": "Default Theme",
-                "type": "dark", # or "light"
+                "type": "dark",
                 "colors": {},
                 "syntax_highlighting": {}
             }

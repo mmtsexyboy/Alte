@@ -1,10 +1,8 @@
 #include "AlteRope.h"
-#include <stdexcept> // For std::out_of_range
-#include <iostream>  // For debugging (can be removed later)
-#include <vector>    // Potentially for splitting string in build_rope
-#include <algorithm> // For std::min
-
-// --- UTF-8 Helper Functions ---
+#include <stdexcept>
+#include <iostream>
+#include <vector>
+#include <algorithm>
 
 static size_t count_utf8_chars(const std::string& s) {
     size_t count = 0;
@@ -12,10 +10,10 @@ static size_t count_utf8_chars(const std::string& s) {
     while (i < s.length()) {
         unsigned char c = s[i];
         if (c <= 0x7F) { i += 1;
-        } else if ((c & 0xE0) == 0xC0) { if (i + 1 < s.length() && (s[i+1] & 0xC0) == 0x80) i += 2; else { i++; /* invalid seq */ }
-        } else if ((c & 0xF0) == 0xE0) { if (i + 2 < s.length() && (s[i+1] & 0xC0) == 0x80 && (s[i+2] & 0xC0) == 0x80) i += 3; else { i++; /* invalid seq */ }
-        } else if ((c & 0xF8) == 0xF0) { if (i + 3 < s.length() && (s[i+1] & 0xC0) == 0x80 && (s[i+2] & 0xC0) == 0x80 && (s[i+3] & 0xC0) == 0x80) i += 4; else { i++; /* invalid seq */ }
-        } else { i++; /* invalid start byte */ }
+        } else if ((c & 0xE0) == 0xC0) { if (i + 1 < s.length() && (s[i+1] & 0xC0) == 0x80) i += 2; else { i++; }
+        } else if ((c & 0xF0) == 0xE0) { if (i + 2 < s.length() && (s[i+1] & 0xC0) == 0x80 && (s[i+2] & 0xC0) == 0x80) i += 3; else { i++; }
+        } else if ((c & 0xF8) == 0xF0) { if (i + 3 < s.length() && (s[i+1] & 0xC0) == 0x80 && (s[i+2] & 0xC0) == 0x80 && (s[i+3] & 0xC0) == 0x80) i += 4; else { i++; }
+        } else { i++; }
         count++;
     }
     return count;
@@ -57,7 +55,6 @@ static size_t get_byte_offset_for_char_index(const std::string& s, size_t target
     return byte_idx;
 }
 
-// Helper to get byte length of a specific number of UTF-8 characters from a character offset
 static size_t get_byte_length_for_char_count(const std::string& s, size_t char_offset_start, size_t num_chars_to_count) {
     size_t current_char_count_in_str = 0;
     size_t byte_idx = 0;
@@ -85,15 +82,11 @@ static size_t get_byte_length_for_char_count(const std::string& s, size_t char_o
     return byte_len_of_target_chars;
 }
 
-
-// --- RopeNode Member function ---
 void RopeNode::set_leaf_weight() {
     if (is_leaf()) {
         this->weight = count_utf8_chars(this->data);
     }
 }
-
-// --- AlteRope Class Implementation ---
 
 const size_t MAX_LEAF_LEN_BYTES = 64;
 const size_t MAX_LEAF_LEN_CHARS_SPLIT_THRESHOLD = MAX_LEAF_LEN_BYTES * 2;
@@ -185,7 +178,7 @@ void AlteRope::find_char_at(RopeNode* node, size_t& char_index_ref, std::string&
             result = get_nth_utf8_char(node->data, char_index_ref);
         }
     } else {
-        if (char_index_ref < node->weight) { // node->weight is char length of left subtree
+        if (char_index_ref < node->weight) {
             find_char_at(node->left, char_index_ref, result);
         } else {
             char_index_ref -= node->weight;
@@ -231,15 +224,6 @@ RopeNode* AlteRope::insert_recursive(RopeNode* node, size_t& char_index_ref, con
             }
         } else {
             char_index_ref -= node->weight;
-            // This implies insertion is after this leaf. The current design expects
-            // char_index_ref to guide to the correct leaf or split point *within* a leaf.
-            // If it's still > 0 here, it means we're effectively trying to append *after* this leaf,
-            // which should be handled by creating a new node to the right in the parent.
-            // For now, returning node and letting parent handle might be one way, but it's tricky.
-            // This indicates a need for a more robust way to return "insertion happened" AND "where next".
-            // A simple solution: if index is past this leaf, it's an error for this recursive step.
-            // The public method should ensure overall index is valid.
-            // This path should not be hit if logic is perfect.
              throw std::logic_error("Insert_recursive: char_index out of bounds for leaf node processing.");
         }
     } else {
@@ -258,14 +242,13 @@ void AlteRope::remove(size_t char_index, size_t char_count) {
     if (char_count == 0) return;
     size_t current_len = length();
     if (char_index >= current_len || char_index + char_count > current_len) {
-        // Allow char_index + char_count == current_len for deleting to the end
         if (char_index + char_count > current_len && !(char_index + char_count == current_len && char_count > 0) ) {
-             if(char_index == current_len && char_count == 0) { /* allow */ }
+             if(char_index == current_len && char_count == 0) { }
              else if (char_index + char_count > current_len) {
                 throw std::out_of_range("Deletion range out of bounds.");
              }
         }
-        if (char_index >= current_len && char_count > 0) { // Cannot start deleting past the end
+        if (char_index >= current_len && char_count > 0) {
             throw std::out_of_range("Deletion start index out of bounds.");
         }
     }
@@ -275,7 +258,6 @@ void AlteRope::remove(size_t char_index, size_t char_count) {
 
     size_t mutable_char_count = char_count;
     root = delete_recursive(root, char_index, mutable_char_count);
-    // TODO: Add rebalancing or node merging/concatenation if necessary
 }
 
 RopeNode* AlteRope::delete_recursive(RopeNode* node, size_t char_idx_in_subtree, size_t& count_ref) {
@@ -295,8 +277,6 @@ RopeNode* AlteRope::delete_recursive(RopeNode* node, size_t char_idx_in_subtree,
             node->weight = count_utf8_chars(node->data);
             count_ref -= chars_to_delete_here;
         }
-        // If char_idx_in_subtree >= leaf_char_len, deletion starts past this leaf, so do nothing to this leaf.
-        // count_ref remains unchanged, char_idx_in_subtree would be adjusted by caller (internal node).
 
         if (node->data.empty()) {
             delete node;
@@ -305,33 +285,29 @@ RopeNode* AlteRope::delete_recursive(RopeNode* node, size_t char_idx_in_subtree,
         return node;
     }
 
-    // Internal node
-    size_t left_len = calculate_length(node->left); // node->weight is already this
+    size_t left_len = calculate_length(node->left);
 
-    if (char_idx_in_subtree < left_len) { // Deletion starts in or spans into the left child
+    if (char_idx_in_subtree < left_len) {
         node->left = delete_recursive(node->left, char_idx_in_subtree, count_ref);
-        // If deletion spanned into the right child (count_ref > 0 after left recursion)
         if (count_ref > 0) {
-            // All remaining chars to delete must be from the start of the right child now
             node->right = delete_recursive(node->right, 0, count_ref);
         }
-    } else { // Deletion starts purely in the right child
+    } else {
         node->right = delete_recursive(node->right, char_idx_in_subtree - left_len, count_ref);
     }
 
-    // Update weight and handle pruning
-    if (node->left == nullptr && node->right == nullptr) { // Both children gone
+    if (node->left == nullptr && node->right == nullptr) {
         delete node;
         return nullptr;
-    } else if (node->left == nullptr) { // Only right child remains
+    } else if (node->left == nullptr) {
         RopeNode* temp = node->right;
         delete node;
         return temp;
-    } else if (node->right == nullptr) { // Only left child remains
+    } else if (node->right == nullptr) {
         RopeNode* temp = node->left;
         delete node;
         return temp;
-    } else { // Both children might still exist or one became null and was handled
+    } else {
         node->weight = calculate_length(node->left);
         return node;
     }
