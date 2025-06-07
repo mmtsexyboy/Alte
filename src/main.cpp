@@ -42,6 +42,11 @@
 int main(int argc, char *argv[]) {
     QApplication app(argc, argv);
 
+    // Log current working directory and application path
+    qDebug() << "Current working directory (PWD):" << QDir::currentPath();
+    QString appPath = QCoreApplication::applicationDirPath();
+    qDebug() << "Application directory path (appPath):" << appPath;
+
     // Set application language and layout direction for Persian
     QLocale persianLocale(QLocale::Persian, QLocale::Iran);
     QLocale::setDefault(persianLocale);
@@ -50,8 +55,8 @@ int main(int argc, char *argv[]) {
     // ThemeManager setup
     AlteThemeManager themeManager;
 
-    QString appPath = QCoreApplication::applicationDirPath();
-    qDebug() << "Application directory path:" << appPath;
+    // QString appPath = QCoreApplication::applicationDirPath(); // Moved up
+    // qDebug() << "Application directory path:" << appPath; // Moved up
 
     QString themeFilePath = "";
     QString themeName = "default_dark_neon.json"; // Define theme name
@@ -60,6 +65,7 @@ int main(int argc, char *argv[]) {
     potentialBasePaths.append(appPath + "/../share/alte/resources"); // a. /opt/alte/bin/../share/alte/resources -> /opt/alte/share/alte/resources
     potentialBasePaths.append(appPath + "/resources");                // b. <app_dir>/resources
     potentialBasePaths.append(appPath + "/../resources");             // c. <app_dir>/../resources (e.g. build/bin/ -> build/resources)
+    potentialBasePaths.append(appPath + "/../../resources");          // d. <app_dir>/../../resources (e.g. build/bin/ -> resources)
 
     for (const QString& basePath : potentialBasePaths) {
         QString currentThemePath = basePath + "/themes/" + themeName;
@@ -75,10 +81,19 @@ int main(int argc, char *argv[]) {
     }
 
     if (themeFilePath.isEmpty()) {
-        // Fallback to the original potentially unreliable path
-        QString fallbackPath = "./resources/themes/" + themeName;
-        qWarning() << "Falling back to relative path, application might not find resources if run from a different directory:" << fallbackPath;
-        themeFilePath = fallbackPath; // Use this path, even if it might not exist, to match original behavior if all else fails
+        qWarning() << "Could not find theme in standard locations. Trying directly relative to app executable.";
+        QString directRelativePath = appPath + "/resources/themes/" + themeName;
+        QFileInfo fileInfo(directRelativePath);
+        if (fileInfo.exists() && fileInfo.isFile()) {
+            themeFilePath = directRelativePath;
+            qDebug() << "Theme file found at direct relative path:" << themeFilePath;
+        } else {
+            // If even that fails, as a last resort, use the original problematic relative path
+            // but warn more strongly.
+            QString finalFallbackPath = "./resources/themes/" + themeName;
+            qWarning() << "Direct relative path failed (" << directRelativePath << "). Critical fallback to './resources/themes/'. This is very likely to fail unless CWD is project root:" << finalFallbackPath;
+            themeFilePath = finalFallbackPath;
+        }
     }
 
     // Ensure themeFilePath is normalized to avoid issues with ".." or "."
