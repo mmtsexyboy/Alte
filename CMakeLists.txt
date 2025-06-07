@@ -4,6 +4,10 @@ project(Alte LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 20) # Changed to C++20
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+# Add AddressSanitizer flags
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address")
+set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -fsanitize=address")
+
 # Instruct CMake to run moc automatically when needed.
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)

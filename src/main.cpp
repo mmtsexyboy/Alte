@@ -21,6 +21,8 @@
 #include <QCoreApplication>    // For applicationDirPath
 #include <QIcon>               // For QIcon (moved to top)
 #include <stdexcept>           // For std::exception
+#include <QDebug>              // For qDebug messages
+#include <cstdio>              // For fprintf
 
 // Forward declare AlteThemeManager if its definition isn't needed in this header part
 // class AlteThemeManager; // Not needed here as it's in main()
@@ -390,7 +392,21 @@ int main(int argc, char *argv[]) {
     }
     qDebug() << "Final theme file path attempted:" << themeFilePath;
     if (themeManager.loadTheme(themeFilePath)) {
-        qDebug() << "Theme loaded successfully from:" << themeFilePath;
+        // qDebug() << "Theme loaded successfully from:" << themeFilePath; // Potentially problematic
+        qDebug() << "MAIN: loadTheme call completed."; // Test with simple string literal
+
+        // Simplest possible fprintf test
+        fprintf(stderr, "MAIN: fprintf test immediately after loadTheme returns.\n");
+        fflush(stderr);
+
+        // Restore themeManager integrity checks
+        fprintf(stderr, "MAIN: Test after loadTheme, before applyTheme. Color 'text': %s\n",
+                themeManager.getColor("text", Qt::magenta).name().toUtf8().constData());
+        fflush(stderr);
+        fprintf(stderr, "MAIN: Test getting 'styles' object size: %d\n",
+                themeManager.getStylesObjectSizeForDebug());
+        fflush(stderr);
+
         themeManager.applyTheme(&app);
     } else {
         qWarning() << "Failed to load theme from:" << themeFilePath << ". Using default Qt appearance.";
@@ -413,6 +429,7 @@ int main(int argc, char *argv[]) {
 
     // Connect the splash screen's animationFinished signal to show main window
     QObject::connect(&splash, &SplashScreen::animationFinished, &app, [&]() {
+    qDebug() << "Lambda connected to animationFinished: Started.";
     try {
         qDebug() << "Splash animation finished. Attempting to show main window...";
 
@@ -435,15 +452,25 @@ int main(int argc, char *argv[]) {
             mainWindow.setGeometry(100, 100, 1024, 768); // A slightly larger default
         }
 
-        qDebug() << "Showing main window...";
+            mainWindow.setGeometry(100, 100, 1024, 768); // A slightly larger default
+        }
+
+        qDebug() << "Before mainWindow.show()";
         mainWindow.show();
-        qDebug() << "Main window shown. Calling newFile()...";
+        qDebug() << "After mainWindow.show()";
+
+        qDebug() << "Before mainWindow.newFile()";
         mainWindow.newFile(); // Initialize with newFile as before
-        qDebug() << "newFile() called. Activating window...";
+        qDebug() << "After mainWindow.newFile()";
+
+        qDebug() << "newFile() called. Activating window..."; // This existing log is fine
         mainWindow.activateWindow(); // Ensure main window gets focus
-        qDebug() << "Main window activated. Closing splash screen.";
+        qDebug() << "Main window activated."; // This existing log is fine
+
+        qDebug() << "Before splash.close()";
         splash.close(); // Close the splash screen widget
-        qDebug() << "Splash screen closed. Main window setup complete.";
+        qDebug() << "After splash.close()";
+        qDebug() << "Splash screen closed. Main window setup complete."; // This existing log is fine
     } catch (const std::exception& e) {
         qCritical() << "Std::exception caught during main window setup: " << e.what();
     } catch (...) {

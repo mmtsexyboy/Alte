@@ -3,6 +3,7 @@
 #include <QTextStream> // Not directly used, but often useful with QFile
 #include <QStyleFactory> // For potentially setting a base style like "Fusion"
 #include <QFontDatabase>
+#include <cstdio> // For fprintf
 
 AlteThemeManager::AlteThemeManager() {
     // Initialize with a fallback or default theme if desired, or leave empty
@@ -50,31 +51,46 @@ bool AlteThemeManager::loadTheme(const QString& filePath) {
     // Assuming syntaxHighlightingRules is an object of objects. If it's an array, adjust accordingly.
     qDebug() << "Loaded syntaxHighlightingRules keys:" << syntaxHighlightingRules.keys();
 
-
     fontInfo = themeData.value("font").toObject(); // Load font definitions
     qDebug() << "Loaded fontInfo keys:" << fontInfo.keys();
-
 
     qInfo() << "Theme loaded successfully:" << themeData.value("name").toString();
     return true;
 }
 
 void AlteThemeManager::applyTheme(QApplication* app) const {
+    fprintf(stderr, "[applyTheme] Entered function (fprintf).\n");
+    fflush(stderr);
+
     if (!app) {
         qWarning() << "QApplication instance is null. Cannot apply theme.";
+        fprintf(stderr, "[applyTheme] QApplication instance is null. Cannot apply theme (fprintf).\n");
+        fflush(stderr);
         return;
     }
 
-    // It's often good to start from a clean base style like Fusion for consistency
-    // before applying extensive stylesheets, especially if not all controls are styled.
+    fprintf(stderr, "[applyTheme] Setting Fusion style (fprintf).\n");
+    fflush(stderr);
     app->setStyle(QStyleFactory::create("Fusion"));
 
-    // Apply application font
+    fprintf(stderr, "[applyTheme] About to call getApplicationFont (fprintf).\n");
+    fflush(stderr);
+    // Test: print a color to see if 'this->colors' is accessible before getApplicationFont
+    fprintf(stderr, "[applyTheme] Test color 'text' before getApplicationFont: %s (fprintf).\n", getColor("text", Qt::magenta).name().toUtf8().constData());
+    fflush(stderr);
+
     QFont appFont = getApplicationFont(app->font()); // Pass current app font as default
+    fprintf(stderr, "[applyTheme] Called getApplicationFont. Setting app font (fprintf).\n");
+    fflush(stderr);
     app->setFont(appFont);
     qDebug() << "Application font set to:" << appFont.family() << "Size:" << appFont.pointSize();
 
-    // Apply a global palette (optional, as stylesheet can override)
+    fprintf(stderr, "[applyTheme] About to set global palette (fprintf).\n");
+    fflush(stderr);
+    // Test: print a color to see if 'this->colors' is accessible before palette setup
+    fprintf(stderr, "[applyTheme] Test color 'windowBackground' before palette: %s (fprintf).\n", getColor("windowBackground", Qt::magenta).name().toUtf8().constData());
+    fflush(stderr);
+
     QPalette globalPalette;
     globalPalette.setColor(QPalette::Window, getColor("windowBackground", Qt::white));
     globalPalette.setColor(QPalette::WindowText, getColor("text", Qt::black));
@@ -92,11 +108,21 @@ void AlteThemeManager::applyTheme(QApplication* app) const {
     globalPalette.setColor(QPalette::Highlight, getColor("highlight", Qt::blue)); // Selection background
     globalPalette.setColor(QPalette::HighlightedText, getColor("highlightedText", Qt::white)); // Selection text
 
+    fprintf(stderr, "[applyTheme] Palette colors assigned. Applying palette to app (fprintf).\n");
+    fflush(stderr);
     app->setPalette(globalPalette);
     qDebug() << "Global palette applied. Window background:" << globalPalette.color(QPalette::Window).name();
 
-    // Generate and apply the global stylesheet
+    fprintf(stderr, "[applyTheme] About to call generateGlobalStyleSheet (fprintf).\n");
+    fflush(stderr);
+    // Test: print a color to see if 'this->colors' is accessible just before generateGlobalStyleSheet
+    fprintf(stderr, "[applyTheme] Test color 'accent' before generateGlobalStyleSheet: %s (fprintf).\n", getColor("accent", Qt::magenta).name().toUtf8().constData());
+    fflush(stderr);
+
     QString globalStyleSheet = generateGlobalStyleSheet();
+    fprintf(stderr, "[applyTheme] Called generateGlobalStyleSheet. Result length: %lld (fprintf).\n", static_cast<long long>(globalStyleSheet.length()));
+    fflush(stderr);
+
     if (!globalStyleSheet.isEmpty()) {
         qDebug() << "Global stylesheet generated. Length:" << globalStyleSheet.length();
         if (globalStyleSheet.length() < 3000) {
@@ -158,21 +184,69 @@ QString AlteThemeManager::getStyleSheet(const QString& widgetName) const {
 }
 
 QString AlteThemeManager::generateGlobalStyleSheet() const {
+    fprintf(stderr, "[generateGlobalStyleSheet] Entered function (fprintf).\n");
+    fflush(stderr); // Ensure it's flushed
+
+    qDebug() << "[generateGlobalStyleSheet] Entered function (qDebug).";
+    qDebug() << "[generateGlobalStyleSheet] Number of entries in 'styles' map:" << styles.size();
+
     QStringList globalStylesList; // Renamed to avoid confusion with the 'styles' member
     if (styles.isEmpty()) {
+        fprintf(stderr, "[generateGlobalStyleSheet] 'styles' map is empty (fprintf).\n");
+        fflush(stderr);
         qWarning() << "No styles found in theme JSON's 'styles' section to generate global stylesheet.";
     }
+    fprintf(stderr, "[generateGlobalStyleSheet] Starting generation of global stylesheet entries loop (fprintf).\n");
+    fflush(stderr);
+    qDebug() << "Starting generation of global stylesheet entries loop (qDebug)...";
+
     for (const QString& widgetName : styles.keys()) {
-        QString styleValue = styles.value(widgetName).toString();
+        fprintf(stderr, "[generateGlobalStyleSheet] Processing widgetName: %s (fprintf).\n", widgetName.toUtf8().constData());
+        fflush(stderr);
+        qDebug().noquote() << "Processing widgetName:" << widgetName;
+
+        QString originalStyleValue = styles.value(widgetName).toString();
+        fprintf(stderr, "[generateGlobalStyleSheet]   Original styleValue: %s (fprintf).\n", originalStyleValue.toUtf8().constData());
+        fflush(stderr);
+        qDebug().noquote() << "  Original styleValue:" << originalStyleValue;
+
+        QString processedStyleValue = originalStyleValue;
         for (auto it = colors.constBegin(); it != colors.constEnd(); ++it) {
-            QString placeholder = QString("%%%%%1%%%%").arg(it.key()); // e.g., %%cyberPulse%%
-            styleValue.replace(placeholder, it.value().toString());
+            QString placeholder = QString("%%%%%1%%%%").arg(it.key()); // Current: e.g., %%%%cyberPulse%%%%
+            QString correctPlaceholder = QString("%%%1%%").arg(it.key()); // Corrected: e.g., %%cyberPulse%%
+            if (originalStyleValue.contains(correctPlaceholder)) { // Log only if placeholder is relevant
+                fprintf(stderr, "[generateGlobalStyleSheet]     Replacing placeholder: %s with color: %s (fprintf).\n", correctPlaceholder.toUtf8().constData(), it.value().toString().toUtf8().constData());
+                fflush(stderr);
+                qDebug().noquote() << "    Replacing placeholder:" << correctPlaceholder << "with color:" << it.value().toString();
+            }
+            processedStyleValue.replace(correctPlaceholder, it.value().toString());
         }
-        QString styleEntry = QString("%1 { %2 }").arg(widgetName, styleValue);
+        fprintf(stderr, "[generateGlobalStyleSheet]   Processed styleValue: %s (fprintf).\n", processedStyleValue.toUtf8().constData());
+        fflush(stderr);
+        qDebug().noquote() << "  Processed styleValue:" << processedStyleValue;
+
+        QString styleEntry = QString("%1 { %2 }").arg(widgetName, processedStyleValue);
+        fprintf(stderr, "[generateGlobalStyleSheet]   Generated styleEntry: %s (fprintf).\n", styleEntry.toUtf8().constData());
+        fflush(stderr);
+        qDebug().noquote() << "  Generated styleEntry:" << styleEntry;
         globalStylesList.append(styleEntry);
     }
+
+    fprintf(stderr, "[generateGlobalStyleSheet] Joining QStringList (fprintf).\n");
+    fflush(stderr);
     QString finalStyleSheet = globalStylesList.join("\n");
+
+    fprintf(stderr, "[generateGlobalStyleSheet] Generated global stylesheet with color replacement. Length: %lld (fprintf).\n", static_cast<long long>(finalStyleSheet.length()));
+    fflush(stderr);
     qDebug() << "Generated global stylesheet with color replacement. Length:" << finalStyleSheet.length();
+
+    if (finalStyleSheet.length() < 3000) { // Also print final stylesheet if short
+        fprintf(stderr, "[generateGlobalStyleSheet] Final Global Stylesheet Content (fprintf):\n%s\n", finalStyleSheet.toUtf8().constData());
+        fflush(stderr);
+        qDebug().noquote() << "Final Global Stylesheet Content (qDebug):\n" << finalStyleSheet;
+    }
+    fprintf(stderr, "[generateGlobalStyleSheet] Returning final stylesheet (fprintf).\n");
+    fflush(stderr);
     return finalStyleSheet;
 }
 
@@ -226,4 +300,9 @@ QFont AlteThemeManager::getEditorFont(const QFont& defaultFont) const {
     font.setPointSize(size);
     qDebug() << "Editor font set to family:" << font.family() << "size:" << font.pointSize() << "(requested:" << requestedFamily << ")";
     return font;
+}
+
+// Method for debugging
+int AlteThemeManager::getStylesObjectSizeForDebug() const {
+    return styles.size();
 }
