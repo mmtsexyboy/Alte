@@ -21,25 +21,25 @@
 QT_BEGIN_MOC_NAMESPACE
 QT_WARNING_PUSH
 QT_WARNING_DISABLE_DEPRECATED
-struct qt_meta_stringdata_AlteSyntaxHighlighter_t {
+struct qt_meta_stringdata_SyntaxHighlighter_t {
     QByteArrayData data[1];
-    char stringdata0[22];
+    char stringdata0[18];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
-    qptrdiff(offsetof(qt_meta_stringdata_AlteSyntaxHighlighter_t, stringdata0) + ofs \
+    qptrdiff(offsetof(qt_meta_stringdata_SyntaxHighlighter_t, stringdata0) + ofs \
         - idx * sizeof(QByteArrayData)) \
     )
-static const qt_meta_stringdata_AlteSyntaxHighlighter_t qt_meta_stringdata_AlteSyntaxHighlighter = {
+static const qt_meta_stringdata_SyntaxHighlighter_t qt_meta_stringdata_SyntaxHighlighter = {
     {
-QT_MOC_LITERAL(0, 0, 21) // "AlteSyntaxHighlighter"
+QT_MOC_LITERAL(0, 0, 17) // "SyntaxHighlighter"
 
     },
-    "AlteSyntaxHighlighter"
+    "SyntaxHighlighter"
 };
 #undef QT_MOC_LITERAL
 
-static const uint qt_meta_data_AlteSyntaxHighlighter[] = {
+static const uint qt_meta_data_SyntaxHighlighter[] = {
 
  // content:
        8,       // revision
@@ -55,7 +55,7 @@ static const uint qt_meta_data_AlteSyntaxHighlighter[] = {
        0        // eod
 };
 
-void AlteSyntaxHighlighter::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_a)
+void SyntaxHighlighter::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_a)
 {
     (void)_o;
     (void)_id;
@@ -63,30 +63,30 @@ void AlteSyntaxHighlighter::qt_static_metacall(QObject *_o, QMetaObject::Call _c
     (void)_a;
 }
 
-QT_INIT_METAOBJECT const QMetaObject AlteSyntaxHighlighter::staticMetaObject = { {
+QT_INIT_METAOBJECT const QMetaObject SyntaxHighlighter::staticMetaObject = { {
     QMetaObject::SuperData::link<QSyntaxHighlighter::staticMetaObject>(),
-    qt_meta_stringdata_AlteSyntaxHighlighter.data,
-    qt_meta_data_AlteSyntaxHighlighter,
+    qt_meta_stringdata_SyntaxHighlighter.data,
+    qt_meta_data_SyntaxHighlighter,
     qt_static_metacall,
     nullptr,
     nullptr
 } };
 
 
-const QMetaObject *AlteSyntaxHighlighter::metaObject() const
+const QMetaObject *SyntaxHighlighter::metaObject() const
 {
     return QObject::d_ptr->metaObject ? QObject::d_ptr->dynamicMetaObject() : &staticMetaObject;
 }
 
-void *AlteSyntaxHighlighter::qt_metacast(const char *_clname)
+void *SyntaxHighlighter::qt_metacast(const char *_clname)
 {
     if (!_clname) return nullptr;
-    if (!strcmp(_clname, qt_meta_stringdata_AlteSyntaxHighlighter.stringdata0))
+    if (!strcmp(_clname, qt_meta_stringdata_SyntaxHighlighter.stringdata0))
         return static_cast<void*>(this);
     return QSyntaxHighlighter::qt_metacast(_clname);
 }
 
-int AlteSyntaxHighlighter::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
+int SyntaxHighlighter::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
 {
     _id = QSyntaxHighlighter::qt_metacall(_c, _id, _a);
     return _id;
