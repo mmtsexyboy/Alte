@@ -71,10 +71,13 @@ QTextCharFormat SyntaxHighlighter::createFormatFromRule(const QJsonObject& ruleD
 }
 
 void SyntaxHighlighter::loadRulesForLanguage(const QString& languageName, AlteThemeManager *themeManager) {
+    qDebug() << "SyntaxHighlighter::loadRulesForLanguage - Loading rules for language:" << languageName;
     m_highlightingRules.clear();
     QJsonObject langRules = themeManager->getSyntaxRulesForLanguage(languageName);
+    qDebug() << "SyntaxHighlighter::loadRulesForLanguage - Received langRules from ThemeManager:" << langRules;
+
     if (langRules.isEmpty()) {
-        qWarning() << "SyntaxHighlighter: No syntax rules found for language" << languageName;
+        qWarning() << "SyntaxHighlighter: No syntax rules found for language" << languageName << "(langRules object is empty).";
         return;
     }
 
@@ -96,7 +99,7 @@ void SyntaxHighlighter::loadRulesForLanguage(const QString& languageName, AlteTh
     // We need to iterate over the "highlighting_rules" array.
 
     if (!langRules.contains("highlighting_rules") || !langRules.value("highlighting_rules").isArray()) {
-        qWarning() << "SyntaxHighlighter: 'highlighting_rules' array not found or not an array for language" << languageName;
+        qWarning() << "SyntaxHighlighter: 'highlighting_rules' array not found or not an array for language" << languageName << "Def:" << langRules;
         return;
     }
     QJsonArray rulesArray = langRules.value("highlighting_rules").toArray();
