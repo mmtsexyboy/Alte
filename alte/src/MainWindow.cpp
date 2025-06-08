@@ -15,13 +15,15 @@
 #include <QTextDocument>
 #include <QStatusBar> // Required for statusBar()
 #include <QMouseEvent> // Required for QMouseEvent
+#include "ScratchpadDialog.h" // Added for Scratchpad
+#include "ShortcutSettingsDialog.h" // Existing include
 #include "LineNumberArea.h"
 // AlteThemeManager and AlteSyntaxHighlighter are included via MainWindow.h
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), typewriterModeEnabled(false), currentFilePath(""),
       m_themeManager(nullptr), m_syntaxHighlighter(nullptr), m_currentLanguageName("Plain Text"),
-      m_languageStatusLabel(nullptr) { // Initialize new member
+      m_languageStatusLabel(nullptr), m_shortcutManager(nullptr), m_isZenModeActive(false), m_scratchpadDialog(nullptr) { // Initialize new members
 
     // Initialize ThemeManager
     m_themeManager = new AlteThemeManager(this); // `this` for QObject parent
@@ -30,13 +32,17 @@ MainWindow::MainWindow(QWidget *parent)
     textEdit = new QTextEdit(this);
     textEdit->setPlaceholderText("Welcome to Alte! Drag and drop a text file here or start typing.");
 
+    // Initialize ShortcutManager
+    m_shortcutManager = new ShortcutManager(this);
+    m_shortcutManager->loadShortcuts(); // Load user/default shortcuts
+
     // Initialize SyntaxHighlighter
     // The initial language can be empty or a default like "Plain Text"
     m_syntaxHighlighter = new AlteSyntaxHighlighter(textEdit->document(), m_themeManager, m_currentLanguageName);
 
     lineNumberArea = new LineNumberArea(textEdit);
 
-    QWidget *editorWidget = new QWidget;
+    editorWidget = new QWidget; // Assign to member
     QHBoxLayout *layout = new QHBoxLayout(editorWidget);
     layout->setSpacing(0);
     layout->setContentsMargins(0, 0, 0, 0);
@@ -46,29 +52,42 @@ MainWindow::MainWindow(QWidget *parent)
 
 
     newAction = new QAction("New", this);
-    newAction->setShortcut(QKeySequence::New);
+    m_shortcutManager->connectToAction(commandIdToString(CommandId::NEW_FILE), newAction);
     connect(newAction, &QAction::triggered, this, &MainWindow::newFile);
 
     openAction = new QAction("Open...", this);
-    openAction->setShortcut(QKeySequence::Open);
+    m_shortcutManager->connectToAction(commandIdToString(CommandId::OPEN_FILE), openAction);
     connect(openAction, &QAction::triggered, this, &MainWindow::openFile);
 
     saveAction = new QAction("Save", this);
-    saveAction->setShortcut(QKeySequence::Save);
+    m_shortcutManager->connectToAction(commandIdToString(CommandId::SAVE_FILE), saveAction);
     connect(saveAction, &QAction::triggered, this, &MainWindow::saveFile);
 
     saveAsAction = new QAction("Save As...", this);
-    saveAsAction->setShortcut(QKeySequence::SaveAs);
+    m_shortcutManager->connectToAction(commandIdToString(CommandId::SAVE_AS_FILE), saveAsAction);
     connect(saveAsAction, &QAction::triggered, this, &MainWindow::saveFileAs);
 
     quitAction = new QAction("Quit", this);
-    quitAction->setShortcut(QKeySequence::Quit);
+    m_shortcutManager->connectToAction(commandIdToString(CommandId::QUIT_APP), quitAction);
     connect(quitAction, &QAction::triggered, this, &QMainWindow::close);
 
     typewriterModeAction = new QAction("Typewriter Mode", this);
     typewriterModeAction->setCheckable(true);
-    typewriterModeAction->setShortcut(QKeySequence("Ctrl+Shift+T"));
+    m_shortcutManager->connectToAction(commandIdToString(CommandId::TOGGLE_TYPEWRITER_MODE), typewriterModeAction);
     connect(typewriterModeAction, &QAction::triggered, this, &MainWindow::toggleTypewriterMode);
+
+    m_zenModeAction = new QAction("Zen Mode", this);
+    m_zenModeAction->setCheckable(true);
+    m_shortcutManager->connectToAction(commandIdToString(CommandId::ZEN_MODE), m_zenModeAction);
+    connect(m_zenModeAction, &QAction::triggered, this, &MainWindow::toggleZenMode);
+
+    m_openScratchpadAction = new QAction("Open Scratchpad", this); // Not added to a menu
+    m_shortcutManager->connectToAction(commandIdToString(CommandId::OPEN_SCRATCHPAD), m_openScratchpadAction);
+    connect(m_openScratchpadAction, &QAction::triggered, this, &MainWindow::openScratchpad);
+
+    m_shortcutSettingsAction = new QAction("Configure Shortcuts...", this);
+    m_shortcutManager->connectToAction(commandIdToString(CommandId::OPEN_SHORTCUT_SETTINGS), m_shortcutSettingsAction);
+    connect(m_shortcutSettingsAction, &QAction::triggered, this, &MainWindow::openShortcutSettingsDialog);
 
     QMenu *fileMenu = menuBar()->addMenu("File");
     fileMenu->addAction(newAction);
@@ -77,9 +96,12 @@ MainWindow::MainWindow(QWidget *parent)
     fileMenu->addAction(saveAsAction);
     fileMenu->addSeparator();
     fileMenu->addAction(quitAction);
+    fileMenu->addSeparator(); // Optional: separator before settings
+    fileMenu->addAction(m_shortcutSettingsAction); // Added to File menu for now
 
     QMenu *viewMenu = menuBar()->addMenu("View");
     viewMenu->addAction(typewriterModeAction);
+    viewMenu->addAction(m_zenModeAction); // Add Zen Mode to View menu
 
     connect(textEdit, &QTextEdit::cursorPositionChanged, this, &MainWindow::updateTypewriterCenter);
     connect(textEdit->document(), &QTextDocument::modificationChanged, this, &MainWindow::onModificationChanged);
@@ -98,6 +120,7 @@ MainWindow::MainWindow(QWidget *parent)
 MainWindow::~MainWindow() {
     // No need to delete m_languageStatusLabel explicitly if it's parented to MainWindow
     // and added to status bar, Qt handles it.
+    // m_scratchpadDialog will be deleted by Qt if it's parented and not already deleted.
 }
 
 void MainWindow::updateLanguageStatusLabel() {
@@ -359,4 +382,42 @@ void MainWindow::setCurrentLanguageFromMenu(QAction* action) {
             qDebug() << "Language manually changed to:" << m_currentLanguageName;
         }
     }
+}
+
+void MainWindow::openShortcutSettingsDialog() {
+    ShortcutSettingsDialog dialog(m_shortcutManager, this);
+    // dialog.setModal(true); // Make it modal
+    dialog.exec(); // Show modally
+}
+
+void MainWindow::toggleZenMode() {
+    m_isZenModeActive = !m_isZenModeActive;
+    m_zenModeAction->setChecked(m_isZenModeActive);
+
+    if (m_isZenModeActive) {
+        menuBar()->hide();
+        statusBar()->hide();
+        // Assuming lineNumberArea is directly accessible and part of editorWidget's layout
+        if (lineNumberArea) lineNumberArea->hide();
+        // Optionally, remove margins around textEdit if editorWidget had any
+        // centralWidget()->layout()->setContentsMargins(0,0,0,0); // If central widget is editorWidget
+    } else {
+        menuBar()->show();
+        statusBar()->show();
+        if (lineNumberArea) lineNumberArea->show();
+        // Restore original margins if changed
+    }
+    // It might be necessary to trigger a resize or update of the layout
+}
+
+void MainWindow::openScratchpad() {
+    if (!m_scratchpadDialog) {
+        m_scratchpadDialog = new ScratchpadDialog(this); // Parent to MainWindow
+    }
+    if (m_scratchpadDialog->isHidden()) {
+        // m_scratchpadDialog->loadContent(); // Load fresh content each time it's shown, or rely on showEvent
+        m_scratchpadDialog->show();
+    }
+    m_scratchpadDialog->raise();
+    m_scratchpadDialog->activateWindow();
 }
